@@ -28,3 +28,18 @@ test('cyberware commit updates only requested shared field',()=>{
  const saved=JSON.parse(data.get('cyberpunk-red-console-v1'));
  assert.equal(saved.eb,300);assert.equal(saved.humanity,50);assert.equal(saved.role,'Solo');assert.equal(saved.stats.REF,7);
 });
+
+test('refreshing player console pulls only shared character fields',()=>{
+ const stored={eb:750,humanity:32,role:'Tech',handle:'Updated',stats:{REF:9,DEX:8},skills:{Handgun:9},rolls:[]};
+ const ctx={localStorage:{getItem:()=>JSON.stringify(stored)},KEY:'cyberpunk-red-console-v1',console,s:{eb:100,humanity:40,role:'Solo',handle:'Old',stats:{REF:5,DEX:5},skills:{Handgun:4},rolls:[{id:1}]}};
+ vm.runInNewContext(extractFunction(player,'refreshSharedPlayer','hpmax')+';refreshSharedPlayer();',ctx);
+ assert.equal(ctx.s.eb,750);assert.equal(ctx.s.stats.REF,9);assert.equal(ctx.s.skills.Handgun,4);assert.equal(ctx.s.rolls.length,1);
+});
+test('cyberware refresh does not discard owned or installed items',()=>{
+ const saved={eb:1200,humanity:36,humanityMax:60,stats:{REF:9,DEX:8}};
+ const ctx={PLAYER_KEY:'cyberpunk-red-console-v1',localStorage:{getItem:()=>JSON.stringify(saved)},STATS:['REF','DEX'],state:{cash:10,humanity:20,humanityMax:40,stats:{REF:5,DEX:5},owned:['arm'],installed:['optic'],netLoaded:['sword']}};
+ const src=cyber.slice(cyber.indexOf('function playerData()'),cyber.indexOf('function commitShared('));
+ vm.runInNewContext(src+';refreshFromPlayer();',ctx);
+ assert.equal(ctx.state.cash,1200);assert.equal(ctx.state.humanity,36);assert.equal(ctx.state.stats.REF,9);
+ assert.deepEqual(ctx.state.owned,['arm']);assert.deepEqual(ctx.state.installed,['optic']);assert.deepEqual(ctx.state.netLoaded,['sword']);
+});
