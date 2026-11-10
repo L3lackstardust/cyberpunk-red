@@ -61,6 +61,54 @@ const {setTimeout:delay}=require('node:timers/promises');
    assert.match(await page.locator('#redSaveStatus').innerText(),/NOT SAVED/);
    await page.evaluate(()=>window.__restoreStorage());
   });
+
+  await check('Two-tab player edit propagates without removing cyberware',async()=>{
+   const playerTab=await context.newPage();
+   const cyberTab=await context.newPage();
+   playerTab.on('pageerror',e=>errors.push('player tab: '+e.message));
+   cyberTab.on('pageerror',e=>errors.push('cyber tab: '+e.message));
+   try{
+    await playerTab.goto('http://127.0.0.1:8765/index.html',{waitUntil:'domcontentloaded'});
+    await cyberTab.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
+    await cyberTab.evaluate(()=>{
+     const k='cyberpunk-red-character-v1';
+     const v=JSON.parse(localStorage.getItem(k));
+     v.installed=['optic'];v.owned=['arm'];v.netLoaded=['sword'];
+     localStorage.setItem(k,JSON.stringify(v));
+    });
+    await cyberTab.reload({waitUntil:'domcontentloaded'});
+    await playerTab.locator('[data-key="eb"]').fill('777');
+    await playerTab.locator('[data-key="eb"]').dispatchEvent('change');
+    await cyberTab.waitForFunction(()=>Number(document.querySelector('#cash').value)===777,{timeout:5000});
+    const stored=await cyberTab.evaluate(()=>JSON.parse(localStorage.getItem('cyberpunk-red-character-v1')));
+    assert.equal(stored.cash,777);
+    assert.deepEqual(stored.installed,['optic']);
+    assert.deepEqual(stored.owned,['arm']);
+    assert.deepEqual(stored.netLoaded,['sword']);
+   }finally{await playerTab.close();await cyberTab.close()}
+  });
+  await check('Two-tab cyberware humanity edit updates player without overwriting skills',async()=>{
+   const playerTab=await context.newPage();
+   const cyberTab=await context.newPage();
+   playerTab.on('pageerror',e=>errors.push('player tab: '+e.message));
+   cyberTab.on('pageerror',e=>errors.push('cyber tab: '+e.message));
+   try{
+    await playerTab.goto('http://127.0.0.1:8765/index.html',{waitUntil:'domcontentloaded'});
+    await cyberTab.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
+    await playerTab.evaluate(()=>{
+     const k='cyberpunk-red-console-v1';
+     const v=JSON.parse(localStorage.getItem(k));
+     v.skills={...v.skills,Perception:5};
+     localStorage.setItem(k,JSON.stringify(v));
+    });
+    await cyberTab.locator('#humanity').fill('33');
+    await cyberTab.locator('#humanity').dispatchEvent('input');
+    await playerTab.waitForFunction(()=>Number(document.querySelector('[data-key="humanity"]').value)===33,{timeout:5000});
+    const stored=await playerTab.evaluate(()=>JSON.parse(localStorage.getItem('cyberpunk-red-console-v1')));
+    assert.equal(stored.humanity,33);
+    assert.equal(stored.skills.Perception,5);
+   }finally{await playerTab.close();await cyberTab.close()}
+  });
   await check('No uncaught errors in tested flows',async()=>assert.deepEqual(errors,[]));
   await context.close();
  }finally{if(browser)await browser.close();server.kill()}
