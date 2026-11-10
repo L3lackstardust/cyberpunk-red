@@ -7,7 +7,7 @@ test('separate persistent namespaces are stable',()=>{assert.match(player,/cyber
 test('cyberware purchase reads latest player funds',()=>{assert.match(cyber,/if\(t\.dataset\.buy\)[\s\S]*?const p=playerData\(\)/);assert.match(cyber,/Number\(p\.eb\)<x\.price/);assert.doesNotMatch(cyber,/if\(!x\|\|state\.cash<x\.price\)return/)});
 test('cyberware installation validates humanity before inventory mutation',()=>{const section=cyber.slice(cyber.indexOf("const input=prompt('Confirm installation"),cyber.indexOf('if(t.dataset.unload'));assert.ok(section.indexOf("Number(p.humanity)<loss")>=0);assert.ok(section.indexOf("Number(p.humanity)<loss")<section.indexOf("state.owned.splice(i,1)"))});
 test('player roll refreshes stats before computing base',()=>{assert.match(player,/refreshSharedPlayer\(\);syncCyberware\(\);base=refreshedRollBase\(label,base\)/)});
-test('cyberware backup import saves immediately',()=>{assert.match(cyber,/state\.conditions\|\|=\{\};save\(\);audit\('Imported cyberware backup/)});
+test('cyberware backup import saves immediately',()=>{assert.match(cyber,/state\.conditions\|\|=\{\};[\s\S]*?normalizeInstallInstances\(\);save\(\);audit\('Imported cyberware backup/)});
 
 function extractFunction(source,name,nextName){const start=source.indexOf('function '+name+'(');const end=source.indexOf('function '+nextName+'(',start);assert.ok(start>=0&&end>start,'function boundaries: '+name);return source.slice(start,end)}
 test('player mirrors only edited fields without changing cyberware inventory',()=>{
