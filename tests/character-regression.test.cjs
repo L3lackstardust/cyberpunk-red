@@ -70,3 +70,26 @@ test('cyberware installation checks prerequisites before moving inventory',()=>{
  assert.ok(segment.indexOf('x.requires.some(')<segment.indexOf('state.owned.splice(i,1)'));
  assert.match(segment,/Number\(p\.humanity\)<loss/);
 });
+
+test('shared player edits preserve unrelated cyberware equipment and NET state',()=>{
+ const data=new Map([['cyberpunk-red-character-v1',JSON.stringify({name:'Before',cash:900,installed:['optic','image'],owned:['arm'],netLoaded:['sword'],conditions:{image:true},stats:{REF:5,DEX:6}})]]);
+ const ctx={localStorage:{getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v)},console,s:{handle:'After',name:'After',role:'Solo',eb:450,humanity:38,humanityMax:50,stats:{REF:8,DEX:6}}};
+ vm.runInNewContext(extractFunction(player,'mirrorPlayerFields','refreshSharedPlayer')+';mirrorPlayerFields(["eb","REF"]);',ctx);
+ const saved=JSON.parse(data.get('cyberpunk-red-character-v1'));
+ assert.equal(saved.cash,450);assert.equal(saved.stats.REF,8);assert.equal(saved.stats.DEX,6);
+ assert.deepEqual(saved.installed,['optic','image']);assert.deepEqual(saved.owned,['arm']);assert.deepEqual(saved.netLoaded,['sword']);assert.equal(saved.conditions.image,true);
+});
+test('cyberware shared humanity edit preserves player skills and roll history',()=>{
+ const stored={eb:900,humanity:55,humanityMax:60,role:'Solo',handle:'Ghost',stats:{REF:7},skills:{Perception:6},rolls:[{id:'r1'}]};
+ const data=new Map([['cyberpunk-red-console-v1',JSON.stringify(stored)]]);
+ const ctx={localStorage:{getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v)},console,alert:()=>{throw Error('unexpected alert')},state:{cash:200,humanity:32,humanityMax:60,role:'Netrunner',name:'Else',stats:{REF:2}},STATS:['REF'],PLAYER_KEY:'cyberpunk-red-console-v1'};
+ const source=cyber.slice(cyber.indexOf('function playerData()'),cyber.indexOf('function pullPlayer()'));
+ vm.runInNewContext(source+';commitShared(["humanity"]);',ctx);
+ const saved=JSON.parse(data.get('cyberpunk-red-console-v1'));
+ assert.equal(saved.humanity,32);assert.equal(saved.eb,900);assert.equal(saved.handle,'Ghost');assert.equal(saved.stats.REF,7);
+ assert.deepEqual(saved.skills,{Perception:6});assert.deepEqual(saved.rolls,[{id:'r1'}]);
+});
+test('cyberware storage failure displays a warning rather than silently losing edits',()=>{
+ assert.match(cyber,/NOT SAVED — export a JSON backup now/);
+ assert.match(cyber,/console\.error\('RED local save failed'/);
+});
