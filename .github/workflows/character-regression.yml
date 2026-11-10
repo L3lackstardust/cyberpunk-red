@@ -1,0 +1,25 @@
+name: Character regression
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'character-cyberware.html'
+      - 'tests/**'
+      - '.github/workflows/character-regression.yml'
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'character-cyberware.html'
+      - 'tests/**'
+      - '.github/workflows/character-regression.yml'
+  workflow_dispatch:
+jobs:
+  character-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Node regression suite
+        run: node --test tests/character-regression.test.cjs
