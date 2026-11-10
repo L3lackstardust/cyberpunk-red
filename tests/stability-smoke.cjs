@@ -95,12 +95,10 @@ const {setTimeout:delay}=require('node:timers/promises');
    try{
     await playerTab.goto('http://127.0.0.1:8765/index.html',{waitUntil:'domcontentloaded'});
     await cyberTab.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
-    await playerTab.evaluate(()=>{
-     const k='cyberpunk-red-console-v1';
-     const v=JSON.parse(localStorage.getItem(k));
-     v.skills={...v.skills,Perception:5};
-     localStorage.setItem(k,JSON.stringify(v));
-    });
+    await playerTab.locator('[data-skill="Perception"]').fill('5');
+    await playerTab.locator('[data-skill="Perception"]').dispatchEvent('input');
+    const before=await playerTab.evaluate(()=>JSON.parse(localStorage.getItem('cyberpunk-red-console-v1')));
+    assert.equal(before.skills.Perception,5);
     await cyberTab.locator('#humanity').fill('33');
     await cyberTab.locator('#humanity').dispatchEvent('input');
     await playerTab.waitForFunction(()=>Number(document.querySelector('[data-key="humanity"]').value)===33,{timeout:5000});
