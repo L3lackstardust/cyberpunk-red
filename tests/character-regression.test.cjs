@@ -7,7 +7,7 @@ test('separate persistent namespaces are stable',()=>{assert.match(player,/cyber
 test('cyberware purchase reads latest player funds',()=>{assert.match(cyber,/if\(t\.dataset\.buy\)[\s\S]*?const p=playerData\(\)/);assert.match(cyber,/Number\(p\.eb\)<x\.price/);assert.doesNotMatch(cyber,/if\(!x\|\|state\.cash<x\.price\)return/)});
 test('cyberware installation validates humanity before inventory mutation',()=>{const section=cyber.slice(cyber.indexOf("const input=prompt('Confirm installation"),cyber.indexOf('if(t.dataset.unload'));assert.ok(section.indexOf("Number(p.humanity)<loss")>=0);assert.ok(section.indexOf("Number(p.humanity)<loss")<section.indexOf("state.owned.splice(i,1)"))});
 test('player roll refreshes stats before computing base',()=>{assert.match(player,/refreshSharedPlayer\(\);syncCyberware\(\);base=refreshedRollBase\(label,base\)/)});
-test('cyberware backup import saves immediately',()=>{assert.match(cyber,/state\.conditions\|\|=\{\};save\(\);audit\('Imported cyberware backup/)});
+test('cyberware backup import saves immediately',()=>{assert.match(cyber,/state\.conditions\|\|=\{\};[\s\S]*?normalizeInstallInstances\(\);save\(\);audit\('Imported cyberware backup/)});
 
 function extractFunction(source,name,nextName){const start=source.indexOf('function '+name+'(');const end=source.indexOf('function '+nextName+'(',start);assert.ok(start>=0&&end>start,'function boundaries: '+name);return source.slice(start,end)}
 test('player mirrors only edited fields without changing cyberware inventory',()=>{
@@ -69,4 +69,27 @@ test('cyberware installation checks prerequisites before moving inventory',()=>{
  const segment=cyber.slice(cyber.indexOf('if(t.dataset.install!==undefined)'),cyber.indexOf('if(t.dataset.unload'));
  assert.ok(segment.indexOf('x.requires.some(')<segment.indexOf('state.owned.splice(i,1)'));
  assert.match(segment,/Number\(p\.humanity\)<loss/);
+});
+
+test('shared player edits preserve unrelated cyberware equipment and NET state',()=>{
+ const data=new Map([['cyberpunk-red-character-v1',JSON.stringify({name:'Before',cash:900,installed:['optic','image'],owned:['arm'],netLoaded:['sword'],conditions:{image:true},stats:{REF:5,DEX:6}})]]);
+ const ctx={localStorage:{getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v)},console,s:{handle:'After',name:'After',role:'Solo',eb:450,humanity:38,humanityMax:50,stats:{REF:8,DEX:6}}};
+ vm.runInNewContext(extractFunction(player,'mirrorPlayerFields','refreshSharedPlayer')+';mirrorPlayerFields(["eb","REF"]);',ctx);
+ const saved=JSON.parse(data.get('cyberpunk-red-character-v1'));
+ assert.equal(saved.cash,450);assert.equal(saved.stats.REF,8);assert.equal(saved.stats.DEX,6);
+ assert.deepEqual(saved.installed,['optic','image']);assert.deepEqual(saved.owned,['arm']);assert.deepEqual(saved.netLoaded,['sword']);assert.equal(saved.conditions.image,true);
+});
+test('cyberware shared humanity edit preserves player skills and roll history',()=>{
+ const stored={eb:900,humanity:55,humanityMax:60,role:'Solo',handle:'Ghost',stats:{REF:7},skills:{Perception:6},rolls:[{id:'r1'}]};
+ const data=new Map([['cyberpunk-red-console-v1',JSON.stringify(stored)]]);
+ const ctx={localStorage:{getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v)},console,alert:()=>{throw Error('unexpected alert')},state:{cash:200,humanity:32,humanityMax:60,role:'Netrunner',name:'Else',stats:{REF:2}},STATS:['REF'],PLAYER_KEY:'cyberpunk-red-console-v1'};
+ const source=cyber.slice(cyber.indexOf('function playerData()'),cyber.indexOf('function pullPlayer()'));
+ vm.runInNewContext(source+';commitShared(["humanity"]);',ctx);
+ const saved=JSON.parse(data.get('cyberpunk-red-console-v1'));
+ assert.equal(saved.humanity,32);assert.equal(saved.eb,900);assert.equal(saved.handle,'Ghost');assert.equal(saved.stats.REF,7);
+ assert.deepEqual(saved.skills,{Perception:6});assert.deepEqual(saved.rolls,[{id:'r1'}]);
+});
+test('cyberware storage failure displays a warning rather than silently losing edits',()=>{
+ assert.match(cyber,/NOT SAVED — export a JSON backup now/);
+ assert.match(cyber,/console\.error\('RED local save failed'/);
 });
