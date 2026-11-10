@@ -107,6 +107,45 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.equal(stored.skills.Perception,5);
    }finally{await playerTab.close();await cyberTab.close()}
   });
+
+  await check('Cyberware backup import restores installed items and settings',async()=>{
+   const restore=await context.newPage();
+   restore.on('pageerror',e=>errors.push('backup tab: '+e.message));
+   try{
+    await restore.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
+    const snapshot=await restore.evaluate(()=>{
+     const raw=JSON.parse(localStorage.getItem('cyberpunk-red-character-v1'));
+     return {...raw,name:'BACKUP-RESTORED',installed:['optic','image'],owned:['arm'],netLoaded:['sword'],conditions:{...raw.conditions,image:true}};
+    });
+    restore.once('dialog',dialog=>dialog.accept());
+    await restore.locator('#import').setInputFiles({name:'restore-test.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({schema:1,kind:'cyberpunk-character',data:snapshot}))});
+    await restore.waitForFunction(()=>JSON.parse(localStorage.getItem('cyberpunk-red-character-v1')||'{}').name==='BACKUP-RESTORED');
+    const stored=await restore.evaluate(()=>JSON.parse(localStorage.getItem('cyberpunk-red-character-v1')));
+    assert.deepEqual(stored.installed,['optic','image']);
+    assert.deepEqual(stored.owned,['arm']);
+    assert.deepEqual(stored.netLoaded,['sword']);
+    assert.equal(stored.conditions.image,true);
+   }finally{await restore.close()}
+  });
+  await check('Conditional cyberware modifier only applies to relevant action',async()=>{
+   const modPage=await context.newPage();
+   modPage.on('pageerror',e=>errors.push('modifier tab: '+e.message));
+   try{
+    await modPage.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
+    const result=await modPage.evaluate(()=>{
+     state.installed=['optic','image'];
+     state.action='perception';
+     state.conditions.image=false;
+     const off=mods().reduce((sum,x)=>sum+x.value,0);
+     state.conditions.image=true;
+     const on=mods().reduce((sum,x)=>sum+x.value,0);
+     state.action='handgun';
+     const other=mods().reduce((sum,x)=>sum+x.value,0);
+     return {off,on,other};
+    });
+    assert.deepEqual(result,{off:0,on:2,other:0});
+   }finally{await modPage.close()}
+  });
   await check('No uncaught errors in tested flows',async()=>assert.deepEqual(errors,[]));
   await context.close();
  }finally{if(browser)await browser.close();server.kill()}
