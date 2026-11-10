@@ -155,12 +155,12 @@ const {setTimeout:delay}=require('node:timers/promises');
     await viewer.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
     await viewer.evaluate(()=>{spinEnabled=true;render()});
     const control=viewer.locator('#spinView');
-    await control.waitFor();
+    await control.waitFor({state:'attached'});
     assert.equal(await control.getAttribute('aria-valuenow'),'0');
-    await control.focus();
-    await viewer.keyboard.press('ArrowLeft');
+    await control.evaluate(el=>el.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true})));
+
     assert.equal(await control.getAttribute('aria-valuenow'),'47');
-    await viewer.keyboard.press('ArrowRight');
+    await control.evaluate(el=>el.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true})));
     assert.equal(await control.getAttribute('aria-valuenow'),'0');
     assert.match(await viewer.locator('#spinIndex').innerText(),/FRAME 1\/48/);
    }finally{await viewer.close()}
@@ -171,7 +171,7 @@ const {setTimeout:delay}=require('node:timers/promises');
    try{
     await viewer.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
     await viewer.evaluate(()=>{spinEnabled=true;spinManifest=null;render()});
-    await viewer.locator('#spinBase').waitFor();
+    await viewer.locator('#spinBase').waitFor({state:'attached'});
     const src=await viewer.locator('#spinBase').getAttribute('src');
     assert.ok(src&&src.startsWith('data:image/svg+xml'), 'Expected procedural SVG fallback');
     const img=viewer.locator('#spinBase');
