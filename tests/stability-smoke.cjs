@@ -11,6 +11,7 @@ const {setTimeout:delay}=require('node:timers/promises');
   await delay(1200);
   browser=await chromium.launch({headless:true,args:['--no-sandbox']});
   const context=await browser.newContext({acceptDownloads:true});
+  context.setDefaultTimeout(7000);
   const page=await context.newPage();
   const errors=[];
   page.on('pageerror',e=>errors.push(e.message));
@@ -174,7 +175,7 @@ const {setTimeout:delay}=require('node:timers/promises');
     const src=await viewer.locator('#spinBase').getAttribute('src');
     assert.ok(src&&src.startsWith('data:image/svg+xml'), 'Expected procedural SVG fallback');
     const img=viewer.locator('#spinBase');
-    await img.evaluate(el=>el.decode());
+    await viewer.waitForFunction(()=>{const el=document.getElementById('spinBase');return !!el&&el.complete&&el.naturalWidth>0},null,{timeout:7000});
     assert.equal(await img.evaluate(el=>el.naturalWidth>0),true);
    }finally{await viewer.close()}
   });
