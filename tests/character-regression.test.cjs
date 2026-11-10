@@ -43,3 +43,30 @@ test('cyberware refresh does not discard owned or installed items',()=>{
  assert.equal(ctx.state.cash,1200);assert.equal(ctx.state.humanity,36);assert.equal(ctx.state.stats.REF,9);
  assert.deepEqual(ctx.state.owned,['arm']);assert.deepEqual(ctx.state.installed,['optic']);assert.deepEqual(ctx.state.netLoaded,['sword']);
 });
+
+test('cyberware modifier applies only when installed and condition enabled',()=>{
+ const source=cyber.slice(cyber.indexOf('function mods()'),cyber.indexOf('function renderRoll()'));
+ const ctx={state:{installed:['image'],conditions:{image:false},action:'perception'},items:[{id:'image',name:'Image Enhance',mod:{action:'perception',value:2},conditional:true}]};
+ vm.runInNewContext(source+';globalResult=mods();',ctx);
+ assert.equal(ctx.globalResult.length,0);
+ ctx.state.conditions.image=true;
+ vm.runInNewContext('globalResult=mods();',ctx);
+ assert.equal(ctx.globalResult.length,1);assert.equal(ctx.globalResult[0].value,2);
+ ctx.state.action='handgun';vm.runInNewContext('globalResult=mods();',ctx);
+ assert.equal(ctx.globalResult.length,0);
+});
+test('cyberware roll uses latest player stats and records its modifier sources',()=>{
+ assert.match(cyber,/\$\('roll'\)\.onclick=\(\)=>\{refreshFromPlayer\(\);renderRoll\(\)/);
+ assert.match(cyber,/sources:mods\(\),modifier,total,dv/);
+ assert.match(cyber,/cyberpunk-red:roll/);
+});
+test('cyberware transactions preserve inventory on insufficient player balance',()=>{
+ const segment=cyber.slice(cyber.indexOf('if(t.dataset.buy)'),cyber.indexOf('if(t.dataset.install'));
+ assert.ok(segment.indexOf('Number(p.eb)<x.price')<segment.indexOf('state.owned.push(x.id)'));
+ assert.ok(segment.includes('return}state.cash=Number(p.eb)-x.price'));
+});
+test('cyberware installation checks prerequisites before moving inventory',()=>{
+ const segment=cyber.slice(cyber.indexOf('if(t.dataset.install!==undefined)'),cyber.indexOf('if(t.dataset.unload'));
+ assert.ok(segment.indexOf('x.requires.some(')<segment.indexOf('state.owned.splice(i,1)'));
+ assert.match(segment,/Number\(p\.humanity\)<loss/);
+});
