@@ -146,6 +146,38 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.deepEqual(result,{off:0,on:2,other:0});
    }finally{await modPage.close()}
   });
+
+  await check('48-frame cyberware rotation wraps with keyboard input',async()=>{
+   const viewer=await context.newPage();
+   viewer.on('pageerror',e=>errors.push('spin tab: '+e.message));
+   try{
+    await viewer.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
+    await viewer.evaluate(()=>{spinEnabled=true;render()});
+    const control=viewer.locator('#spinView');
+    await control.waitFor();
+    assert.equal(await control.getAttribute('aria-valuenow'),'0');
+    await control.focus();
+    await viewer.keyboard.press('ArrowLeft');
+    assert.equal(await control.getAttribute('aria-valuenow'),'47');
+    await viewer.keyboard.press('ArrowRight');
+    assert.equal(await control.getAttribute('aria-valuenow'),'0');
+    assert.match(await viewer.locator('#spinIndex').innerText(),/FRAME 1\/48/);
+   }finally{await viewer.close()}
+  });
+  await check('Image rotation provides a fallback when sequence art is unavailable',async()=>{
+   const viewer=await context.newPage();
+   viewer.on('pageerror',e=>errors.push('fallback tab: '+e.message));
+   try{
+    await viewer.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
+    await viewer.evaluate(()=>{spinEnabled=true;spinManifest=null;render()});
+    await viewer.locator('#spinBase').waitFor();
+    const src=await viewer.locator('#spinBase').getAttribute('src');
+    assert.ok(src&&src.startsWith('data:image/svg+xml'), 'Expected procedural SVG fallback');
+    const img=viewer.locator('#spinBase');
+    await img.evaluate(el=>el.decode());
+    assert.equal(await img.evaluate(el=>el.naturalWidth>0),true);
+   }finally{await viewer.close()}
+  });
   await check('No uncaught errors in tested flows',async()=>assert.deepEqual(errors,[]));
   await context.close();
  }finally{if(browser)await browser.close();server.kill()}
