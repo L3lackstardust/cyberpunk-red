@@ -301,6 +301,7 @@ const {setTimeout:delay}=require('node:timers/promises');
     await page.locator('[data-key="pose"][data-value="confident"]').click();
     await page.locator('[data-key="cyberarm"][data-value="left"]').click();
     await page.locator('[data-key="eyes"]').click();
+    await page.locator('[data-view="0"]').click();
     await page.locator('#right').click();
     assert.equal(await page.locator('#viewer').getAttribute('aria-valuenow'),'1');
     assert.equal(await page.locator('#portrait svg').count(),1);
