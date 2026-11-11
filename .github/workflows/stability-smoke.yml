@@ -4,6 +4,7 @@ on:
     paths:
       - 'index.html'
       - 'character-cyberware.html'
+      - 'avatar-creator.html'
       - 'tests/**'
       - 'assets/cyberware-spin/**'
       - '.github/workflows/stability-smoke.yml'
