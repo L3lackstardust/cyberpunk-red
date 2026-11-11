@@ -210,6 +210,28 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.equal(result.overlayCount,1);
    }finally{await viewer.close()}
   });
+  await check('All six avatar body silhouettes render distinctly across rotation',async()=>{
+   const page=await context.newPage();
+   page.on('pageerror',e=>errors.push('avatar six builds: '+e.message));
+   try{
+    await page.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'domcontentloaded'});
+    const builds=['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic'];
+    const signatures=new Set();
+    for(const build of builds){
+     await page.locator('[data-key="build"][data-value="'+build+'"]').click();
+     assert.equal(await page.locator('[data-key="build"][data-value="'+build+'"]').getAttribute('aria-pressed'),'true');
+     const front=await page.locator('#body svg').evaluate(el=>el.outerHTML);
+     const portrait=await page.locator('#portrait svg').evaluate(el=>el.outerHTML);
+     assert.ok(front.includes('<path')&&portrait.includes('<path'));
+     signatures.add(front);
+     await page.locator('#angle').fill('24');
+     const back=await page.locator('#body svg').evaluate(el=>el.outerHTML);
+     assert.notEqual(front,back,'front and rear views should differ for '+build);
+     await page.locator('#angle').fill('0');
+    }
+    assert.equal(signatures.size,6,'all six base builds should have distinct SVG geometry');
+   }finally{await page.close()}
+  });
   await check('Avatar studio builds, rotates, poses and saves one shared identity',async()=>{
    const page=await context.newPage();
    page.on('pageerror',e=>errors.push('avatar studio: '+e.message));
