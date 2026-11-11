@@ -26,35 +26,41 @@ function controls(){
  for(const [key,title,colors] of [['skin','Skin tone',skinColors],['hairColor','Hair color',hairColors]])html+='<div class="field"><label>'+title+'</label><div class="choices">'+colors.map(color=>'<button class="swatch" data-key="'+key+'" data-value="'+color+'" aria-label="'+title+' '+color+'" aria-pressed="'+(avatar[key]===color)+'"><i style="background:'+color+'"></i></button>').join('')+'</div></div>';
  html+='<div class="field"><button id="syncCyberware" type="button">Sync installed cyberware</button><p class="note">Read cyberarms and cyberoptics from your saved Cyberware Manager character. Your other appearance choices stay unchanged.</p></div>';html+='<div class="field"><button data-key="eyes" data-value="toggle" aria-pressed="'+Boolean(avatar.eyes)+'">Cyberoptic glow '+(avatar.eyes?'ON':'OFF')+'</button></div>';
  $('controls').innerHTML=html;
- $('controls').querySelectorAll('button[data-key]').forEach(b=>b.addEventListener('click',()=>{const key=b.dataset.key;avatar[key]=key==='eyes'?!avatar.eyes:b.dataset.value;controls();render()}));$('syncCyberware').addEventListener('click',syncCyberware);
+ $('controls').querySelectorAll('button[data-key]').forEach(b=>b.addEventListener('click',()=>{const key=b.dataset.key;avatar[key]=key==='eyes'?!avatar.eyes:b.dataset.value;controls();render();persistAvatar('Appearance saved automatically')}));$('syncCyberware').addEventListener('click',syncCyberware);
 }
 function figure(portrait=false){return window.REDAvatarRenderer.render(showImplants?avatar:{...avatar,cyberarm:'none',eyes:false},portrait)}
 function render(){$('showImplants').setAttribute('aria-pressed',String(showImplants));$('showImplants').textContent=showImplants?'Cyberware visible':'Cyberware hidden';$('body').innerHTML=figure();$('portrait').innerHTML=figure(true);$('frame').textContent=(avatar.frame===0?'FRONT':avatar.frame===12?'RIGHT PROFILE':avatar.frame===24?'REAR':avatar.frame===36?'LEFT PROFILE':avatar.frame<12?'FRONT → RIGHT':avatar.frame<24?'RIGHT → REAR':avatar.frame<36?'REAR → LEFT':'LEFT → FRONT')+' · '+String(avatar.frame*7.5).padStart(3,'0')+'° · FRAME '+String(avatar.frame+1).padStart(2,'0')+' / 48';$('viewer').setAttribute('aria-valuenow',avatar.frame);$('viewer').setAttribute('aria-valuetext',String(avatar.frame*7.5)+' degrees');$('angle').value=avatar.frame}
+function installedInstances(character){
+ const ids=Array.isArray(character.installed)?character.installed:[];
+ if(Array.isArray(character.installInstances)&&character.installInstances.length)return character.installInstances;
+ return ids.map((itemId,i)=>({itemId,side:character.installSideByIndex?.[i]||character.installSides?.[itemId]||null}));
+}
+function syncCyberwareFromCharacter(character){
+ const instances=installedInstances(character);
+ const sidesFor=id=>instances.filter(x=>x&&x.itemId===id).map(x=>String(x.side||'both').toLowerCase());
+ const hasSide=(sides,side)=>sides.some(s=>s===side||s==='both');
+ const arms=sidesFor('arm'),leftArm=hasSide(arms,'left'),rightArm=hasSide(arms,'right');
+ avatar.cyberarm=leftArm&&rightArm?'both':leftArm?'left':rightArm?'right':'none';
+ const optics=sidesFor('optic'),leftOptic=hasSide(optics,'left'),rightOptic=hasSide(optics,'right');
+ avatar.eyes=leftOptic&&rightOptic?'both':leftOptic?'left':rightOptic?'right':false;
+}
 function syncCyberware(){
  try{
   const raw=localStorage.getItem('cyberpunk-red-character-v1');
   if(!raw){$('status').textContent='No saved Cyberware Manager character found';return}
-  const character=JSON.parse(raw);
-  const instances=Array.isArray(character.installInstances)?character.installInstances:[];
-  const arms=instances.filter(x=>x&&x.itemId==='arm').map(x=>String(x.side||'both').toLowerCase());
-  const left=arms.some(s=>s==='left'||s==='both'),right=arms.some(s=>s==='right'||s==='both');
-  avatar.cyberarm=left&&right?'both':left?'left':right?'right':'none';
-  const optics=instances.filter(x=>x&&x.itemId==='optic').map(x=>String(x.side||'right').toLowerCase());
-  const opticLeft=optics.includes('left')||optics.includes('both'),opticRight=optics.includes('right')||optics.includes('both');
-  avatar.eyes=opticLeft&&opticRight?'both':opticLeft?'left':opticRight?'right':false;
-  controls();render();
-  $('status').textContent='Cyberware synced from saved character — save avatar to keep changes';
+  syncCyberwareFromCharacter(JSON.parse(raw));controls();render();persistAvatar('Cyberware synced and avatar saved');
  }catch(e){$('status').textContent='Could not read character cyberware'}
 }
 document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{avatar.frame=Number(button.dataset.view);render()}));$('showImplants').addEventListener('click',()=>{showImplants=!showImplants;render()});
-function rotate(delta){avatar.frame=(avatar.frame+delta+48)%48;render()}
-$('left').onclick=()=>rotate(-1);$('right').onclick=()=>rotate(1);$('angle').oninput=e=>{avatar.frame=Number(e.target.value);render()};$('viewer').onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();rotate(e.key==='ArrowRight'?1:-1)}};
+function rotate(delta){avatar.frame=(avatar.frame+delta+48)%48;render();persistAvatar('Rotation saved automatically')}
+$('left').onclick=()=>rotate(-1);$('right').onclick=()=>rotate(1);$('angle').oninput=e=>{avatar.frame=Number(e.target.value);render();persistAvatar('Rotation saved automatically')};$('viewer').onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();rotate(e.key==='ArrowRight'?1:-1)}};
 let drag=null;$('viewer').addEventListener('pointerdown',e=>{drag={x:e.clientX,frame:avatar.frame};$('viewer').setPointerCapture(e.pointerId)});$('viewer').addEventListener('pointermove',e=>{if(!drag)return;avatar.frame=((drag.frame+Math.round((e.clientX-drag.x)/9))%48+48)%48;render()});for(const type of ['pointerup','pointercancel'])$('viewer').addEventListener(type,()=>drag=null);
-$('save').onclick=()=>{try{localStorage.setItem(KEY,JSON.stringify(avatar));$('status').textContent='Avatar saved in this browser'}catch(e){$('status').textContent='Save unavailable — export JSON backup'}};
-$('reset').onclick=()=>{avatar={...defaults};controls();render();$('status').textContent='Appearance reset; save to keep changes'};
+function persistAvatar(message){try{localStorage.setItem(KEY,JSON.stringify(avatar));$('status').textContent=message||'Avatar saved in this browser';return true}catch(e){$('status').textContent='Save unavailable — export JSON backup';return false}}
+$('save').onclick=()=>persistAvatar('Avatar saved in this browser');
+$('reset').onclick=()=>{avatar={...defaults};controls();render();persistAvatar('Appearance reset and saved')};
 $('export').onclick=()=>{const blob=new Blob([JSON.stringify({schema:1,kind:'red-avatar',avatar},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='red-avatar.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
-$('import').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const data=JSON.parse(await file.text());if(data.kind!=='red-avatar'||data.schema!==1||!data.avatar)throw Error('Invalid avatar backup');avatar=sanitize(data.avatar);controls();render();$('status').textContent='Avatar imported — save to keep changes'}catch(err){$('status').textContent='Import failed: '+err.message}e.target.value=''};
+$('import').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const data=JSON.parse(await file.text());if(data.kind!=='red-avatar'||data.schema!==1||!data.avatar)throw Error('Invalid avatar backup');avatar=sanitize(data.avatar);controls();render();persistAvatar('Avatar imported and saved')}catch(err){$('status').textContent='Import failed: '+err.message}e.target.value=''};
 controls();syncCyberwareOnLoad();render();
-function syncCyberwareOnLoad(){try{const raw=localStorage.getItem('cyberpunk-red-character-v1');if(!raw)return;const data=JSON.parse(raw),inst=Array.isArray(data.installInstances)?data.installInstances:[];const arms=inst.filter(x=>x?.itemId==='arm').map(x=>String(x.side||'both').toLowerCase());const left=arms.includes('left')||arms.includes('both'),right=arms.includes('right')||arms.includes('both');avatar.cyberarm=left&&right?'both':left?'left':right?'right':'none';avatar.eyes=inst.some(x=>x?.itemId==='optic');controls()}catch(e){console.warn('Character cyberware sync skipped',e)}}
+function syncCyberwareOnLoad(){try{const raw=localStorage.getItem('cyberpunk-red-character-v1');if(!raw)return;syncCyberwareFromCharacter(JSON.parse(raw));controls()}catch(e){console.warn('Character cyberware sync skipped',e)}}
 window.addEventListener('storage',e=>{if(e.key==='cyberpunk-red-character-v1'){syncCyberwareOnLoad();render()}});
 </script></body></html>
