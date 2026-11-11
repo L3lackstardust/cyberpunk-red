@@ -30,7 +30,8 @@ test('Cyberware Manager defaults to efficient 48-frame rotation and keeps 3D opt
  assert.ok(cyber.includes('let spinEnabled=true'));
  assert.ok(cyber.includes('let cyber3dModule=null,cyber3dEnabled=false'));
  assert.ok(cyber.includes('id="toggleSpin" type="button" aria-pressed="true"'));
- assert.ok(cyber.includes("if(cyber3dEnabled){spinEnabled=false;layerViewEnabled=false}else{spinEnabled=true}"));
+ assert.ok(cyber.includes('function activateSpinMode()'));
+ assert.ok(cyber.includes("if(cyber3dEnabled){activateSpinMode()}else{cyber3dEnabled=true;spinEnabled=false;layerViewEnabled=false;syncViewerButtons()}"));
 });
 
 test('Cyberware Manager recovers to image rotation if optional 3D initialization fails',()=>{
@@ -86,4 +87,12 @@ test('Cyberware Manager offers the six Avatar Studio body builds and uses the se
  for(const value of ['value="avatar"','value="female-slim"','value="female-average"','value="female-athletic"','value="male-slim"','value="male-average"','value="male-athletic"'])assert.ok(cyber.includes(value),value);
  assert.ok(cyber.includes('build:selectedBuild'));
  assert.ok(cyber.includes('function avatarBuildWidth(build)'));
+});
+
+test('Cyberware viewer mode switches keep 3D, image, and layer controls mutually exclusive',()=>{
+ const cyber=fs.readFileSync('character-cyberware.html','utf8');
+ assert.ok(cyber.includes('function syncViewerButtons()'));
+ assert.ok(cyber.includes('function activateSpinMode(){spinEnabled=true;layerViewEnabled=false;cyber3dEnabled=false;syncViewerButtons()}'));
+ assert.ok(cyber.includes("if(layerViewEnabled){spinEnabled=false;cyber3dEnabled=false}"));
+ assert.ok(cyber.includes("if(spinEnabled){spinEnabled=false}else{activateSpinMode()}syncViewerButtons()"));
 });
