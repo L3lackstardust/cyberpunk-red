@@ -13,22 +13,22 @@
 <script src="./assets/avatar-renderer.js"></script><script>
 'use strict';
 const KEY='cyberpunk-red-avatar-v1';
-const defaults={build:'male-athletic',pose:'neutral',hair:'short',face:'standard',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'none',eyes:false,frame:0};
-const schema={build:['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic'],pose:['neutral','confident','guarded','relaxed'],hair:['none','short','swept','mohawk'],face:['standard','angular','round'],outfit:['street','combat','corporate'],cyberarm:['none','left','right','both']};
+const defaults={build:'male-athletic',pose:'neutral',hair:'short',face:'standard',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'none',cyberleg:'none',eyes:false,frame:0};
+const schema={build:['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic'],pose:['neutral','confident','guarded','relaxed'],hair:['none','short','swept','mohawk'],face:['standard','angular','round'],outfit:['street','combat','corporate'],cyberarm:['none','left','right','both'],cyberleg:['none','left','right','both']};
 const skinColors=['#e4b995','#c99170','#a9765d','#76513e','#513a31'],hairColors=['#18222a','#684736','#e3c08b','#d14a56','#8d79b4'];
 let avatar={...defaults},showImplants=true;
 const $=id=>document.getElementById(id);
 function sanitize(raw){const v={...defaults};if(!raw||typeof raw!=='object')return v;for(const [key,values] of Object.entries(schema))if(values.includes(raw[key]))v[key]=raw[key];if(skinColors.includes(raw.skin))v.skin=raw.skin;if(hairColors.includes(raw.hairColor))v.hairColor=raw.hairColor;if(Number.isInteger(raw.frame)&&raw.frame>=0&&raw.frame<48)v.frame=raw.frame;v.eyes=raw.eyes===true?true:['left','right','both'].includes(raw.eyes)?raw.eyes:false;return v}
 try{avatar=sanitize(JSON.parse(localStorage.getItem(KEY)))}catch(e){avatar={...defaults}}
 function controls(){
- const entries=[['build','Base body · 3 female / 3 male'],['face','Face'],['hair','Hair'],['outfit','Clothing'],['pose','Personality pose'],['cyberarm','Cyberarms']];
+ const entries=[['build','Base body · 3 female / 3 male'],['face','Face'],['hair','Hair'],['outfit','Clothing'],['pose','Personality pose'],['cyberarm','Cyberarms'],['cyberleg','Cyberlegs']];
  let html=entries.map(([key,title])=>'<div class="field"><label>'+title+'</label><div class="choices">'+schema[key].map(v=>'<button type="button" data-key="'+key+'" data-value="'+v+'" aria-pressed="'+(avatar[key]===v)+'">'+v.charAt(0).toUpperCase()+v.slice(1)+'</button>').join('')+'</div></div>').join('');
  for(const [key,title,colors] of [['skin','Skin tone',skinColors],['hairColor','Hair color',hairColors]])html+='<div class="field"><label>'+title+'</label><div class="choices">'+colors.map(color=>'<button class="swatch" data-key="'+key+'" data-value="'+color+'" aria-label="'+title+' '+color+'" aria-pressed="'+(avatar[key]===color)+'"><i style="background:'+color+'"></i></button>').join('')+'</div></div>';
  html+='<div class="field"><button id="syncCyberware" type="button">Sync installed cyberware</button><p class="note">Read cyberarms and cyberoptics from your saved Cyberware Manager character. Your other appearance choices stay unchanged.</p></div>';html+='<div class="field"><button data-key="eyes" data-value="toggle" aria-pressed="'+Boolean(avatar.eyes)+'">Cyberoptic glow '+(avatar.eyes?'ON':'OFF')+'</button></div>';
  $('controls').innerHTML=html;
  $('controls').querySelectorAll('button[data-key]').forEach(b=>b.addEventListener('click',()=>{const key=b.dataset.key;avatar[key]=key==='eyes'?!avatar.eyes:b.dataset.value;controls();render();persistAvatar('Appearance saved automatically')}));$('syncCyberware').addEventListener('click',syncCyberware);
 }
-function figure(portrait=false){return window.REDAvatarRenderer.render(showImplants?avatar:{...avatar,cyberarm:'none',eyes:false},portrait)}
+function figure(portrait=false){return window.REDAvatarRenderer.render(showImplants?avatar:{...avatar,cyberarm:'none',cyberleg:'none',eyes:false},portrait)}
 function render(){$('showImplants').setAttribute('aria-pressed',String(showImplants));$('showImplants').textContent=showImplants?'Cyberware visible':'Cyberware hidden';$('body').innerHTML=figure();$('portrait').innerHTML=figure(true);$('frame').textContent=(avatar.frame===0?'FRONT':avatar.frame===12?'RIGHT PROFILE':avatar.frame===24?'REAR':avatar.frame===36?'LEFT PROFILE':avatar.frame<12?'FRONT → RIGHT':avatar.frame<24?'RIGHT → REAR':avatar.frame<36?'REAR → LEFT':'LEFT → FRONT')+' · '+String(avatar.frame*7.5).padStart(3,'0')+'° · FRAME '+String(avatar.frame+1).padStart(2,'0')+' / 48';$('viewer').setAttribute('aria-valuenow',avatar.frame);$('viewer').setAttribute('aria-valuetext',String(avatar.frame*7.5)+' degrees');$('angle').value=avatar.frame}
 function installedInstances(character){
  const ids=Array.isArray(character.installed)?character.installed:[];
@@ -41,6 +41,8 @@ function syncCyberwareFromCharacter(character){
  const hasSide=(sides,side)=>sides.some(s=>s===side||s==='both');
  const arms=sidesFor('arm'),leftArm=hasSide(arms,'left'),rightArm=hasSide(arms,'right');
  avatar.cyberarm=leftArm&&rightArm?'both':leftArm?'left':rightArm?'right':'none';
+ const legs=sidesFor('leg'),leftLeg=hasSide(legs,'left'),rightLeg=hasSide(legs,'right');
+ avatar.cyberleg=leftLeg&&rightLeg?'both':leftLeg?'left':rightLeg?'right':'none';
  const optics=sidesFor('optic'),leftOptic=hasSide(optics,'left'),rightOptic=hasSide(optics,'right');
  avatar.eyes=leftOptic&&rightOptic?'both':leftOptic?'left':rightOptic?'right':false;
 }
