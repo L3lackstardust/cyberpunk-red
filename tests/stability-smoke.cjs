@@ -349,6 +349,21 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.equal(await page.locator('[data-key="pose"][data-value="confident"]').getAttribute('aria-pressed'),'true');
    }finally{await avatarContext.close()}
   });
+  await check('Cyberware Manager shares all six Avatar Studio body builds',async()=>{
+   const buildContext=await browser.newContext();
+   const page=await buildContext.newPage();
+   page.on('pageerror',e=>errors.push('shared body build: '+e.message));
+   try{
+    await page.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
+    await page.evaluate(()=>localStorage.setItem('cyberpunk-red-avatar-v1',JSON.stringify({build:'female-athletic',pose:'neutral',hair:'short',face:'standard',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'none',cyberleg:'none',eyes:false,frame:0})));
+    await page.reload({waitUntil:'domcontentloaded'});
+    assert.equal(await page.evaluate(()=>savedAvatarForSpin()?.build),'female-athletic');
+    await page.selectOption('#bodyPreset','male-slim');
+    assert.equal(await page.evaluate(()=>savedAvatarForSpin()?.build),'male-slim');
+    await page.selectOption('#bodyPreset','avatar');
+    assert.equal(await page.evaluate(()=>savedAvatarForSpin()?.build),'female-athletic');
+   }finally{await buildContext.close()}
+  });
   await check('No uncaught errors in tested flows',async()=>assert.deepEqual(errors,[]));
   await context.close();
  }finally{if(browser)await browser.close();server.kill()}
