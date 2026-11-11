@@ -18,13 +18,13 @@ const schema={build:['female-slim','female-average','female-athletic','male-slim
 const skinColors=['#e4b995','#c99170','#a9765d','#76513e','#513a31'],hairColors=['#18222a','#684736','#e3c08b','#d14a56','#8d79b4'];
 let avatar={...defaults},showImplants=true;
 const $=id=>document.getElementById(id);
-function sanitize(raw){const v={...defaults};if(!raw||typeof raw!=='object')return v;for(const [key,values] of Object.entries(schema))if(values.includes(raw[key]))v[key]=raw[key];if(skinColors.includes(raw.skin))v.skin=raw.skin;if(hairColors.includes(raw.hairColor))v.hairColor=raw.hairColor;if(Number.isInteger(raw.frame)&&raw.frame>=0&&raw.frame<48)v.frame=raw.frame;v.eyes=raw.eyes===true;return v}
+function sanitize(raw){const v={...defaults};if(!raw||typeof raw!=='object')return v;for(const [key,values] of Object.entries(schema))if(values.includes(raw[key]))v[key]=raw[key];if(skinColors.includes(raw.skin))v.skin=raw.skin;if(hairColors.includes(raw.hairColor))v.hairColor=raw.hairColor;if(Number.isInteger(raw.frame)&&raw.frame>=0&&raw.frame<48)v.frame=raw.frame;v.eyes=raw.eyes===true||['left','right','both'].includes(raw.eyes)?raw.eyes:false;return v}
 try{avatar=sanitize(JSON.parse(localStorage.getItem(KEY)))}catch(e){avatar={...defaults}}
 function controls(){
  const entries=[['build','Base body · 3 female / 3 male'],['face','Face'],['hair','Hair'],['outfit','Clothing'],['pose','Personality pose'],['cyberarm','Cyberarms']];
  let html=entries.map(([key,title])=>'<div class="field"><label>'+title+'</label><div class="choices">'+schema[key].map(v=>'<button type="button" data-key="'+key+'" data-value="'+v+'" aria-pressed="'+(avatar[key]===v)+'">'+v.charAt(0).toUpperCase()+v.slice(1)+'</button>').join('')+'</div></div>').join('');
  for(const [key,title,colors] of [['skin','Skin tone',skinColors],['hairColor','Hair color',hairColors]])html+='<div class="field"><label>'+title+'</label><div class="choices">'+colors.map(color=>'<button class="swatch" data-key="'+key+'" data-value="'+color+'" aria-label="'+title+' '+color+'" aria-pressed="'+(avatar[key]===color)+'"><i style="background:'+color+'"></i></button>').join('')+'</div></div>';
- html+='<div class="field"><button id="syncCyberware" type="button">Sync installed cyberware</button><p class="note">Read cyberarms and cyberoptics from your saved Cyberware Manager character. Your other appearance choices stay unchanged.</p></div>';html+='<div class="field"><button data-key="eyes" data-value="toggle" aria-pressed="'+avatar.eyes+'">Cyberoptic glow '+(avatar.eyes?'ON':'OFF')+'</button></div>';
+ html+='<div class="field"><button id="syncCyberware" type="button">Sync installed cyberware</button><p class="note">Read cyberarms and cyberoptics from your saved Cyberware Manager character. Your other appearance choices stay unchanged.</p></div>';html+='<div class="field"><button data-key="eyes" data-value="toggle" aria-pressed="'+Boolean(avatar.eyes)+'">Cyberoptic glow '+(avatar.eyes?'ON':'OFF')+'</button></div>';
  $('controls').innerHTML=html;
  $('controls').querySelectorAll('button[data-key]').forEach(b=>b.addEventListener('click',()=>{const key=b.dataset.key;avatar[key]=key==='eyes'?!avatar.eyes:b.dataset.value;controls();render()}));$('syncCyberware').addEventListener('click',syncCyberware);
 }
@@ -39,7 +39,9 @@ function syncCyberware(){
   const arms=instances.filter(x=>x&&x.itemId==='arm').map(x=>String(x.side||'both').toLowerCase());
   const left=arms.some(s=>s==='left'||s==='both'),right=arms.some(s=>s==='right'||s==='both');
   avatar.cyberarm=left&&right?'both':left?'left':right?'right':'none';
-  avatar.eyes=instances.some(x=>x&&x.itemId==='optic');
+  const optics=instances.filter(x=>x&&x.itemId==='optic').map(x=>String(x.side||'right').toLowerCase());
+  const opticLeft=optics.includes('left')||optics.includes('both'),opticRight=optics.includes('right')||optics.includes('both');
+  avatar.eyes=opticLeft&&opticRight?'both':opticLeft?'left':opticRight?'right':false;
   controls();render();
   $('status').textContent='Cyberware synced from saved character — save avatar to keep changes';
  }catch(e){$('status').textContent='Could not read character cyberware'}
