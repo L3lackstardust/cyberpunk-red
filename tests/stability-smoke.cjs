@@ -33,6 +33,14 @@ const {setTimeout:delay}=require('node:timers/promises');
    const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#export').click()]);
    assert.match(download.suggestedFilename(),/json/i);
   });
+  await check('Anatomical overlay counts implants on their actual side',async()=>{
+   await page.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
+   const counts=await page.evaluate(()=>{
+    state.installed=['optic'];state.installInstances=[{id:'test-optic',itemId:'optic',side:'left'}];
+    return [installedAt('Eyes','Left').length,installedAt('Eyes','Right').length];
+   });
+   assert.deepEqual(counts,[1,0]);
+  });
   await check('Anatomical eye and limb targets retain selected sides',async()=>{
    await page.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
    await page.locator('#toggleLayers').click();
