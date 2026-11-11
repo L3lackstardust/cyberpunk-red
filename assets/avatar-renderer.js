@@ -49,7 +49,7 @@ function renderAvatarSvg(avatar,portrait=false){
  s+=path('M'+(130-neckRadius)+' 86Q'+(130-neckRadius-2)+' 98 '+(130-neckRadius-6)+' 107','none','#977768',2);
  s+=path('M'+(130+neckRadius)+' 86Q'+(130+neckRadius+2)+' 98 '+(130+neckRadius+6)+' 107','none','#977768',2);
  s+=line(130,89,130,104,skin,16*depth);
- const faceWidth=26*depth*head+4,cheek=avatar.face==='round'?1.12:avatar.face==='angular'?.82:1,profileDepth=Math.abs(Math.sin(a));
+ const faceWidth=26*depth*head+4,cheek=avatar.face==='round'?1.12:avatar.face==='angular'?.82:1;
  s+=path('M'+(130-faceWidth*.78)+' 30Q130 13 '+(130+faceWidth*.78)+' 30Q'+(130+faceWidth*cheek)+' 58 '+(130+faceWidth*.57)+' 77Q130 '+(avatar.face==='angular'?98:91)+' '+(130-faceWidth*.57)+' 77Q'+(130-faceWidth*cheek)+' 58 '+(130-faceWidth*.78)+' 30Z',skin,'#b8a19a',1.5);
  // The rear head is a separate silhouette: face shading and facial landmarks
  // must never appear on the back of a rotating character.
