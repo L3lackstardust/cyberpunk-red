@@ -18,7 +18,7 @@ const schema={build:['female-slim','female-average','female-athletic','male-slim
 const skinColors=['#e4b995','#c99170','#a9765d','#76513e','#513a31'],hairColors=['#18222a','#684736','#e3c08b','#d14a56','#8d79b4'];
 let avatar={...defaults},showImplants=true;
 const $=id=>document.getElementById(id);
-function sanitize(raw){const v={...defaults};if(!raw||typeof raw!=='object')return v;for(const [key,values] of Object.entries(schema))if(values.includes(raw[key]))v[key]=raw[key];if(skinColors.includes(raw.skin))v.skin=raw.skin;if(hairColors.includes(raw.hairColor))v.hairColor=raw.hairColor;if(Number.isInteger(raw.frame)&&raw.frame>=0&&raw.frame<48)v.frame=raw.frame;v.eyes=raw.eyes===true||['left','right','both'].includes(raw.eyes)?raw.eyes:false;return v}
+function sanitize(raw){const v={...defaults};if(!raw||typeof raw!=='object')return v;for(const [key,values] of Object.entries(schema))if(values.includes(raw[key]))v[key]=raw[key];if(skinColors.includes(raw.skin))v.skin=raw.skin;if(hairColors.includes(raw.hairColor))v.hairColor=raw.hairColor;if(Number.isInteger(raw.frame)&&raw.frame>=0&&raw.frame<48)v.frame=raw.frame;v.eyes=raw.eyes===true?true:['left','right','both'].includes(raw.eyes)?raw.eyes:false;return v}
 try{avatar=sanitize(JSON.parse(localStorage.getItem(KEY)))}catch(e){avatar={...defaults}}
 function controls(){
  const entries=[['build','Base body · 3 female / 3 male'],['face','Face'],['hair','Hair'],['outfit','Clothing'],['pose','Personality pose'],['cyberarm','Cyberarms']];
