@@ -186,6 +186,11 @@ const {setTimeout:delay}=require('node:timers/promises');
     await viewer.waitForFunction(()=>document.getElementById('spinView')?.getAttribute('aria-valuenow')==='0');
     assert.equal(await control.getAttribute('aria-valuenow'),'0');
     assert.match(await viewer.locator('#spinIndex').innerText(),/FRAME 1\/48/);
+    const rect=await control.boundingBox();
+    await viewer.mouse.move(rect.x+40,rect.y+rect.height/2);await viewer.mouse.down();
+    await viewer.mouse.move(rect.x+130,rect.y+rect.height/2,{steps:4});await viewer.mouse.up();
+    await viewer.waitForFunction(()=>document.getElementById('spinView')?.getAttribute('aria-valuenow')==='10');
+    assert.equal(await control.getAttribute('aria-valuenow'),'10');
    }finally{await viewer.close()}
   });
   await check('Image rotation provides a fallback when sequence art is unavailable',async()=>{
