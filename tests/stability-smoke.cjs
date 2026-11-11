@@ -210,6 +210,19 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.equal(result.overlayCount,1);
    }finally{await viewer.close()}
   });
+  await check('Avatar face presets render distinct jaw geometry',async()=>{
+   const page=await context.newPage();
+   page.on('pageerror',e=>errors.push('avatar face: '+e.message));
+   try{
+    await page.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'domcontentloaded'});
+    const shapes=new Set();
+    for(const face of ['standard','angular','round']){
+     await page.locator('[data-key="face"][data-value="'+face+'"]').click();
+     shapes.add(await page.locator('#portrait svg').evaluate(el=>el.outerHTML));
+    }
+    assert.equal(shapes.size,3);
+   }finally{await page.close()}
+  });
   await check('Avatar studio builds, rotates, poses and saves one shared identity',async()=>{
    const page=await context.newPage();
    page.on('pageerror',e=>errors.push('avatar studio: '+e.message));
