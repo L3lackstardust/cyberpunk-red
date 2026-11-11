@@ -67,3 +67,9 @@ test('3D anatomical picking preserves the selected implant side',()=>{
  const cyber=fs.readFileSync('character-cyberware.html','utf8');
  assert.ok(cyber.includes('state.selected=hit.object.userData.loc;selectedAnatomicalSide=hit.object.userData.side||null;render()'));
 });
+
+test('Avatar Studio exposes explicit none, left, right, and bilateral cyberoptic choices',()=>{
+ assert.ok(script.includes('Cyberoptic placement'));
+ for(const side of ["'none'","'left'","'right'","'both'"])assert.ok(script.includes(side));
+ assert.ok(script.includes("b.dataset.value==='none'?false:b.dataset.value"));
+});
