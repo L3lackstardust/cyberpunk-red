@@ -318,7 +318,8 @@ const {setTimeout:delay}=require('node:timers/promises');
    }finally{await page.close()}
   });
   await check('Avatar studio builds, rotates, poses and saves one shared identity',async()=>{
-   const page=await context.newPage();
+   const avatarContext=await browser.newContext();
+   const page=await avatarContext.newPage();
    page.on('pageerror',e=>errors.push('avatar studio: '+e.message));
    try{
     await page.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'domcontentloaded'});
@@ -351,7 +352,7 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.equal(await page.locator('[data-key="eyes"][data-value="none"]').getAttribute('aria-pressed'),'true');
     await page.reload({waitUntil:'domcontentloaded'});
     assert.equal(await page.locator('[data-key="pose"][data-value="confident"]').getAttribute('aria-pressed'),'true');
-   }finally{await page.close()}
+   }finally{await avatarContext.close()}
   });
   await check('No uncaught errors in tested flows',async()=>assert.deepEqual(errors,[]));
   await context.close();
