@@ -22,7 +22,21 @@ function renderAvatarSvg(avatar,portrait=false){
  const faceWidth=26*depth*head+4,cheek=avatar.face==='round'?1.12:avatar.face==='angular'?.82:1;
  s+=path('M'+(130-faceWidth*.78)+' 30Q130 13 '+(130+faceWidth*.78)+' 30Q'+(130+faceWidth*cheek)+' 58 '+(130+faceWidth*.57)+' 77Q130 '+(avatar.face==='angular'?98:91)+' '+(130-faceWidth*.57)+' 77Q'+(130-faceWidth*cheek)+' 58 '+(130-faceWidth*.78)+' 30Z',skin,'#b8a19a',1.5);
  s+=line(sx(112),74,sx(121),80,'#815e50',1)+line(sx(139),80,sx(148),74,'#815e50',1);
- if(avatar.hair!=='none'){const top=avatar.hair==='mohawk'?8:avatar.hair==='swept'?16:23;s+=path('M'+sx(106)+' 42Q'+sx(105)+' '+top+' 130 '+(top-3)+'Q'+sx(155)+' '+top+' '+sx(154)+' 43L'+sx(148)+' 34Q130 27 '+sx(112)+' 37Z',avatar.hairColor,'#20252d',1)}
+ if(avatar.hair!=='none'){
+  const hc=avatar.hairColor,hairEdge='#131c26',L=sx(105),R=sx(155);
+  // Hair profiles are separate silhouettes, not a recolored universal cap.
+  if(avatar.hair==='short'){
+   s+=path('M'+L+' 43Q'+sx(104)+' 19 130 20Q'+sx(156)+' 19 '+R+' 43L'+sx(148)+' 33Q130 27 '+sx(112)+' 34Z',hc,hairEdge,1.5);
+   if(back>.15)s+=path('M'+sx(109)+' 37Q130 27 '+sx(151)+' 37L'+sx(148)+' 64Q130 73 '+sx(112)+' 64Z',hc,hairEdge,1);
+  }else if(avatar.hair==='swept'){
+   s+=path('M'+L+' 44Q'+sx(98)+' 10 130 16Q'+sx(160)+' 11 '+sx(163)+' 36L'+sx(157)+' 68L'+sx(149)+' 62L'+sx(150)+' 31Q'+sx(119)+' 48 '+sx(108)+' 52Z',hc,hairEdge,1.5);
+   s+=path('M'+sx(109)+' 33Q130 18 '+sx(154)+' 26','none','#b7a2a0',1);
+  }else if(avatar.hair==='mohawk'){
+   s+=path('M'+sx(119)+' 34L'+sx(119)+' 16L'+sx(126)+' 5L130 13L'+sx(134)+' 2L'+sx(143)+' 18L'+sx(142)+' 35Z',hc,hairEdge,1.5);
+   s+=line(sx(121),30,sx(139),30,'#576673',1.5);
+  }
+  if(back>.3&&avatar.hair!=='mohawk')s+=line(sx(113),45,sx(147),45,'#71828a',1);
+ }
  if(front>.12){s+=line(sx(112),45,sx(125),45,'#4a3430',2)+line(sx(135),45,sx(148),45,'#4a3430',2);s+=line(130,53,128,63,'#6e4b3e',1);s+='<ellipse cx="'+sx(119)+'" cy="51" rx="3.5" ry="2.5" fill="'+eye+'"/><ellipse cx="'+sx(141)+'" cy="51" rx="3.5" ry="2.5" fill="'+eye+'"/>'+line(sx(122),69,sx(138),69,'#4d3230',2)}
  if(back>.4)s+=line(130,118,130,211,'#718e9a',3);
  s+='</svg>';return s;
