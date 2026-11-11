@@ -368,6 +368,20 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.equal(await page.evaluate(()=>savedAvatarForSpin()?.build),'female-athletic');
    }finally{await buildContext.close()}
   });
+  await check('Avatar Studio updates the Cyberware Manager rotation across tabs',async()=>{
+   const sharedContext=await browser.newContext();
+   const cyberTab=await sharedContext.newPage(),studioTab=await sharedContext.newPage();
+   try{
+    await cyberTab.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
+    await cyberTab.evaluate(()=>localStorage.setItem('cyberpunk-red-avatar-v1',JSON.stringify({build:'female-athletic',pose:'neutral',hair:'short',face:'standard',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'none',cyberleg:'none',eyes:false,frame:0})));
+    await cyberTab.reload({waitUntil:'domcontentloaded'});
+    const before=await cyberTab.locator('#spinBase').getAttribute('src');
+    await studioTab.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'domcontentloaded'});
+    await studioTab.evaluate(()=>localStorage.setItem('cyberpunk-red-avatar-v1',JSON.stringify({build:'female-slim',pose:'confident',hair:'swept',face:'angular',outfit:'combat',skin:'#c99170',hairColor:'#684736',cyberarm:'none',cyberleg:'none',eyes:false,frame:0})));
+    await cyberTab.waitForFunction(previous=>document.querySelector('#spinBase')?.getAttribute('src')!==previous,before,{timeout:5000});
+    assert.equal(await cyberTab.evaluate(()=>savedAvatarForSpin()?.build),'female-slim');
+   }finally{await sharedContext.close()}
+  });
   await check('No uncaught errors in tested flows',async()=>assert.deepEqual(errors,[]));
   await context.close();
  }finally{if(browser)await browser.close();server.kill()}
