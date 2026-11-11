@@ -187,6 +187,7 @@ const {setTimeout:delay}=require('node:timers/promises');
     const result=await viewer.evaluate(()=>{
      state.installInstances=[{itemId:'arm',side:'Left'}];
      spinManifest={presets:{standard:{base:Array.from({length:48},(_,i)=>'missing-frame-'+i+'.png'),overlays:{'arms-left':Array.from({length:48},(_,i)=>'missing-arm-'+i+'.png')}}}};
+     spinManifestPromise=Promise.resolve(spinManifest);
      spinEnabled=true;spinFrame=0;render();
      const img=document.getElementById('spinBase');
      const firstError=img.onerror;
@@ -199,8 +200,8 @@ const {setTimeout:delay}=require('node:timers/promises');
      const fallback=img.src;
      return {initial,latest,afterStale,fallback,frame:spinFrame,aria:document.getElementById('spinView').getAttribute('aria-valuenow'),overlayCount:document.querySelectorAll('#spinOverlays img').length};
     });
-    assert.match(result.initial,/missing-frame-0\\.png/);
-    assert.match(result.latest,/missing-frame-3\\.png/);
+    assert.ok(result.initial.includes('missing-frame-0.png'), 'Initial frame should request frame 0');
+    assert.ok(result.latest.includes('missing-frame-3.png'), 'Latest frame should request frame 3');
     assert.equal(result.afterStale,result.latest,'Stale callback must not replace current frame');
     assert.ok(result.fallback.startsWith('data:image/svg+xml'),'Current frame should fall back to procedural art');
     assert.equal(result.frame,3);
