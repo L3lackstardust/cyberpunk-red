@@ -245,6 +245,7 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.equal(await page.locator('#viewer').getAttribute('aria-valuetext'),'180 degrees');
     await page.locator('#showImplants').click();
     assert.equal(await page.locator('#showImplants').getAttribute('aria-pressed'),'false');
+    console.log('Save rect:',JSON.stringify(await page.locator('#save').evaluate(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,hit:document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.outerHTML?.slice(0,180)}})));console.log('Left optic/arm rect:',JSON.stringify(await page.locator('[data-key="cyberarm"][data-value="left"]').evaluate(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}})));
     await page.locator('#save').click();
     console.log('Avatar save status:',await page.locator('#status').textContent());console.log('In-memory after manual save:',await page.evaluate(()=>avatar.cyberarm));
     const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('cyberpunk-red-avatar-v1')));
