@@ -361,3 +361,11 @@ test('curved torso and far-arm mask share the same waist taper',()=>{
   assert.equal(paths[0],paths[paths.length-1]);
  }
 });
+
+test('hip transition accents remain paired across body builds',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ for(const build of ['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic']){
+  const svg=ctx.window.REDAvatarRenderer.render({build,frame:12,pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',eyes:false,cyberarm:'none',cyberleg:'none'});
+  assert.equal((svg.match(/#91a5af/g)||[]).length,2);
+ }
+});
