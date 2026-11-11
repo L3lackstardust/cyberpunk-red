@@ -339,6 +339,7 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.equal(await page.locator('#body svg').count(),1);
     assert.equal(await page.locator('#portrait svg').count(),1);
     await page.locator('#save').click();
+    console.log('Studio save status:',await page.locator('#status').textContent(),'memory:',await page.evaluate(()=>avatar.cyberarm));
     const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('cyberpunk-red-avatar-v1')));
     console.log('Avatar Studio saved state:',JSON.stringify(saved));
     assert.equal(saved.build,'female-athletic');assert.equal(saved.pose,'confident');assert.equal(saved.cyberarm,'right');assert.equal(saved.eyes,'both');
