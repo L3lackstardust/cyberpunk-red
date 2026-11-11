@@ -92,7 +92,8 @@ function savedAvatarForSpin(){
   const installs=state.installInstances||[];
   const arms=installs.filter(x=>x.itemId==='arm').map(x=>String(x.side||'both').toLowerCase());
   const left=arms.includes('left')||arms.includes('both'),right=arms.includes('right')||arms.includes('both');
-  return {...a,cyberarm:left&&right?'both':left?'left':right?'right':'none',eyes:(()=>{const optics=installs.filter(x=>x.itemId==='optic').map(x=>String(x.side||'right').toLowerCase());const left=optics.includes('left')||optics.includes('both'),right=optics.includes('right')||optics.includes('both');return left&&right?'both':left?'left':right?'right':false})(),frame:spinFrame};
+  const legs=installs.filter(x=>x.itemId==='leg').map(x=>String(x.side||'both').toLowerCase());const leftLeg=legs.includes('left')||legs.includes('both'),rightLeg=legs.includes('right')||legs.includes('both');
+  return {...a,cyberleg:leftLeg&&rightLeg?'both':leftLeg?'left':rightLeg?'right':'none',cyberarm:left&&right?'both':left?'left':right?'right':'none',eyes:(()=>{const optics=installs.filter(x=>x.itemId==='optic').map(x=>String(x.side||'right').toLowerCase());const left=optics.includes('left')||optics.includes('both'),right=optics.includes('right')||optics.includes('both');return left&&right?'both':left?'left':right?'right':false})(),frame:spinFrame};
  }catch(e){return null}
 }
 function renderSpinViewer(){return '<div class="spin-view" id="spinView" role="slider" tabindex="0" aria-label="Character rotation" aria-valuemin="0" aria-valuemax="47" aria-valuenow="'+spinFrame+'"><img id="spinBase" alt="Rotating character frame"><div id="spinOverlays"></div><span class="spin-index" id="spinIndex">FRAME '+(spinFrame+1)+'/48</span><span class="spin-message" id="spinMessage">Preparing image sequence…</span></div>'}
