@@ -179,6 +179,37 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.equal(await img.evaluate(el=>el.naturalWidth>0),true);
    }finally{await viewer.close()}
   });
+  await check('Rapid rotation keeps the latest cyberware frame and overlays',async()=>{
+   const viewer=await context.newPage();
+   viewer.on('pageerror',e=>errors.push('rapid spin tab: '+e.message));
+   try{
+    await viewer.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
+    const result=await viewer.evaluate(()=>{
+     state.installInstances=[{itemId:'arm',side:'Left'}];
+     spinManifest={presets:{standard:{base:Array.from({length:48},(_,i)=>'missing-frame-'+i+'.png'),overlays:{'arms-left':Array.from({length:48},(_,i)=>'missing-arm-'+i+'.png')}}}};
+     spinManifestPromise=Promise.resolve(spinManifest);
+     spinAssetPath=relative=>'./assets/cyberware-spin/'+relative;
+     spinEnabled=true;spinFrame=0;render();
+     const img=document.getElementById('spinBase');
+     const firstError=img.onerror;
+     const initial=img.src;
+     spinStep(1);spinStep(1);spinStep(1);
+     const latest=img.src;
+     firstError(new Event('error'));
+     const afterStale=img.src;
+     img.onerror(new Event('error'));
+     const fallback=img.src;
+     return {initial,latest,afterStale,fallback,frame:spinFrame,aria:document.getElementById('spinView').getAttribute('aria-valuenow'),overlayCount:document.querySelectorAll('#spinOverlays img').length};
+    });
+    assert.ok(result.initial.includes('missing-frame-0.png'), 'Initial frame should request frame 0');
+    assert.ok(result.latest.includes('missing-frame-3.png'), 'Latest frame should request frame 3');
+    assert.equal(result.afterStale,result.latest,'Stale callback must not replace current frame');
+    assert.ok(result.fallback.startsWith('data:image/svg+xml'),'Current frame should fall back to procedural art');
+    assert.equal(result.frame,3);
+    assert.equal(result.aria,'3');
+    assert.equal(result.overlayCount,1);
+   }finally{await viewer.close()}
+  });
   await check('No uncaught errors in tested flows',async()=>assert.deepEqual(errors,[]));
   await context.close();
  }finally{if(browser)await browser.close();server.kill()}
