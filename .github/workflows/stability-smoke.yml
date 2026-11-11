@@ -5,6 +5,7 @@ on:
       - 'index.html'
       - 'character-cyberware.html'
       - 'avatar-creator.html'
+      - 'assets/avatar-renderer.js'
       - 'tests/**'
       - 'assets/cyberware-spin/**'
       - '.github/workflows/stability-smoke.yml'
