@@ -220,6 +220,8 @@ const {setTimeout:delay}=require('node:timers/promises');
     await page.locator('[data-key="cyberarm"][data-value="left"]').click();
     await page.locator('[data-view="24"]').click();
     assert.equal(await page.locator('#viewer').getAttribute('aria-valuenow'),'24');
+    assert.match(await page.locator('#frame').innerText(),/REAR · 180° · FRAME 25 \/ 48/);
+    assert.equal(await page.locator('#viewer').getAttribute('aria-valuetext'),'180 degrees');
     await page.locator('#showImplants').click();
     assert.equal(await page.locator('#showImplants').getAttribute('aria-pressed'),'false');
     await page.locator('#save').click();
