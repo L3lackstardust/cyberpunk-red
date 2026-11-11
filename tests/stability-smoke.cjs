@@ -355,6 +355,10 @@ const {setTimeout:delay}=require('node:timers/promises');
    page.on('pageerror',e=>errors.push('shared body build: '+e.message));
    try{
     await page.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
+    await page.evaluate(()=>localStorage.setItem('cyberpunk-red-avatar-v1',JSON.stringify({pose:'invalid-pose',hair:'invalid-hair',face:'invalid-face',outfit:'invalid-outfit',skin:'#000000',hairColor:'#000000'})));
+    await page.reload({waitUntil:'domcontentloaded'});
+    const legacy=await page.evaluate(()=>savedAvatarForSpin());
+    assert.equal(legacy.build,'male-average');assert.equal(legacy.pose,'neutral');assert.equal(legacy.hair,'short');assert.equal(legacy.face,'standard');assert.equal(legacy.outfit,'street');assert.equal(legacy.skin,'#a9765d');
     await page.evaluate(()=>localStorage.setItem('cyberpunk-red-avatar-v1',JSON.stringify({build:'female-athletic',pose:'neutral',hair:'short',face:'standard',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'none',cyberleg:'none',eyes:false,frame:0})));
     await page.reload({waitUntil:'domcontentloaded'});
     assert.equal(await page.evaluate(()=>savedAvatarForSpin()?.build),'female-athletic');
