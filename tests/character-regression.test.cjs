@@ -139,3 +139,18 @@ test('avatar arm layers and cyberoptic visibility follow cardinal viewing direct
   assert.ok(!/NaN|undefined/.test(svg));
  }
 });
+
+test('all 48 avatar frames preserve arm layers and pose rendering without invalid coordinates',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ for(const pose of ['neutral','confident','guarded','relaxed']){
+  for(let frame=0;frame<48;frame++){
+   const avatar={build:'female-average',pose,frame,face:'round',hair:'swept',outfit:'combat',skin:'#a9765d',hairColor:'#18222a',cyberarm:'both',eyes:true};
+   const svg=ctx.window.REDAvatarRenderer.render(avatar);
+   assert.equal((svg.match(/data-arm-depth="near"/g)||[]).length,1,pose+' frame '+frame);
+   assert.equal((svg.match(/data-arm-depth="far"/g)||[]).length,1,pose+' frame '+frame);
+   assert.equal((svg.match(/data-cyberarm-side=/g)||[]).length,2);
+   assert.ok(!/NaN|undefined|Infinity/.test(svg));
+   assert.equal(svg,ctx.window.REDAvatarRenderer.render({...avatar,frame:frame+48}));
+  }
+ }
+});
