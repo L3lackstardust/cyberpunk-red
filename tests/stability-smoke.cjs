@@ -210,6 +210,22 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.equal(result.overlayCount,1);
    }finally{await viewer.close()}
   });
+  await check('Avatar hairstyles have distinct front and rear silhouettes',async()=>{
+   const page=await context.newPage();
+   page.on('pageerror',e=>errors.push('avatar hair: '+e.message));
+   try{
+    await page.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'domcontentloaded'});
+    const front=new Set(),rear=new Set();
+    for(const hair of ['none','short','swept','mohawk']){
+     await page.locator('[data-key="hair"][data-value="'+hair+'"]').click();
+     front.add(await page.locator('#portrait svg').evaluate(el=>el.outerHTML));
+     await page.locator('#angle').evaluate(el=>{el.value='24';el.dispatchEvent(new Event('input',{bubbles:true}))});
+     rear.add(await page.locator('#body svg').evaluate(el=>el.outerHTML));
+     await page.locator('#angle').evaluate(el=>{el.value='0';el.dispatchEvent(new Event('input',{bubbles:true}))});
+    }
+    assert.equal(front.size,4);assert.equal(rear.size,4);
+   }finally{await page.close()}
+  });
   await check('Avatar face presets render distinct jaw geometry',async()=>{
    const page=await context.newPage();
    page.on('pageerror',e=>errors.push('avatar face: '+e.message));
