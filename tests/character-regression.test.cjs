@@ -108,3 +108,20 @@ test('shared avatar renderer preserves anatomy geometry across six bodies and fo
   }
  }
 });
+
+test('avatar rotation wraps every 48 frames and preserves anatomical cyberarm side',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ const base={build:'female-athletic',pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',eyes:false};
+ const render=(frame,cyberarm)=>ctx.window.REDAvatarRenderer.render({...base,frame,cyberarm});
+ for(let frame=0;frame<48;frame++){
+  assert.equal(render(frame,'left'),render(frame+48,'left'),'frame '+frame+' should wrap');
+  const left=render(frame,'left'),right=render(frame,'right'),both=render(frame,'both');
+  assert.match(left,/data-cyberarm-side="left"/);
+  assert.doesNotMatch(left,/data-cyberarm-side="right"/);
+  assert.match(right,/data-cyberarm-side="right"/);
+  assert.doesNotMatch(right,/data-cyberarm-side="left"/);
+  assert.match(both,/data-cyberarm-side="left"/);
+  assert.match(both,/data-cyberarm-side="right"/);
+  assert.ok(!/NaN|undefined/.test(left));
+ }
+});
