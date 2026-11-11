@@ -10,13 +10,13 @@
 <section class="panel center"><h2>FULL BODY · 360°</h2><div id="viewer" class="viewer" role="slider" tabindex="0" aria-label="Rotate character" aria-valuemin="0" aria-valuemax="47" aria-valuenow="0" aria-valuetext="Front, 0 degrees"><div id="body"></div><div class="frame" id="frame">FRONT · 000° · FRAME 01 / 48</div></div><div class="nav"><button id="left" aria-label="Rotate left">◀</button><span class="subtitle">Drag to rotate · ← → keys</span><button id="right" aria-label="Rotate right">▶</button></div><div class="choices" style="margin:12px 0"><button type="button" data-view="0">Front</button><button type="button" data-view="12">Side</button><button type="button" data-view="24">Rear</button><button type="button" id="showImplants" aria-pressed="true">Cyberware visible</button></div><div class="field"><label for="angle">Rotation</label><input id="angle" type="range" min="0" max="47" value="0"></div></section>
 <section class="panel right"><h2>CHARACTER PORTRAIT</h2><div class="portrait" id="portrait"></div><p class="note">The portrait and full-body figure are generated from the same saved appearance. Choose a pose to express personality; rotate to inspect cyberware.</p><div class="actions"><button class="primary" id="save">Save Avatar</button><button id="reset">Reset Appearance</button><button id="export">Export Avatar JSON</button><label class="subtitle" for="import">Import Avatar JSON</label><input id="import" type="file" accept=".json,application/json"></div><p id="status" class="status" role="status"></p></section>
 </main>
-<script src="./assets/avatar-renderer.js"></script><script src="./assets/avatar-turnaround.js"></script><script>
+<script src="./assets/avatar-renderer.js"></script><script src="./assets/avatar-turnaround.js"></script><script src="./assets/avatar-image-index.js"></script><script>
 'use strict';
 const KEY='cyberpunk-red-avatar-v1';
 const defaults={build:'male-athletic',pose:'neutral',hair:'short',face:'standard',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'none',cyberleg:'none',eyes:false,frame:0};
 const schema={build:['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic'],pose:['neutral','confident','guarded','relaxed'],hair:['none','short','swept','mohawk'],face:['standard','angular','round'],outfit:['street','combat','corporate'],cyberarm:['none','left','right','both'],cyberleg:['none','left','right','both']};
 const skinColors=['#e4b995','#c99170','#a9765d','#76513e','#513a31'],hairColors=['#18222a','#684736','#e3c08b','#d14a56','#8d79b4'];
-let avatar={...defaults},showImplants=true,turnaroundManifest=null;
+let avatar={...defaults},showImplants=true,turnaroundManifest=null,imageCatalog=null,catalogSelection=null;
 const $=id=>document.getElementById(id);
 function sanitize(raw){const v={...defaults};if(!raw||typeof raw!=='object')return v;for(const [key,values] of Object.entries(schema))if(values.includes(raw[key]))v[key]=raw[key];if(skinColors.includes(raw.skin))v.skin=raw.skin;if(hairColors.includes(raw.hairColor))v.hairColor=raw.hairColor;if(Number.isInteger(raw.frame)&&raw.frame>=0&&raw.frame<48)v.frame=raw.frame;v.eyes=raw.eyes===true?true:['left','right','both'].includes(raw.eyes)?raw.eyes:false;return v}
 try{avatar=sanitize(JSON.parse(localStorage.getItem(KEY)))}catch(e){avatar={...defaults}}
@@ -29,8 +29,18 @@ function controls(){
  $('controls').querySelectorAll('button[data-key]').forEach(b=>b.addEventListener('click',()=>{const key=b.dataset.key;avatar[key]=key==='eyes'?(b.dataset.value==='none'?false:b.dataset.value):b.dataset.value;controls();render();persistAvatar('Appearance saved automatically')}));$('syncCyberware').addEventListener('click',syncCyberware);
 }
 function figure(portrait=false){return window.REDAvatarRenderer.render(showImplants?avatar:{...avatar,cyberarm:'none',cyberleg:'none',eyes:false},portrait)}
+function catalogFrame(portrait=false){
+ const api=window.REDAvatarImageIndex;if(!api||!imageCatalog||!catalogSelection)return null;
+ const angle=Math.floor((((avatar.frame%48)+48)%48)/6)%8;
+ const path=api.resolve(imageCatalog,catalogSelection,angle);
+ if(!path)return null;
+ const entry=imageCatalog.images[api.imageId(catalogSelection,angle)];
+ if(entry.characterFingerprint!==JSON.stringify({build:avatar.build,pose:avatar.pose,skin:avatar.skin,face:avatar.face,hair:avatar.hair,hairColor:avatar.hairColor,outfit:avatar.outfit,cyberarm:avatar.cyberarm,cyberleg:avatar.cyberleg,eyes:avatar.eyes}))return null;
+ return portrait?(entry.portrait||path):path;
+}
 function artComposition(){const api=window.REDAvatarTurnaround;return api&&turnaroundManifest?api.resolveComposition(turnaroundManifest,avatar,showImplants):null}
 function renderFigure(target,portrait=false){
+ const catalog=catalogFrame(portrait);if(catalog){const img=document.createElement('img');img.alt=portrait?'Catalog character portrait':'Catalog character full-body frame';img.src='./'+catalog;img.onerror=()=>{if(img.isConnected)target.innerHTML=figure(portrait)};target.replaceChildren(img);return}
  const composition=artComposition();if(!composition){target.innerHTML=figure(portrait);return}
  const paths=portrait?[composition.portrait]:composition.layers;
  const stack=document.createElement('div');stack.className='art-stack';
@@ -81,6 +91,7 @@ $('reset').onclick=()=>{avatar={...defaults};controls();render();persistAvatar('
 $('export').onclick=()=>{const blob=new Blob([JSON.stringify({schema:1,kind:'red-avatar',avatar},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='red-avatar.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 $('import').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const data=JSON.parse(await file.text());if(data.kind!=='red-avatar'||data.schema!==1||!data.avatar)throw Error('Invalid avatar backup');avatar=sanitize(data.avatar);controls();render();persistAvatar('Avatar imported and saved')}catch(err){$('status').textContent='Import failed: '+err.message}e.target.value=''};
 controls();syncCyberwareOnLoad();render();
+fetch('./assets/avatar-art/image-index.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(data=>{if(data&&data.version===1&&data.images){imageCatalog=data;const saved=localStorage.getItem('cyberpunk-red-avatar-catalog-selection');if(saved){try{catalogSelection=JSON.parse(saved)}catch{}}render()}}).catch(()=>{});
 fetch('./assets/avatar-art/manifest.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(data=>{if(data&&data.version===1&&data.frames){turnaroundManifest=data;render()}}).catch(()=>{});
 function syncCyberwareOnLoad(){try{const raw=localStorage.getItem('cyberpunk-red-character-v1');if(!raw)return;syncCyberwareFromCharacter(JSON.parse(raw));controls()}catch(e){console.warn('Character cyberware sync skipped',e)}}
 window.addEventListener('storage',e=>{if(e.key==='cyberpunk-red-character-v1'){syncCyberwareOnLoad();render()}});
