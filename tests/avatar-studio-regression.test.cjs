@@ -101,5 +101,5 @@ test('Shared avatar renderer leaves the unimplanted eye natural and overlays onl
  const renderer=fs.readFileSync('assets/avatar-renderer.js','utf8');
  assert.ok(renderer.includes("eye='#8fe2ec'"));
  assert.ok(renderer.includes("if(installed!=='both'&&installed!==opticSide)continue"));
- assert.ok(renderer.includes('data-optic-side="'+opticSide+'"'));
+ assert.ok(renderer.includes("data-optic-side=\"'+opticSide+'\""));
 });
