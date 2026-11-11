@@ -11,9 +11,9 @@ test('Avatar Studio automatically persists appearance and rotation changes',()=>
 });
 test('Avatar Studio maps bilateral cyberware to the correct avatar sides',()=>{
  const start=script.indexOf('function installedInstances('),end=script.indexOf('function syncCyberware(){',start);assert.ok(start>=0&&end>start);
- const ctx={avatar:{cyberarm:'none',eyes:false},input:{installed:['arm','arm','optic'],installInstances:[{itemId:'arm',side:'left'},{itemId:'arm',side:'right'},{itemId:'optic',side:'left'}]}};
+ const ctx={avatar:{cyberarm:'none',eyes:false},input:{installed:['arm','arm','leg','leg','optic'],installInstances:[{itemId:'arm',side:'left'},{itemId:'arm',side:'right'},{itemId:'leg',side:'left'},{itemId:'leg',side:'right'},{itemId:'optic',side:'left'}]}};
  vm.runInNewContext(script.slice(start,end)+';syncCyberwareFromCharacter(input);',ctx);
- assert.equal(ctx.avatar.cyberarm,'both');assert.equal(ctx.avatar.eyes,'left');
+ assert.equal(ctx.avatar.cyberarm,'both');assert.equal(ctx.avatar.cyberleg,'both');assert.equal(ctx.avatar.eyes,'left');
 });
 test('Avatar Studio supports legacy side arrays and right-only optics',()=>{
  const start=script.indexOf('function installedInstances('),end=script.indexOf('function syncCyberware(){',start);
@@ -22,5 +22,5 @@ test('Avatar Studio supports legacy side arrays and right-only optics',()=>{
  assert.equal(ctx.avatar.cyberarm,'right');assert.equal(ctx.avatar.eyes,'right');
 });
 test('Avatar Studio keeps 48-frame rotation and six supported body builds',()=>{
- for(const value of ['max="47"','female-slim','female-average','female-athletic','male-slim','male-average','male-athletic','raw.frame>=0&&raw.frame<48'])assert.ok(studio.includes(value),value);
+ for(const value of ['Cyberlegs','max="47"','female-slim','female-average','female-athletic','male-slim','male-average','male-athletic','raw.frame>=0&&raw.frame<48'])assert.ok(studio.includes(value),value);
 });
