@@ -23,6 +23,7 @@ function renderAvatarSvg(avatar,portrait=false){
  // Collarbone, torso seams, and waist segmentation track the selected body proportions.
  const collarY=114,collarL=sx(130-22*shoulderScale),collarR=sx(130+22*shoulderScale);
  s+=path('M'+collarL+' '+collarY+'Q130 127 '+collarR+' '+collarY,'none','#8195a0',1.5);
+ s+=path('M'+sx(130-30*shoulderScale)+' 110Q'+sx(130-25*shoulderScale)+' 103 '+collarL+' 114','none','#a4b6be',1.5);s+=path('M'+sx(130+30*shoulderScale)+' 110Q'+sx(130+25*shoulderScale)+' 103 '+collarR+' 114','none','#a4b6be',1.5);
  s+=line(sx(130-20*proportions.waist),174,sx(130-17*proportions.waist),211,'#617987',1.5);
  s+=line(sx(130+20*proportions.waist),174,sx(130+17*proportions.waist),211,'#617987',1.5);
  s+=path('M'+sx(130-19*proportions.waist)+' 211Q130 218 '+sx(130+19*proportions.waist)+' 211','none','#93a4ad',1.5);
