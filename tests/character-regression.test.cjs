@@ -125,3 +125,17 @@ test('avatar rotation wraps every 48 frames and preserves anatomical cyberarm si
   assert.ok(!/NaN|undefined/.test(left));
  }
 });
+
+test('avatar arm layers and cyberoptic visibility follow cardinal viewing direction',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ const base={build:'male-average',pose:'neutral',face:'angular',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'both',eyes:true};
+ for(const frame of [0,6,12,18,24,30,36,42]){
+  const svg=ctx.window.REDAvatarRenderer.render({...base,frame});
+  assert.match(svg,/data-arm-depth="near"/);
+  assert.match(svg,/data-arm-depth="far"/);
+  assert.match(svg,/data-cyberarm-side="left"/);
+  assert.match(svg,/data-cyberarm-side="right"/);
+  assert.equal(svg.includes('data-cyberoptic="visible"'),Math.cos(frame*Math.PI/24)>.12);
+  assert.ok(!/NaN|undefined/.test(svg));
+ }
+});
