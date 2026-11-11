@@ -32,11 +32,11 @@ function renderAvatarSvg(avatar,portrait=false){
  if(avatar.outfit==='combat')s+=path('M'+sx(111)+' 117L'+sx(149)+' 117L'+sx(151)+' 205L'+sx(109)+' 205Z','#394d57','#93aab4',3);
  if(avatar.outfit==='street'){s+=line(sx(112),124,sx(149),215,'#e24d61',3);s+=path('M'+sx(105)+' 111L'+sx(122)+' 145L'+sx(115)+' 164L'+sx(103)+' 130Z','#1b2b36','#7795a0',1);s+=detail(sx(116),184,11,16,'#263d49')}
  if(avatar.outfit==='corporate'){s+=path('M'+sx(113)+' 110L130 153L'+sx(147)+' 110L130 131Z','#d2cbd0');s+=path('M130 153L125 172L130 202L135 172Z','#9f3245','#e16a7a',1)}
- for(const sign of [-1,1]){const side=(sign<0)===(front>=0)?'right':'left',shoulder=sx(130+sign*37*shoulderScale),elbow=sx(130+sign*50*shoulderScale)+pose[0]*sign*.5,wrist=sx(130+sign*64*shoulderScale)+pose[1]*sign;const cyber=arm(side),material=cyber?'url(#chrome)':skin;s+=line(shoulder,123,elbow,190,material,21*depth*width*shoulderScale)+line(elbow,190,wrist,248,material,17*depth*width*shoulderScale);s+='<circle cx="'+elbow+'" cy="190" r="'+(5*depth+2)+'" fill="'+(cyber?'#1c3541':skin)+'" stroke="#89aab8"/>';if(cyber){s+='<g data-cyberarm-side="'+side+'" data-cyberarm-frame="'+frame+'">';s+=line(shoulder,135,elbow,177,'#ff526d',2)+line(elbow,203,wrist,238,'#ff526d',2);s+=line(shoulder+sign*4,139,elbow+sign*3,172,'#e2f5fa',2);s+=line(elbow+sign*4,207,wrist+sign*3,234,'#c5e1e9',2);s+='<circle cx="'+elbow+'" cy="190" r="3" fill="#ff526d"/>';s+=path('M'+(elbow-sign*8*depth)+' 183L'+(elbow+sign*8*depth)+' 197','none','#9ed9e9',2);s+='</g>'}else{s+=line(shoulder,142,elbow,179,'#bd9a86',2)}s+='<ellipse cx="'+wrist+'" cy="253" rx="'+(7*depth+2)+'" ry="12" fill="'+material+'" stroke="'+(cyber?'#b8dbe5':'#765b53')+'" stroke-width="1"/>';
+ for(const sign of (Math.sin(a)>=0?[-1,1]:[1,-1])){const side=(sign<0)===(front>=0)?'right':'left',shoulder=sx(130+sign*37*shoulderScale),elbow=sx(130+sign*50*shoulderScale)+pose[0]*sign*.5,wrist=sx(130+sign*64*shoulderScale)+pose[1]*sign;const cyber=arm(side),material=cyber?'url(#chrome)':skin;s+='<g data-arm-side="'+side+'" data-arm-depth="'+(sign*Math.sin(a)>0?'near':'far')+'">';s+=line(shoulder,123,elbow,190,material,21*depth*width*shoulderScale)+line(elbow,190,wrist,248,material,17*depth*width*shoulderScale);s+='<circle cx="'+elbow+'" cy="190" r="'+(5*depth+2)+'" fill="'+(cyber?'#1c3541':skin)+'" stroke="#89aab8"/>';if(cyber){s+='<g data-cyberarm-side="'+side+'" data-cyberarm-frame="'+frame+'">';s+=line(shoulder,135,elbow,177,'#ff526d',2)+line(elbow,203,wrist,238,'#ff526d',2);s+=line(shoulder+sign*4,139,elbow+sign*3,172,'#e2f5fa',2);s+=line(elbow+sign*4,207,wrist+sign*3,234,'#c5e1e9',2);s+='<circle cx="'+elbow+'" cy="190" r="3" fill="#ff526d"/>';s+=path('M'+(elbow-sign*8*depth)+' 183L'+(elbow+sign*8*depth)+' 197','none','#9ed9e9',2);s+='</g>'}else{s+=line(shoulder,142,elbow,179,'#bd9a86',2)}s+='<ellipse cx="'+wrist+'" cy="253" rx="'+(7*depth+2)+'" ry="12" fill="'+material+'" stroke="'+(cyber?'#b8dbe5':'#765b53')+'" stroke-width="1"/>';
  // Distinct shoulder caps, elbow articulation and a readable thumb/hand silhouette.
  s+=path('M'+(shoulder-sign*8*depth)+' 121Q'+shoulder+' 110 '+(shoulder+sign*11*depth)+' 128','none',cyber?'#c4e4ec':'#9b8276',1.7);
  s+=path('M'+(elbow-sign*7*depth)+' 188Q'+elbow+' 196 '+(elbow+sign*7*depth)+' 188','none',cyber?'#d4eaf0':'#9c776b',1.5);
- s+=path('M'+(wrist+sign*5*depth)+' 252L'+(wrist+sign*12*depth)+' 260L'+(wrist+sign*8*depth)+' 266','none',cyber?'#a6d1de':'#b68e7b',2);
+ s+=path('M'+(wrist+sign*5*depth)+' 252L'+(wrist+sign*12*depth)+' 260L'+(wrist+sign*8*depth)+' 266','none',cyber?'#a6d1de':'#b68e7b',2);s+='</g>';
  }
  // Neck tapers into the shoulders and keeps its profile readable at oblique angles.
  const neckRadius=(avatar.build.startsWith('male')?8.5:7)*depth*head;
@@ -55,6 +55,11 @@ function renderAvatarSvg(avatar,portrait=false){
   if(front>-.2)s+='<ellipse cx="'+(130+direction*faceWidth*.34)+'" cy="52" rx="2.5" ry="2" fill="'+eye+'"/>';
  }
 
+ // Oblique jaw and nose contour soften the front/profile transition.
+ if(profile>.01&&front>-.25){
+  const dir=side>=0?1:-1;
+  s+=path('M'+(130+dir*faceWidth*.65)+' 65Q'+(130+dir*faceWidth*.58)+' 78 130 86','none','#8f685b',1.5);
+ }
  if(avatar.hair!=='none'){
   const hc=avatar.hairColor,hairEdge='#131c26',L=sx(105),R=sx(155);
   // Hair profiles are separate silhouettes, not a recolored universal cap.
@@ -71,6 +76,11 @@ function renderAvatarSvg(avatar,portrait=false){
   if(back>.3&&avatar.hair!=='mohawk')s+=line(sx(113),45,sx(147),45,'#71828a',1);
  }
  if(front>.12){s+=line(sx(112),45,sx(125),45,'#4a3430',2)+line(sx(135),45,sx(148),45,'#4a3430',2);s+=line(130,53,128,63,'#6e4b3e',1);s+='<ellipse cx="'+sx(119)+'" cy="51" rx="3.5" ry="2.5" fill="'+eye+'"/><ellipse cx="'+sx(141)+'" cy="51" rx="3.5" ry="2.5" fill="'+eye+'"/>'+line(sx(122),69,sx(138),69,'#4d3230',2)}
+ // Cyberoptic glow is confined to the visible face and tracks viewing direction.
+ if(avatar.eyes&&front>.12){
+  const opticX=sx(130+(Math.sin(a)>=0?11:-11));
+  s+='<g data-cyberoptic="visible"><circle cx="'+opticX+'" cy="51" r="5.5" fill="none" stroke="#ff526d" stroke-width="1.5"/></g>';
+ }
  if(back>.4)s+=line(130,118,130,211,'#718e9a',3);
  s+='</svg>';return s;
 }
