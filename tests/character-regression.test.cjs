@@ -193,3 +193,19 @@ test('six-body cardinal snapshots remain deterministic across poses and implant 
  }
  assert.ok(signatures.size>=72,'cardinal snapshots should preserve body, view and cyberware differences');
 });
+
+test('explicit optic sides remain distinct with bilateral colors',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ const base={build:'female-average',pose:'neutral',frame:0,face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'none'};
+ const render=eyes=>ctx.window.REDAvatarRenderer.render({...base,eyes});
+ assert.match(render('left'),/data-optic-side="left"/);
+ assert.doesNotMatch(render('left'),/data-optic-side="right"/);
+ assert.match(render('right'),/data-optic-side="right"/);
+ assert.doesNotMatch(render('right'),/data-optic-side="left"/);
+ assert.match(render('both'),/data-optic-side="left"/);
+ assert.match(render('both'),/data-optic-side="right"/);
+ assert.match(render('both'),/#64d8ff/);
+ assert.match(render('both'),/#ff526d/);
+ assert.doesNotMatch(render(false),/data-optic-side=/);
+ assert.match(render(true),/data-optic-side="right"/);
+});
