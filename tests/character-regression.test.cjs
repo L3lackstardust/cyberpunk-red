@@ -351,3 +351,13 @@ test('six body silhouettes retain distinct shoulder and hip geometry across rota
   assert.ok(hipRadii.size>=4,'hip silhouettes frame '+frame);
  }
 });
+
+test('curved torso and far-arm mask share the same waist taper',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ for(const build of ['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic']){
+  const svg=ctx.window.REDAvatarRenderer.render({build,frame:6,pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',eyes:false,cyberarm:'both',cyberleg:'both'});
+  const paths=[...svg.matchAll(/<path d="([^"]+)" fill="(?:url\(#fabric\)|black)"/g)].map(m=>m[1]).filter(d=>d.includes(' 165 '));
+  assert.ok(paths.length>=2,build+' matching torso and mask contours');
+  assert.equal(paths[0],paths[paths.length-1]);
+ }
+});
