@@ -51,10 +51,10 @@ function syncCyberware(){
   syncCyberwareFromCharacter(JSON.parse(raw));controls();render();persistAvatar('Cyberware synced and avatar saved');
  }catch(e){$('status').textContent='Could not read character cyberware'}
 }
-document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{avatar.frame=Number(button.dataset.view);render()}));$('showImplants').addEventListener('click',()=>{showImplants=!showImplants;render()});
+document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{avatar.frame=Number(button.dataset.view);render();persistAvatar('View saved automatically')}));$('showImplants').addEventListener('click',()=>{showImplants=!showImplants;render()});
 function rotate(delta){avatar.frame=(avatar.frame+delta+48)%48;render();persistAvatar('Rotation saved automatically')}
 $('left').onclick=()=>rotate(-1);$('right').onclick=()=>rotate(1);$('angle').oninput=e=>{avatar.frame=Number(e.target.value);render();persistAvatar('Rotation saved automatically')};$('viewer').onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();rotate(e.key==='ArrowRight'?1:-1)}};
-let drag=null;$('viewer').addEventListener('pointerdown',e=>{drag={x:e.clientX,frame:avatar.frame};$('viewer').setPointerCapture(e.pointerId)});$('viewer').addEventListener('pointermove',e=>{if(!drag)return;avatar.frame=((drag.frame+Math.round((e.clientX-drag.x)/9))%48+48)%48;render()});for(const type of ['pointerup','pointercancel'])$('viewer').addEventListener(type,()=>drag=null);
+let drag=null;$('viewer').addEventListener('pointerdown',e=>{drag={x:e.clientX,frame:avatar.frame};$('viewer').setPointerCapture(e.pointerId)});$('viewer').addEventListener('pointermove',e=>{if(!drag)return;avatar.frame=((drag.frame+Math.round((e.clientX-drag.x)/9))%48+48)%48;render()});for(const type of ['pointerup','pointercancel'])$('viewer').addEventListener(type,()=>{if(drag){drag=null;persistAvatar('Rotation saved automatically')}});
 function persistAvatar(message){try{localStorage.setItem(KEY,JSON.stringify(avatar));$('status').textContent=message||'Avatar saved in this browser';return true}catch(e){$('status').textContent='Save unavailable — export JSON backup';return false}}
 $('save').onclick=()=>persistAvatar('Avatar saved in this browser');
 $('reset').onclick=()=>{avatar={...defaults};controls();render();persistAvatar('Appearance reset and saved')};
