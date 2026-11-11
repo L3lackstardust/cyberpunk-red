@@ -231,6 +231,12 @@ const {setTimeout:delay}=require('node:timers/promises');
     const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('cyberpunk-red-avatar-v1')));
     assert.equal(saved.build,'female-athletic');assert.equal(saved.pose,'confident');assert.equal(saved.cyberarm,'right');assert.equal(saved.eyes,true);
     await page.reload({waitUntil:'domcontentloaded'});
+    assert.equal(await page.locator('[data-key="cyberarm"][data-value="right"]').getAttribute('aria-pressed'),'true');
+    await page.evaluate(()=>localStorage.setItem('cyberpunk-red-character-v1',JSON.stringify({installInstances:[{itemId:'arm',side:'left'}]})));
+    await page.reload({waitUntil:'domcontentloaded'});
+    assert.equal(await page.locator('[data-key="cyberarm"][data-value="left"]').getAttribute('aria-pressed'),'true');
+    assert.equal(await page.locator('[data-key="eyes"]').getAttribute('aria-pressed'),'false');
+    await page.reload({waitUntil:'domcontentloaded'});
     assert.equal(await page.locator('[data-key="pose"][data-value="confident"]').getAttribute('aria-pressed'),'true');
    }finally{await page.close()}
   });
