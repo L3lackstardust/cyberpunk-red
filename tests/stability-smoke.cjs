@@ -246,6 +246,7 @@ const {setTimeout:delay}=require('node:timers/promises');
     await page.locator('#showImplants').click();
     assert.equal(await page.locator('#showImplants').getAttribute('aria-pressed'),'false');
     await page.locator('#save').click();
+    console.log('Avatar save status:',await page.locator('#status').textContent());
     const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('cyberpunk-red-avatar-v1')));
     assert.equal(saved.cyberarm,'left');
     await page.locator('#showImplants').click();
