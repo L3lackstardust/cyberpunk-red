@@ -209,3 +209,15 @@ test('explicit optic sides remain distinct with bilateral colors',()=>{
  assert.doesNotMatch(render(false),/data-optic-side=/);
  assert.match(render(true),/data-optic-side="right"/);
 });
+
+test('cyberarm plate detail remains side-specific across rotation',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ const base={build:'male-average',pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',eyes:false};
+ for(const frame of [0,6,12,18,24,30,36,42]){
+  const svg=ctx.window.REDAvatarRenderer.render({...base,frame,cyberarm:'left'});
+  assert.match(svg,/data-cyberarm-side="left"/);
+  assert.doesNotMatch(svg,/data-cyberarm-side="right"/);
+  assert.match(svg,/#83b9c9/);
+  assert.ok(!/NaN|undefined|Infinity/.test(svg));
+ }
+});
