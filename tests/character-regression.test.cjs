@@ -381,3 +381,19 @@ test('anatomical shoulder and hip contours remain valid across all builds and ro
   assert.match(svg,/data-cyberleg-side="left"/);assert.match(svg,/data-cyberleg-side="right"/);
  }
 });
+
+test('shoulder inset contours follow rotational depth across six builds',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ for(const build of ['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic']){
+  const depths=[];
+  for(const frame of [0,6,12,18,24]){
+   const svg=ctx.window.REDAvatarRenderer.render({build,frame,pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',eyes:false,cyberarm:'none',cyberleg:'none'});
+   const match=svg.match(/data-shoulder-contour-depth="([0-9.]+)"/);
+   assert.ok(match,build+' frame '+frame);
+   assert.equal((svg.match(/#334c59/g)||[]).length,2);
+   depths.push(Number(match[1]));
+  }
+  assert.ok(depths[0]>depths[2],build+' front greater than profile');
+  assert.equal(depths[0],depths[4],build+' front and back depth match');
+ }
+});
