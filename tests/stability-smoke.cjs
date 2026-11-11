@@ -212,6 +212,19 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.equal(result.overlayCount,1);
    }finally{await viewer.close()}
   });
+  await check('Avatar side profiles differ from front and rear',async()=>{
+   const page=await context.newPage();
+   page.on('pageerror',e=>errors.push('avatar side profiles: '+e.message));
+   try{
+    await page.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'domcontentloaded'});
+    const views=[];
+    for(const frame of [0,12,24,36]){
+     await page.locator('#angle').evaluate((el,n)=>{el.value=String(n);el.dispatchEvent(new Event('input',{bubbles:true}))},frame);
+     views.push(await page.locator('#body svg').evaluate(el=>el.outerHTML));
+    }
+    assert.equal(new Set(views).size,4,'front, both sides, and rear should differ');
+   }finally{await page.close()}
+  });
   await check('Avatar hairstyles have distinct front and rear silhouettes',async()=>{
    const page=await context.newPage();
    page.on('pageerror',e=>errors.push('avatar hair: '+e.message));

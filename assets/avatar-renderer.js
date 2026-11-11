@@ -2,7 +2,7 @@
 // Shared procedural renderer for RED Avatar Studio and Cyberware Manager.
 (function(){
 function renderAvatarSvg(avatar,portrait=false){
- const a=portrait?0:avatar.frame*Math.PI/24,front=Math.cos(a),depth=Math.max(.15,Math.abs(front)),back=Math.max(0,-front),width={'female-slim':.79,'female-average':.89,'female-athletic':1.01,'male-slim':.88,'male-average':1.04,'male-athletic':1.17}[avatar.build],head={standard:1,angular:.91,round:1.12}[avatar.face];
+ const a=portrait?0:avatar.frame*Math.PI/24,front=Math.cos(a),depth=Math.sqrt(front*front+.23*Math.sin(a)*Math.sin(a)),back=Math.max(0,-front),width={'female-slim':.79,'female-average':.89,'female-athletic':1.01,'male-slim':.88,'male-average':1.04,'male-athletic':1.17}[avatar.build],head={standard:1,angular:.91,round:1.12}[avatar.face];
  const proportions={'female-slim':{shoulder:.84,hip:1.08,waist:.79,leg:.84},'female-average':{shoulder:.91,hip:1.18,waist:.94,leg:.96},'female-athletic':{shoulder:1.02,hip:1.12,waist:.88,leg:1.12},'male-slim':{shoulder:.99,hip:.86,waist:.78,leg:.87},'male-average':{shoulder:1.09,hip:.94,waist:1,leg:1.02},'male-athletic':{shoulder:1.23,hip:.96,waist:.91,leg:1.18}}[avatar.build]||{shoulder:1,hip:1,waist:1,leg:1};const shoulderScale=proportions.shoulder,hipScale=proportions.hip;const sx=x=>130+(x-130)*depth*width,eye=avatar.eyes?'#ff526d':'#8fe2ec',skin=avatar.skin,arm=(side)=>avatar.cyberarm==='both'||avatar.cyberarm===side;
  const path=(d,fill,stroke='#63818e',sw=2)=>'<path d="'+d+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+sw+'" stroke-linejoin="round"/>';
  const line=(x,y,x2,y2,color,weight)=>'<path d="M'+x+' '+y+'L'+x2+' '+y2+'" stroke="'+color+'" stroke-width="'+weight+'" stroke-linecap="round"/>';
@@ -22,6 +22,15 @@ function renderAvatarSvg(avatar,portrait=false){
  const faceWidth=26*depth*head+4,cheek=avatar.face==='round'?1.12:avatar.face==='angular'?.82:1;
  s+=path('M'+(130-faceWidth*.78)+' 30Q130 13 '+(130+faceWidth*.78)+' 30Q'+(130+faceWidth*cheek)+' 58 '+(130+faceWidth*.57)+' 77Q130 '+(avatar.face==='angular'?98:91)+' '+(130-faceWidth*.57)+' 77Q'+(130-faceWidth*cheek)+' 58 '+(130-faceWidth*.78)+' 30Z',skin,'#b8a19a',1.5);
  s+=line(sx(112),74,sx(121),80,'#815e50',1)+line(sx(139),80,sx(148),74,'#815e50',1);
+ // Profile features shift toward the viewing direction and fade at front/rear angles.
+ const side=Math.sin(a),profile=Math.max(0,1-Math.abs(front)*2);
+ if(profile>.01){
+  const direction=side>=0?1:-1,edge=130+direction*faceWidth*.76;
+  s+=path('M'+edge+' 48L'+(edge+direction*8*profile)+' 57L'+(edge+direction*2)+' 62Z',skin,'#99705d',1);
+  s+='<ellipse cx="'+(130-direction*faceWidth*.42)+'" cy="58" rx="'+(3+2*profile)+'" ry="7" fill="'+skin+'" stroke="#98715d" stroke-width="1"/>';
+  if(front>-.2)s+='<ellipse cx="'+(130+direction*faceWidth*.34)+'" cy="52" rx="2.5" ry="2" fill="'+eye+'"/>';
+ }
+
  if(avatar.hair!=='none'){
   const hc=avatar.hairColor,hairEdge='#131c26',L=sx(105),R=sx(155);
   // Hair profiles are separate silhouettes, not a recolored universal cap.
