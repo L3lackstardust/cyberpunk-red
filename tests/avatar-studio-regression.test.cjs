@@ -139,3 +139,21 @@ test('Turnaround artwork manifest requires all six builds and 48 frames per pose
  assert.equal(check.valid,false);
  assert.equal(check.expectedFrames,1152);
 });
+
+test('Image-turnaround integration preserves cyberware fallback and shared portrait frame',()=>{
+ const html=fs.readFileSync('avatar-creator.html','utf8');
+ assert.match(html,/avatar-turnaround\\.js/);
+ assert.match(html,/function renderFigure\\(/);
+ assert.match(html,/renderFigure\\(\\$\\('body'\\)\\)/);
+ assert.match(html,/renderFigure\\(\\$\\('portrait'\\),true\\)/);
+ assert.match(html,/if\\(hasImplants\\)return null/);
+ assert.match(html,/target\\.innerHTML=figure\\(portrait\\)/);
+});
+test('Turnaround angle navigation and artwork path validation',()=>{
+ const art=require('../assets/avatar-turnaround.js');
+ assert.equal(art.nextAngle(47,1),0);
+ assert.equal(art.nextAngle(0,-1),47);
+ assert.equal(art.safePath('assets/avatar-art/male-slim/neutral/00.webp'),'assets/avatar-art/male-slim/neutral/00.webp');
+ assert.equal(art.safePath('https://example.com/portrait.png'),null);
+ assert.equal(art.safePath('assets/avatar-art/../private.png'),null);
+});
