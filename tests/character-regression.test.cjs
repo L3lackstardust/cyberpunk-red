@@ -263,3 +263,13 @@ test('all body builds preserve cyberware placements through all 48 frames',()=>{
   assert.equal(svg,ctx.window.REDAvatarRenderer.render({...base,frame:frame+48,cyberarm:'left',cyberleg:'right',eyes:'both'}));
  }
 });
+
+test('cyberlimb mechanical inset seams only appear on installed limbs',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ const base={build:'male-average',pose:'neutral',frame:0,face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',eyes:false};
+ const organic=ctx.window.REDAvatarRenderer.render({...base,cyberarm:'none',cyberleg:'none'});
+ const augmented=ctx.window.REDAvatarRenderer.render({...base,cyberarm:'right',cyberleg:'left'});
+ assert.doesNotMatch(organic,/#122c3a|#162d3b/);
+ assert.match(augmented,/#122c3a/);assert.match(augmented,/#162d3b/);
+ assert.match(augmented,/data-cyberarm-side="right"/);assert.match(augmented,/data-cyberleg-side="left"/);
+});
