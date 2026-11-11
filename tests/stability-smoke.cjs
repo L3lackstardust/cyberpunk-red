@@ -235,6 +235,7 @@ const {setTimeout:delay}=require('node:timers/promises');
    try{
     await page.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'domcontentloaded'});
     await page.locator('[data-key="cyberarm"][data-value="left"]').click();
+    if(await page.locator('#showImplants').getAttribute('aria-pressed')==='false')await page.locator('#showImplants').click();
     const svg=async()=>page.locator('#body svg').evaluate(el=>el.outerHTML);
     const front=await svg();
     await page.locator('#angle').evaluate(el=>{el.value='24';el.dispatchEvent(new Event('input',{bubbles:true}))});
@@ -242,6 +243,7 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.ok(front.includes('#ff526d')&&rear.includes('#ff526d'));
     assert.notEqual(front,rear);
     await page.locator('[data-key="cyberarm"][data-value="right"]').click();
+    assert.equal(await page.locator('[data-key="cyberarm"][data-value="right"]').getAttribute('aria-pressed'),'true');
     const rearRight=await svg();
     assert.notEqual(rear,rearRight,'left and right cyberarms should render differently at rear');
    }finally{await page.close()}
