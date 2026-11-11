@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - 'index.html'
+      - 'roll20-bridge.html'
+      - 'assets/roll20-bridge.js'
       - 'character-cyberware.html'
       - 'assets/avatar-renderer.js'
       - 'tests/**'
@@ -10,6 +12,8 @@ on:
   pull_request:
     paths:
       - 'index.html'
+      - 'roll20-bridge.html'
+      - 'assets/roll20-bridge.js'
       - 'character-cyberware.html'
       - 'tests/**'
       - '.github/workflows/character-regression.yml'
@@ -23,4 +27,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run Node regression suite
-        run: node --test tests/character-regression.test.cjs
+        run: node --test tests/character-regression.test.cjs tests/roll20-bridge.test.cjs
