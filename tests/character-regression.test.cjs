@@ -160,7 +160,7 @@ test('far-side arm is attenuated in profile while both arms remain fully visible
  const base={build:'male-average',pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'both',eyes:true};
  const front=ctx.window.REDAvatarRenderer.render({...base,frame:0});
  const profile=ctx.window.REDAvatarRenderer.render({...base,frame:12});
- assert.match(front,/data-arm-depth="far" opacity="1"/);
+ assert.match(front,/data-arm-depth="far" opacity="1(?:\\.000)?"/);
  assert.match(profile,/data-arm-depth="far" opacity="0.620"/);
  assert.match(profile,/data-arm-depth="near" opacity="1"/);
 });
