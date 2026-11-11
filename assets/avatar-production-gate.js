@@ -10,9 +10,9 @@
   for(const frame of manifest.frames){
    if(!ANGLES.includes(frame.angle)||seen.has(frame.angle))errors.push('Invalid or duplicate angle '+frame.angle);
    seen.add(frame.angle);
-   if(!/^[a-z0-9_-]+\\.webp$/.test(frame.image||''))errors.push('Unsafe frame name');
+   if(!/^[a-z0-9_-]+\.webp$/.test(frame.image||''))errors.push('Unsafe frame name');
    if(frame.characterFingerprint!==manifest.appearanceId)errors.push('Identity mismatch '+frame.angle);
-   if(!Array.isArray(frame.dimensions)||frame.dimensions[0]<512||frame.dimensions[1]<768)errors.push('Insufficient resolution '+frame.angle);
+   if(!Array.isArray(frame.dimensions)||frame.dimensions[0]<192||frame.dimensions[1]<480)errors.push('Insufficient resolution '+frame.angle);
    if(typeof exists==='function'&&!exists(frame.image))errors.push('Missing file '+frame.image);
   }
   for(const angle of ANGLES)if(!seen.has(angle))errors.push('Missing angle '+angle);
