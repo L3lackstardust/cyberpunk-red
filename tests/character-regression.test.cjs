@@ -311,3 +311,25 @@ test('hip mask follows far leg while near leg stays unmasked',()=>{
   assert.match(svg,/data-cyberleg-side="left"/);assert.match(svg,/data-cyberleg-side="right"/);
  }
 });
+
+test('combined arm and leg occlusion remains consistent across every build and frame',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ const builds=['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic'];
+ for(const build of builds)for(let frame=0;frame<48;frame++){
+  const svg=ctx.window.REDAvatarRenderer.render({build,frame,pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',eyes:'both',cyberarm:'both',cyberleg:'both'});
+  assert.match(svg,/<mask id="far-arm-torso-mask"/);
+  assert.match(svg,/<mask id="far-leg-hip-mask"/);
+  const arms=[...svg.matchAll(/<g data-arm-side="(left|right)" data-arm-depth="(near|far)"[^>]*>/g)];
+  const legs=[...svg.matchAll(/<g data-leg-depth="(near|far)" data-leg-side="(left|right)"[^>]*>/g)];
+  assert.equal(arms.length,2,build+' frame '+frame+' arms');
+  assert.equal(legs.length,2,build+' frame '+frame+' legs');
+  for(const groups of [arms,legs]){
+   assert.equal(groups.filter(m=>m[0].includes('mask="url(#far-')).length,1);
+   assert.equal(groups.filter(m=>m[0].includes('near')).length,1);
+   assert.equal(groups.filter(m=>m[0].includes('far')).length,1);
+  }
+  assert.match(svg,/data-cyberarm-side="left"/);assert.match(svg,/data-cyberarm-side="right"/);
+  assert.match(svg,/data-cyberleg-side="left"/);assert.match(svg,/data-cyberleg-side="right"/);
+  assert.ok(!/NaN|undefined|Infinity/.test(svg),build+' frame '+frame);
+ }
+});
