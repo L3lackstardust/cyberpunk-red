@@ -284,3 +284,16 @@ test('cyberlimb outer plate contours scale with rotation depth',()=>{
  assert.notEqual(front,profile);
  for(const svg of [front,profile])assert.ok(!/NaN|undefined|Infinity/.test(svg));
 });
+
+test('far arm uses torso occlusion mask at profile angles',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ const base={build:'male-average',pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',eyes:false,cyberarm:'both',cyberleg:'none'};
+ for(const frame of [6,12,18,30,36,42]){
+  const svg=ctx.window.REDAvatarRenderer.render({...base,frame});
+  assert.match(svg,/<mask id="far-arm-torso-mask"/);
+  const groups=[...svg.matchAll(/<g data-arm-side="(left|right)" data-arm-depth="(near|far)"[^>]*>/g)];
+  assert.equal(groups.length,2);
+  assert.ok(groups.some(m=>m[2]==='far'&&m[0].includes('mask="url(#far-arm-torso-mask)"')));
+  assert.ok(groups.some(m=>m[2]==='near'&&!m[0].includes('mask="url(#far-arm-torso-mask)"')));
+ }
+});
