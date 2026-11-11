@@ -177,3 +177,22 @@ test('Avatar Studio preloads at most eight image frames and keeps procedural fal
  assert.ok(html.includes('preloadAdjacentFrames()'));
  assert.ok(html.includes('target.innerHTML=figure(portrait)'));
 });
+
+test('Full-image mixed-radix catalog addresses are collision-free and reversible',()=>{
+ const api=require('../assets/avatar-image-index.js');
+ const a={template:1,hair:3,outfit:2,cyberarm:2,cyberleg:0,gear:1,build:2};
+ const b={...a,hair:4};
+ assert.notEqual(api.encode(a),api.encode(b));
+ assert.deepEqual(api.decode(api.encode(a)),a);
+ assert.notEqual(api.imageId(a,0),api.imageId(a,7));
+ assert.equal(api.availableAngles({images:{}},a).length,8);
+ assert.equal(api.resolve({images:{}},a,0),null);
+ assert.throws(()=>api.encode({...a,hair:10}),RangeError);
+});
+test('Avatar Studio integrates optional full-image catalog without losing SVG fallback',()=>{
+ const html=fs.readFileSync('avatar-creator.html','utf8');
+ assert.ok(html.includes('avatar-image-index.js'));
+ assert.ok(html.includes('function catalogFrame('));
+ assert.ok(html.includes('entry.characterFingerprint!==JSON.stringify('));
+ assert.ok(html.includes('target.innerHTML=figure(portrait)'));
+});
