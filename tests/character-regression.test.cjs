@@ -342,8 +342,8 @@ test('six body silhouettes retain distinct shoulder and hip geometry across rota
   const shoulderShapes=new Set(),hipRadii=new Set();
   for(const build of builds){
    const svg=ctx.window.REDAvatarRenderer.render({...base,build,frame});
-   const shoulder=svg.match(/<mask id="far-arm-torso-mask"[^>]*>[\\s\\S]*?<path d="([^"]+)"/);
-   const hip=svg.match(/<mask id="far-leg-hip-mask"[^>]*>[\\s\\S]*?<ellipse[^>]*rx="([^"]+)"/);
+   const shoulder=svg.match(/<mask id="far-arm-torso-mask"[^>]*>[\s\S]*?<path d="([^"]+)"/);
+   const hip=svg.match(/<mask id="far-leg-hip-mask"[^>]*>[\s\S]*?<ellipse[^>]*rx="([^"]+)"/);
    assert.ok(shoulder,build+' frame '+frame+' shoulder');assert.ok(hip,build+' frame '+frame+' hip');
    shoulderShapes.add(shoulder[1]);hipRadii.add(hip[1]);
   }
