@@ -124,3 +124,9 @@ test('Avatar model geometry retains hand articulation, footwear and facial landm
  assert.ok(renderer.includes('foot-14*depth'));
  assert.ok(renderer.includes("sx(124)+' 73Q130 77"));
 });
+
+test('Rear avatar view uses rear-head silhouette without facial lighting',()=>{
+ const renderer=fs.readFileSync('assets/avatar-renderer.js','utf8');
+ assert.ok(renderer.includes('if(back>.18)'));
+ assert.ok(renderer.includes('if(front>0){s+='));
+});
