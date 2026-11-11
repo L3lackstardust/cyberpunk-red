@@ -196,3 +196,21 @@ test('Avatar Studio integrates optional full-image catalog without losing SVG fa
  assert.ok(html.includes('entry.characterFingerprint!==JSON.stringify('));
  assert.ok(html.includes('target.innerHTML=figure(portrait)'));
 });
+
+test('Expanded image catalog has 48 distinct character concepts and side-aware cyberware tags',()=>{
+ const catalog=require('../assets/avatar-art/catalog-v2.json');
+ assert.equal(catalog.templates.length,48);
+ assert.equal(new Set(catalog.templates.map(x=>x.slug)).size,48);
+ assert.ok(catalog.cyberware.length>=50);
+ assert.ok(catalog.cyberware.every(x=>x.sides.includes('left')&&x.sides.includes('right')));
+ assert.ok(catalog.templates.every(x=>x.status==='concept-reference'&&x.frames.length===0));
+});
+test('Cyberware image group resolver prevents side collisions and missing-art substitution',()=>{
+ const api=require('../assets/cyberware-image-catalog.js');
+ const base={characterId:1,appearanceId:'street-v1',angle:0,cyberware:[{zone:'arms',style:'combat',side:'left'}]};
+ const right={...base,cyberware:[{zone:'arms',style:'combat',side:'right'}]};
+ assert.notEqual(api.signature(base),api.signature(right));
+ assert.equal(api.resolve({frames:{}},base),null);
+ assert.equal(api.available({frames:{}},base).length,8);
+ assert.throws(()=>api.signature({...base,cyberware:[{zone:'arms',style:'combat',side:'up'}]}),RangeError);
+});
