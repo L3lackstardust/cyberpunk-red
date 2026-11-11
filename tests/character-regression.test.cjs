@@ -221,3 +221,16 @@ test('cyberarm plate detail remains side-specific across rotation',()=>{
   assert.ok(!/NaN|undefined|Infinity/.test(svg));
  }
 });
+
+test('cyberleg renders only on the selected side across rotation',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ const base={build:'female-average',pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'none',eyes:false};
+ for(const frame of [0,6,12,18,24,30,36,42]){
+  const svg=ctx.window.REDAvatarRenderer.render({...base,frame,cyberleg:'left'});
+  assert.match(svg,/data-cyberleg-side="left"/);
+  assert.doesNotMatch(svg,/data-cyberleg-side="right"/);
+  assert.ok(!/NaN|undefined|Infinity/.test(svg));
+ }
+ const both=ctx.window.REDAvatarRenderer.render({...base,frame:0,cyberleg:'both'});
+ assert.match(both,/data-cyberleg-side="left"/);assert.match(both,/data-cyberleg-side="right"/);
+});
