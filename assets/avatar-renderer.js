@@ -7,7 +7,7 @@ function renderAvatarSvg(avatar,portrait=false){
  const path=(d,fill,stroke='#63818e',sw=2)=>'<path d="'+d+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+sw+'" stroke-linejoin="round"/>';
  const line=(x,y,x2,y2,color,weight)=>'<path d="M'+x+' '+y+'L'+x2+' '+y2+'" stroke="'+color+'" stroke-width="'+weight+'" stroke-linecap="round"/>';
  const pose={neutral:[0,0],confident:[-17,-25],guarded:[-25,-40],relaxed:[13,17]}[avatar.pose];
- let s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="'+(portrait?'60 0 140 210':'0 0 260 480')+'" role="img" aria-label="Custom cyberpunk character '+avatar.pose+' pose"><defs><linearGradient id="fabric" x2="1" y2="1"><stop stop-color="#566977"/><stop offset=".5" stop-color="#263843"/><stop offset="1" stop-color="#121d29"/></linearGradient><linearGradient id="chrome" x2="1" y2="1"><stop stop-color="#c4e4ec"/><stop offset=".5" stop-color="#6d8796"/><stop offset="1" stop-color="#263a48"/></linearGradient></defs>';
+ let s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="'+(portrait?'60 0 140 210':'0 0 260 480')+'" role="img" aria-label="Custom cyberpunk character '+avatar.pose+' pose"><defs><linearGradient id="fabric" x2="1" y2="1"><stop stop-color="#566977"/><stop offset=".5" stop-color="#263843"/><stop offset="1" stop-color="#121d29"/></linearGradient><linearGradient id="chrome" x2="1" y2="1"><stop stop-color="#c4e4ec"/><stop offset=".5" stop-color="#6d8796"/><stop offset="1" stop-color="#263a48"/></linearGradient><linearGradient id="skinShade"><stop stop-color="#fff" stop-opacity=".25"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#071019" stop-opacity=".4"/></linearGradient><radialGradient id="faceLight" cx=".32" cy=".25" r=".9"><stop stop-color="#fff" stop-opacity=".24"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#190c09" stop-opacity=".36"/></radialGradient></defs>';
  const detail=(x,y,w,h,fill)=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="3" fill="'+fill+'"/>';
  s+='<ellipse cx="130" cy="455" rx="'+(40*depth*width)+'" ry="6" fill="#061017"/>';
  // Mask the upper portion of the far leg where the pelvis overlaps it.
@@ -20,7 +20,7 @@ function renderAvatarSvg(avatar,portrait=false){
  s+=path('M'+hipRight+' 246Q'+waistRight+' 229 '+waistRight+' 212','none','#536c79',2);
  s+=path('M'+hipLeft+' 246Q'+sx(130-28*hipScale)+' 254 '+sx(130-21*hipScale)+' 267','none','#91a5af',1.5);s+=path('M'+hipRight+' 246Q'+sx(130+28*hipScale)+' 254 '+sx(130+21*hipScale)+' 267','none','#91a5af',1.5);
  s+=path('M'+sx(130-31*shoulderScale)+' 104Q130 88 '+sx(130+31*shoulderScale)+' 104Q'+sx(130+27*proportions.waist)+' 165 '+sx(130+25*proportions.waist)+' 231Q130 249 '+sx(130-25*proportions.waist)+' 231Q'+sx(130-27*proportions.waist)+' 165 '+sx(130-31*shoulderScale)+' 104Z',avatar.outfit==='corporate'?'#202d3c':'url(#fabric)');
- s+=path('M'+sx(109)+' 221Q130 234 '+sx(151)+' 221L'+sx(149)+' 249Q130 255 '+sx(111)+' 249Z','#1b2935','#708795',1);
+ s+=path('M'+sx(130-31*shoulderScale)+' 104Q130 88 '+sx(130+31*shoulderScale)+' 104Q'+sx(130+27*proportions.waist)+' 165 '+sx(130+25*proportions.waist)+' 231Q130 249 '+sx(130-25*proportions.waist)+' 231Q'+sx(130-27*proportions.waist)+' 165 '+sx(130-31*shoulderScale)+' 104Z','url(#skinShade)','none',0);s+=path('M'+sx(109)+' 221Q130 234 '+sx(151)+' 221L'+sx(149)+' 249Q130 255 '+sx(111)+' 249Z','#1b2935','#708795',1);
  // Collarbone, torso seams, and waist segmentation track the selected body proportions.
  const collarY=114,collarL=sx(130-22*shoulderScale),collarR=sx(130+22*shoulderScale);
  s+=path('M'+collarL+' '+collarY+'Q130 127 '+collarR+' '+collarY,'none','#8195a0',1.5);
@@ -51,7 +51,7 @@ function renderAvatarSvg(avatar,portrait=false){
  s+=line(130,89,130,104,skin,16*depth);
  const faceWidth=26*depth*head+4,cheek=avatar.face==='round'?1.12:avatar.face==='angular'?.82:1;
  s+=path('M'+(130-faceWidth*.78)+' 30Q130 13 '+(130+faceWidth*.78)+' 30Q'+(130+faceWidth*cheek)+' 58 '+(130+faceWidth*.57)+' 77Q130 '+(avatar.face==='angular'?98:91)+' '+(130-faceWidth*.57)+' 77Q'+(130-faceWidth*cheek)+' 58 '+(130-faceWidth*.78)+' 30Z',skin,'#b8a19a',1.5);
- s+=line(sx(112),74,sx(121),80,'#815e50',1)+line(sx(139),80,sx(148),74,'#815e50',1);
+ s+='<ellipse cx="130" cy="55" rx="'+(faceWidth*1.02)+'" ry="36" fill="url(#faceLight)" pointer-events="none"/>';s+=line(sx(112),74,sx(121),80,'#815e50',1)+line(sx(139),80,sx(148),74,'#815e50',1);
  // Profile features shift toward the viewing direction and fade at front/rear angles.
  const side=Math.sin(a),profile=Math.max(0,1-Math.abs(front)*2);
  if(profile>.01){
