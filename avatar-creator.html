@@ -37,7 +37,17 @@ function renderFigure(target,portrait=false){
  paths.forEach((path,index)=>{const image=document.createElement('img');image.alt=index?'Character artwork detail layer':portrait?'Character portrait from turnaround artwork':'Full-body character turnaround artwork';image.decoding='async';image.draggable=false;image.src='./'+path;image.onerror=()=>{if(stack.isConnected){target.innerHTML=figure(portrait);$('status').textContent='Turnaround artwork unavailable; procedural fallback active'}};stack.appendChild(image)});
  target.replaceChildren(stack);
 }
-function render(){$('showImplants').setAttribute('aria-pressed',String(showImplants));$('showImplants').textContent=showImplants?'Cyberware visible':'Cyberware hidden';renderFigure($('body'));renderFigure($('portrait'),true);$('frame').textContent=(avatar.frame===0?'FRONT':avatar.frame===12?'RIGHT PROFILE':avatar.frame===24?'REAR':avatar.frame===36?'LEFT PROFILE':avatar.frame<12?'FRONT → RIGHT':avatar.frame<24?'RIGHT → REAR':avatar.frame<36?'REAR → LEFT':'LEFT → FRONT')+' · '+String(avatar.frame*7.5).padStart(3,'0')+'° · FRAME '+String(avatar.frame+1).padStart(2,'0')+' / 48';$('viewer').setAttribute('aria-valuenow',avatar.frame);$('viewer').setAttribute('aria-valuetext',String(avatar.frame*7.5)+' degrees');$('angle').value=avatar.frame}
+const frameCache=new Map();
+function preloadAdjacentFrames(){
+ const api=window.REDAvatarTurnaround;if(!api||!turnaroundManifest)return;
+ for(const offset of [-1,1]){
+  const candidate={...avatar,frame:api.normalizeAngle(avatar.frame+offset)};
+  const item=api.resolveComposition(turnaroundManifest,candidate,showImplants);
+  if(!item)continue;
+  for(const path of item.layers){if(frameCache.has(path))continue;const image=new Image();image.decoding='async';image.src='./'+path;frameCache.set(path,image);if(frameCache.size>8)frameCache.delete(frameCache.keys().next().value)}
+ }
+}
+function render(){$('showImplants').setAttribute('aria-pressed',String(showImplants));$('showImplants').textContent=showImplants?'Cyberware visible':'Cyberware hidden';renderFigure($('body'));renderFigure($('portrait'),true);$('frame').textContent=(avatar.frame===0?'FRONT':avatar.frame===12?'RIGHT PROFILE':avatar.frame===24?'REAR':avatar.frame===36?'LEFT PROFILE':avatar.frame<12?'FRONT → RIGHT':avatar.frame<24?'RIGHT → REAR':avatar.frame<36?'REAR → LEFT':'LEFT → FRONT')+' · '+String(avatar.frame*7.5).padStart(3,'0')+'° · FRAME '+String(avatar.frame+1).padStart(2,'0')+' / 48';$('viewer').setAttribute('aria-valuenow',avatar.frame);$('viewer').setAttribute('aria-valuetext',String(avatar.frame*7.5)+' degrees');$('angle').value=avatar.frame;preloadAdjacentFrames()}
 function installedInstances(character){
  const ids=Array.isArray(character.installed)?character.installed:[];
  if(Array.isArray(character.installInstances)&&character.installInstances.length)return character.installInstances;
