@@ -5,6 +5,8 @@
  const POSES=['neutral','confident','guarded','relaxed'];
  const ANGLES=Array.from({length:48},(_,i)=>i);
  const requiredLayers=['anatomy','cyberware','face','hair','clothing'];
+ const normalizeAngle=angle=>((Math.trunc(Number(angle)||0)%48)+48)%48;
+ const nextAngle=(angle,direction)=>normalizeAngle(normalizeAngle(angle)+(direction<0?-1:1));
  const key=(build,pose,angle)=>build+'/'+pose+'/'+String(angle).padStart(2,'0');
  function validate(manifest){
   const errors=[];
@@ -21,7 +23,7 @@
   if(!BUILDS.includes(build)||!POSES.includes(pose)||!Number.isInteger(angle)||angle<0||angle>=48)return null;
   return manifest?.frames?.[key(build,pose,angle)]||null;
  }
- const api=Object.freeze({BUILDS,POSES,ANGLES,requiredLayers,key,validate,frame});
+ const api=Object.freeze({BUILDS,POSES,ANGLES,requiredLayers,key,validate,frame,normalizeAngle,nextAngle});
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  if(root)root.REDAvatarTurnaround=api;
 })(typeof window!=='undefined'?window:null);
