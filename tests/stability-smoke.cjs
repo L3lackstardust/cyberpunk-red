@@ -227,6 +227,8 @@ const {setTimeout:delay}=require('node:timers/promises');
     await page.locator('#syncCyberware').click();
     assert.equal(await page.locator('[data-key="cyberarm"][data-value="right"]').getAttribute('aria-pressed'),'true');
     assert.equal(await page.locator('[data-key="eyes"]').getAttribute('aria-pressed'),'true');
+    assert.equal(await page.locator('#body svg').count(),1);
+    assert.equal(await page.locator('#portrait svg').count(),1);
     await page.locator('#save').click();
     const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('cyberpunk-red-avatar-v1')));
     assert.equal(saved.build,'female-athletic');assert.equal(saved.pose,'confident');assert.equal(saved.cyberarm,'right');assert.equal(saved.eyes,true);
