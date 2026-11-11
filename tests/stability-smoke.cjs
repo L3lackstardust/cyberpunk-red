@@ -224,10 +224,10 @@ const {setTimeout:delay}=require('node:timers/promises');
      const portrait=await page.locator('#portrait svg').evaluate(el=>el.outerHTML);
      assert.ok(front.includes('<path')&&portrait.includes('<path'));
      signatures.add(front);
-     await page.locator('#angle').fill('24');
+     await page.locator('#angle').evaluate(el=>{el.value='24';el.dispatchEvent(new Event('input',{bubbles:true}))});
      const back=await page.locator('#body svg').evaluate(el=>el.outerHTML);
      assert.notEqual(front,back,'front and rear views should differ for '+build);
-     await page.locator('#angle').fill('0');
+     await page.locator('#angle').evaluate(el=>{el.value='0';el.dispatchEvent(new Event('input',{bubbles:true}))});
     }
     assert.equal(signatures.size,6,'all six base builds should have distinct SVG geometry');
    }finally{await page.close()}
