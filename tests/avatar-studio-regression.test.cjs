@@ -56,3 +56,9 @@ test('Anatomical left/right scan markers carry their side into installation sele
  assert.ok(cyber.includes('data-side="\'+side.toLowerCase()+\'"'));
  assert.ok(cyber.includes("selectedAnatomicalSide=t.dataset.side||null"));
 });
+
+test('Selected implant side remains highlighted consistently between scan and layer views',()=>{
+ const cyber=fs.readFileSync('character-cyberware.html','utf8');
+ assert.ok(cyber.includes("String(selectedAnatomicalSide).toLowerCase()===side.toLowerCase()"));
+ assert.ok(cyber.includes("String(selectedAnatomicalSide||'').toLowerCase()===String(side||'').toLowerCase()"));
+});
