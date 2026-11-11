@@ -24,3 +24,11 @@ test('Avatar Studio supports legacy side arrays and right-only optics',()=>{
 test('Avatar Studio keeps 48-frame rotation and six supported body builds',()=>{
  for(const value of ['Cyberlegs','max="47"','female-slim','female-average','female-athletic','male-slim','male-average','male-athletic','raw.frame>=0&&raw.frame<48'])assert.ok(studio.includes(value),value);
 });
+
+test('Cyberware Manager defaults to efficient 48-frame rotation and keeps 3D optional',()=>{
+ const cyber=fs.readFileSync('character-cyberware.html','utf8');
+ assert.ok(cyber.includes('let spinEnabled=true'));
+ assert.ok(cyber.includes('let cyber3dModule=null,cyber3dEnabled=false'));
+ assert.ok(cyber.includes('id="toggleSpin" type="button" aria-pressed="true"'));
+ assert.ok(cyber.includes("if(cyber3dEnabled){spinEnabled=false;layerViewEnabled=false}else{spinEnabled=true}"));
+});
