@@ -130,3 +130,12 @@ test('Rear avatar view uses rear-head silhouette without facial lighting',()=>{
  assert.ok(renderer.includes('if(back>.18)'));
  assert.ok(renderer.includes('if(front>0){s+='));
 });
+
+test('Turnaround artwork manifest requires all six builds and 48 frames per pose',()=>{
+ const art=require('../assets/avatar-turnaround.js');
+ assert.equal(art.BUILDS.length,6);
+ assert.equal(art.ANGLES.length,48);
+ const check=art.validate({version:1,frames:{}});
+ assert.equal(check.valid,false);
+ assert.equal(check.expectedFrames,1152);
+});
