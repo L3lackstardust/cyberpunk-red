@@ -49,7 +49,7 @@ function renderAvatarSvg(avatar,portrait=false){
  s+=path('M'+(130-neckRadius)+' 86Q'+(130-neckRadius-2)+' 98 '+(130-neckRadius-6)+' 107','none','#977768',2);
  s+=path('M'+(130+neckRadius)+' 86Q'+(130+neckRadius+2)+' 98 '+(130+neckRadius+6)+' 107','none','#977768',2);
  s+=line(130,89,130,104,skin,16*depth);
- const faceWidth=26*depth*head+4,cheek=avatar.face==='round'?1.12:avatar.face==='angular'?.82:1;
+ const faceWidth=26*depth*head+4,cheek=avatar.face==='round'?1.12:avatar.face==='angular'?.82:1,profileDepth=Math.abs(Math.sin(a));
  s+=path('M'+(130-faceWidth*.78)+' 30Q130 13 '+(130+faceWidth*.78)+' 30Q'+(130+faceWidth*cheek)+' 58 '+(130+faceWidth*.57)+' 77Q130 '+(avatar.face==='angular'?98:91)+' '+(130-faceWidth*.57)+' 77Q'+(130-faceWidth*cheek)+' 58 '+(130-faceWidth*.78)+' 30Z',skin,'#b8a19a',1.5);
  // The rear head is a separate silhouette: face shading and facial landmarks
  // must never appear on the back of a rotating character.
@@ -60,7 +60,7 @@ function renderAvatarSvg(avatar,portrait=false){
  const side=Math.sin(a),profile=Math.max(0,1-Math.abs(front)*2);
  if(profile>.01){
   const direction=side>=0?1:-1,edge=130+direction*faceWidth*.76;
-  s+=path('M'+edge+' 48L'+(edge+direction*8*profile)+' 57L'+(edge+direction*2)+' 62Z',skin,'#99705d',1);
+  s+=path('M'+edge+' 48Q'+(edge+direction*4*profile)+' 51 '+(edge+direction*8*profile)+' 57L'+(edge+direction*2)+' 62Z',skin,'#99705d',1);
   s+='<ellipse cx="'+(130-direction*faceWidth*.42)+'" cy="58" rx="'+(3+2*profile)+'" ry="7" fill="'+skin+'" stroke="#98715d" stroke-width="1"/>';
   if(front>-.2)s+='<ellipse cx="'+(130+direction*faceWidth*.34)+'" cy="52" rx="2.5" ry="2" fill="'+eye+'"/>';
  }
@@ -85,7 +85,7 @@ function renderAvatarSvg(avatar,portrait=false){
   }
   if(back>.3&&avatar.hair!=='mohawk')s+=line(sx(113),45,sx(147),45,'#71828a',1);
  }
- if(front>.12){s+=path('M'+sx(115)+' 59Q'+sx(119)+' 61 '+sx(123)+' 59','none','#9b7465',.8);s+=path('M'+sx(137)+' 59Q'+sx(141)+' 61 '+sx(145)+' 59','none','#9b7465',.8);s+=path('M'+sx(124)+' 73Q130 77 '+sx(136)+' 73','none','#b58a79',.9);s+=line(sx(112),45,sx(125),45,'#4a3430',2)+line(sx(135),45,sx(148),45,'#4a3430',2);s+=line(130,53,128,63,'#6e4b3e',1);s+='<ellipse cx="'+sx(119)+'" cy="51" rx="3.5" ry="2.5" fill="'+eye+'"/><ellipse cx="'+sx(141)+'" cy="51" rx="3.5" ry="2.5" fill="'+eye+'"/>'+line(sx(122),69,sx(138),69,'#4d3230',2)}
+ if(front>.12){s+=path('M'+sx(115)+' 59Q'+sx(119)+' 61 '+sx(123)+' 59','none','#9b7465',.8);s+=path('M'+sx(137)+' 59Q'+sx(141)+' 61 '+sx(145)+' 59','none','#9b7465',.8);s+=path('M'+sx(124)+' 73Q130 77 '+sx(136)+' 73','none','#b58a79',.9);s+=path('M'+sx(111)+' 47Q'+sx(119)+' 42 '+sx(126)+' 47','none','#4a3430',1.6);s+=line(sx(112),45,sx(125),45,'#4a3430',2)+line(sx(135),45,sx(148),45,'#4a3430',2);s+=line(130,53,128,63,'#6e4b3e',1);s+='<ellipse cx="'+sx(119)+'" cy="51" rx="3.5" ry="2.5" fill="'+eye+'"/><ellipse cx="'+sx(141)+'" cy="51" rx="3.5" ry="2.5" fill="'+eye+'"/>'+line(sx(122),69,sx(138),69,'#4d3230',2)}
  // Cyberoptic glow is confined to the visible face and tracks viewing direction.
  if(avatar.eyes&&front>.12){
   // A single optic remains on its anatomical side as the head turns.
