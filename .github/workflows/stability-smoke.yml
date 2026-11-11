@@ -5,6 +5,7 @@ on:
       - 'index.html'
       - 'character-cyberware.html'
       - 'tests/**'
+      - 'assets/cyberware-spin/**'
       - '.github/workflows/stability-smoke.yml'
   workflow_dispatch:
 permissions:
@@ -22,5 +23,7 @@ jobs:
         run: |
           npm install --no-save playwright@1.58.2
           npx playwright install --with-deps chromium
+      - name: Validate anatomical artwork sequences
+        run: node tests/validate-cyberware-art.cjs
       - name: Run browser stability tests
         run: node tests/stability-smoke.cjs
