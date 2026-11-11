@@ -33,7 +33,23 @@
   const item=frame(manifest,build,pose,normalizeAngle(angle));
   return safePath(item?.portrait)||safePath(item?.base);
  };
- const api=Object.freeze({BUILDS,POSES,ANGLES,requiredLayers,key,validate,frame,normalizeAngle,nextAngle,safePath,resolveBase,resolvePortrait});
+ function resolveComposition(manifest,avatar,showImplants=true){
+  if(!avatar||!BUILDS.includes(avatar.build)||!POSES.includes(avatar.pose))return null;
+  const entry=frame(manifest,avatar.build,avatar.pose,normalizeAngle(avatar.frame));
+  if(!entry||!safePath(entry.base))return null;
+  // Never silently replace a customized character with incompatible static art.
+  const appearance=entry.appearance;
+  if(!appearance||['skin','face','hair','hairColor','outfit'].some(k=>appearance[k]!==avatar[k]))return null;
+  const cyber=!!(avatar.cyberarm&&avatar.cyberarm!=='none'||avatar.cyberleg&&avatar.cyberleg!=='none'||avatar.eyes);
+  if(showImplants&&cyber)return null; // Per-side fitted cyberware layers required before image activation.
+  const layers=[entry.base];
+  for(const name of ['face','hair','clothing']){
+   const path=entry.layers?.[name];
+   if(path){if(!safePath(path))return null;layers.push(path)}
+  }
+  return {layers,portrait:safePath(entry.portrait)||safePath(entry.base)};
+ }
+ const api=Object.freeze({BUILDS,POSES,ANGLES,requiredLayers,key,validate,frame,normalizeAngle,nextAngle,safePath,resolveBase,resolvePortrait,resolveComposition});
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  if(root)root.REDAvatarTurnaround=api;
 })(typeof window!=='undefined'?window:null);
