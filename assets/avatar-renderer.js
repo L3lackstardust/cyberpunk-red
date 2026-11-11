@@ -85,7 +85,7 @@ function renderAvatarSvg(avatar,portrait=false){
    if(installed!=='both'&&installed!==opticSide)continue;
    const lateral=opticSide==='left'?-1:1;
    const visibility=Math.max(0,front+lateral*Math.sin(a)*.65);
-   if(visibility<=.12)continue;
+   if(visibility<=.12&&installed==='both')continue;
    const opticX=sx(130+lateral*11*head*depth+Math.sin(a)*4);
    const glow=opticSide==='left'?'#64d8ff':'#ff526d';
    s+='<g data-cyberoptic="visible" data-optic-side="'+opticSide+'"><circle cx="'+opticX+'" cy="51" r="5.5" fill="none" stroke="'+glow+'" stroke-width="1.5"/></g>';
