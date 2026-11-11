@@ -191,6 +191,13 @@ const {setTimeout:delay}=require('node:timers/promises');
     await viewer.mouse.move(rect.x+130,rect.y+rect.height/2,{steps:4});await viewer.mouse.up();
     await viewer.waitForFunction(()=>document.getElementById('spinView')?.getAttribute('aria-valuenow')==='10');
     assert.equal(await control.getAttribute('aria-valuenow'),'10');
+    await viewer.locator('#toggleLayers').click();
+    assert.equal(await viewer.locator('#toggleLayers').getAttribute('aria-pressed'),'true');
+    assert.equal(await viewer.locator('#toggleSpin').getAttribute('aria-pressed'),'false');
+    assert.equal(await viewer.locator('#toggle3d').getAttribute('aria-pressed'),'false');
+    await viewer.locator('#toggleSpin').click();
+    assert.equal(await viewer.locator('#toggleSpin').getAttribute('aria-pressed'),'true');
+    assert.equal(await viewer.locator('#toggleLayers').getAttribute('aria-pressed'),'false');
    }finally{await viewer.close()}
   });
   await check('Image rotation provides a fallback when sequence art is unavailable',async()=>{
