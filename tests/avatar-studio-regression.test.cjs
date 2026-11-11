@@ -103,3 +103,9 @@ test('Shared avatar renderer leaves the unimplanted eye natural and overlays onl
  assert.ok(renderer.includes("if(installed!=='both'&&installed!==opticSide)continue"));
  assert.ok(renderer.includes("data-optic-side=\"'+opticSide+'\""));
 });
+
+test('3D implant markers count and highlight left/right installations case-insensitively',()=>{
+ const cyber=fs.readFileSync('character-cyberware.html','utf8');
+ assert.ok(cyber.includes('String(inst.side).toLowerCase()===String(side).toLowerCase()'));
+ assert.ok(cyber.includes('String(selectedAnatomicalSide).toLowerCase()===String(side).toLowerCase()'));
+});
