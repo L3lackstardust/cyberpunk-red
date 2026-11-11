@@ -33,6 +33,19 @@ const {setTimeout:delay}=require('node:timers/promises');
    const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#export').click()]);
    assert.match(download.suggestedFilename(),/json/i);
   });
+  await check('Anatomical eye and limb targets retain selected sides',async()=>{
+   await page.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
+   await page.locator('#toggleLayers').click();
+   const eye=page.locator('.layer-hit[data-loc="Eyes"][data-side="Left"]');
+   assert.equal(await eye.count(),1);
+   await eye.click();
+   assert.equal(await page.locator('.layer-hit[data-loc="Eyes"][data-side="Left"]').getAttribute('aria-pressed'),'true');
+   assert.equal(await page.locator('.layer-hit[data-loc="Eyes"][data-side="Right"]').getAttribute('aria-pressed'),'false');
+   const arm=page.locator('.layer-hit[data-loc="Arms"][data-side="Right"]');
+   await arm.focus();await arm.press('Enter');
+   assert.equal(await page.locator('.layer-hit[data-loc="Arms"][data-side="Right"]').getAttribute('aria-pressed'),'true');
+   assert.equal(await page.locator('.layer-hit[data-loc="Eyes"][data-side="Left"]').getAttribute('aria-pressed'),'false');
+  });
   await check('Cyberware loads and saves a name',async()=>{
    await page.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
    await page.locator('#name').fill('STABILITY-TEST');
