@@ -382,6 +382,18 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.equal(await cyberTab.evaluate(()=>savedAvatarForSpin()?.build),'female-slim');
    }finally{await sharedContext.close()}
   });
+  await check('Avatar cyberoptic overlays match the installed eye side',async()=>{
+   const page=await context.newPage();
+   try{
+    await page.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'domcontentloaded'});
+    const result=await page.evaluate(()=>{
+     const base={build:'male-average',pose:'neutral',hair:'short',face:'standard',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'none',cyberleg:'none',frame:0};
+     const sides=eyes=>{const svg=REDAvatarRenderer.render({...base,eyes},false),doc=new DOMParser().parseFromString(svg,'image/svg+xml');return [...doc.querySelectorAll('[data-optic-side]')].map(n=>n.getAttribute('data-optic-side')).sort()};
+     return {left:sides('left'),right:sides('right'),both:sides('both'),none:sides(false)};
+    });
+    assert.deepEqual(result,{left:['left'],right:['right'],both:['left','right'],none:[]});
+   }finally{await page.close()}
+  });
   await check('No uncaught errors in tested flows',async()=>assert.deepEqual(errors,[]));
   await context.close();
  }finally{if(browser)await browser.close();server.kill()}
