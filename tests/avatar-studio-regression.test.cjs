@@ -142,7 +142,7 @@ test('Turnaround artwork manifest requires all six builds and 48 frames per pose
 
 test('Image-turnaround integration preserves cyberware fallback and shared portrait frame',()=>{
  const html=fs.readFileSync('avatar-creator.html','utf8');
- for(const snippet of ['avatar-turnaround.js','function renderFigure(',"renderFigure($('body'))","renderFigure($('portrait'),true)",'if(hasImplants)return null','target.innerHTML=figure(portrait)'])assert.ok(html.includes(snippet),snippet);
+ for(const snippet of ['avatar-turnaround.js','function renderFigure(',"renderFigure($('body'))","renderFigure($('portrait'),true)",'resolveComposition(turnaroundManifest,avatar,showImplants)','target.innerHTML=figure(portrait)'])assert.ok(html.includes(snippet),snippet);
 });
 test('Turnaround angle navigation and artwork path validation',()=>{
  const art=require('../assets/avatar-turnaround.js');
@@ -151,4 +151,29 @@ test('Turnaround angle navigation and artwork path validation',()=>{
  assert.equal(art.safePath('assets/avatar-art/male-slim/neutral/00.webp'),'assets/avatar-art/male-slim/neutral/00.webp');
  assert.equal(art.safePath('https://example.com/portrait.png'),null);
  assert.equal(art.safePath('assets/avatar-art/../private.png'),null);
+});
+
+test('Turnaround art requires exact appearance and preserves installed implants',()=>{
+ const art=require('../assets/avatar-turnaround.js');
+ const avatar={build:'female-athletic',pose:'neutral',frame:0,skin:'#a9765d',face:'standard',hair:'short',hairColor:'#18222a',outfit:'street',cyberarm:'none',cyberleg:'none',eyes:false};
+ const entry={base:'assets/avatar-art/female-athletic/neutral/00.webp',appearance:{skin:avatar.skin,face:avatar.face,hair:avatar.hair,hairColor:avatar.hairColor,outfit:avatar.outfit},layers:{hair:'assets/avatar-art/hair/short/00.webp'}};
+ const manifest={version:1,frames:{[art.key(avatar.build,avatar.pose,0)]:entry}};
+ assert.deepEqual(art.resolveComposition(manifest,avatar).layers,[entry.base,entry.layers.hair]);
+ assert.equal(art.resolveComposition(manifest,{...avatar,skin:'#513a31'}),null);
+ assert.equal(art.resolveComposition(manifest,{...avatar,cyberarm:'left'}),null);
+ assert.equal(art.resolveComposition(manifest,{...avatar,cyberarm:'left'},false).layers[0],entry.base);
+ assert.equal(art.resolveComposition(manifest,{...avatar,frame:1}),null);
+});
+test('Manifest validator rejects unsafe base and overlay paths',()=>{
+ const art=require('../assets/avatar-turnaround.js');
+ const frames={};for(const build of art.BUILDS)for(const pose of art.POSES)for(const angle of art.ANGLES)frames[art.key(build,pose,angle)]={base:'assets/avatar-art/base.webp'};
+ const manifest={version:1,frames};assert.equal(art.validate(manifest).valid,true);
+ frames[art.key('male-slim','neutral',0)]={base:'https://bad.example/image.webp',layers:{hair:'../bad.svg'}};
+ const result=art.validate(manifest);assert.equal(result.valid,false);assert.ok(result.errors.some(e=>e.includes('Invalid anatomy base')));assert.ok(result.errors.some(e=>e.includes('Invalid artwork layer')));
+});
+test('Avatar Studio preloads at most eight image frames and keeps procedural fallback',()=>{
+ const html=fs.readFileSync('avatar-creator.html','utf8');
+ assert.ok(html.includes('frameCache.size>8'));
+ assert.ok(html.includes('preloadAdjacentFrames()'));
+ assert.ok(html.includes('target.innerHTML=figure(portrait)'));
 });
