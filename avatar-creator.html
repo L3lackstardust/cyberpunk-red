@@ -7,7 +7,7 @@
 <header><div><h1><span>RED</span> AVATAR STUDIO</h1><div class="subtitle">Original procedural character · 48 rotation frames</div></div><a href="./character-cyberware.html">Cyberware Manager</a></header>
 <main class="layout">
 <section class="panel"><h2>BUILD YOUR CHARACTER</h2><div id="controls"></div></section>
-<section class="panel center"><h2>FULL BODY · 360°</h2><div id="viewer" class="viewer" role="slider" tabindex="0" aria-label="Rotate character" aria-valuemin="0" aria-valuemax="47" aria-valuenow="0"><div id="body"></div><div class="frame" id="frame">FRAME 01 / 48</div></div><div class="nav"><button id="left" aria-label="Rotate left">◀</button><span class="subtitle">Drag to rotate · ← → keys</span><button id="right" aria-label="Rotate right">▶</button></div><div class="field"><label for="angle">Rotation</label><input id="angle" type="range" min="0" max="47" value="0"></div></section>
+<section class="panel center"><h2>FULL BODY · 360°</h2><div id="viewer" class="viewer" role="slider" tabindex="0" aria-label="Rotate character" aria-valuemin="0" aria-valuemax="47" aria-valuenow="0"><div id="body"></div><div class="frame" id="frame">FRAME 01 / 48</div></div><div class="nav"><button id="left" aria-label="Rotate left">◀</button><span class="subtitle">Drag to rotate · ← → keys</span><button id="right" aria-label="Rotate right">▶</button></div><div class="choices" style="margin:12px 0"><button type="button" data-view="0">Front</button><button type="button" data-view="12">Side</button><button type="button" data-view="24">Rear</button><button type="button" id="showImplants" aria-pressed="true">Cyberware visible</button></div><div class="field"><label for="angle">Rotation</label><input id="angle" type="range" min="0" max="47" value="0"></div></section>
 <section class="panel right"><h2>CHARACTER PORTRAIT</h2><div class="portrait" id="portrait"></div><p class="note">The portrait and full-body figure are generated from the same saved appearance. Choose a pose to express personality; rotate to inspect cyberware.</p><div class="actions"><button class="primary" id="save">Save Avatar</button><button id="reset">Reset Appearance</button><button id="export">Export Avatar JSON</button><label class="subtitle" for="import">Import Avatar JSON</label><input id="import" type="file" accept=".json,application/json"></div><p id="status" class="status" role="status"></p></section>
 </main>
 <script src="./assets/avatar-renderer.js"></script><script>
@@ -16,7 +16,7 @@ const KEY='cyberpunk-red-avatar-v1';
 const defaults={build:'male-athletic',pose:'neutral',hair:'short',face:'standard',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'none',eyes:false,frame:0};
 const schema={build:['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic'],pose:['neutral','confident','guarded','relaxed'],hair:['none','short','swept','mohawk'],face:['standard','angular','round'],outfit:['street','combat','corporate'],cyberarm:['none','left','right','both']};
 const skinColors=['#e4b995','#c99170','#a9765d','#76513e','#513a31'],hairColors=['#18222a','#684736','#e3c08b','#d14a56','#8d79b4'];
-let avatar={...defaults};
+let avatar={...defaults},showImplants=true;
 const $=id=>document.getElementById(id);
 function sanitize(raw){const v={...defaults};if(!raw||typeof raw!=='object')return v;for(const [key,values] of Object.entries(schema))if(values.includes(raw[key]))v[key]=raw[key];if(skinColors.includes(raw.skin))v.skin=raw.skin;if(hairColors.includes(raw.hairColor))v.hairColor=raw.hairColor;if(Number.isInteger(raw.frame)&&raw.frame>=0&&raw.frame<48)v.frame=raw.frame;v.eyes=raw.eyes===true;return v}
 try{avatar=sanitize(JSON.parse(localStorage.getItem(KEY)))}catch(e){avatar={...defaults}}
@@ -28,8 +28,8 @@ function controls(){
  $('controls').innerHTML=html;
  $('controls').querySelectorAll('button[data-key]').forEach(b=>b.addEventListener('click',()=>{const key=b.dataset.key;avatar[key]=key==='eyes'?!avatar.eyes:b.dataset.value;controls();render()}));$('syncCyberware').addEventListener('click',syncCyberware);
 }
-function figure(portrait=false){return window.REDAvatarRenderer.render(avatar,portrait)}
-function render(){$('body').innerHTML=figure();$('portrait').innerHTML=figure(true);$('frame').textContent='FRAME '+String(avatar.frame+1).padStart(2,'0')+' / 48';$('viewer').setAttribute('aria-valuenow',avatar.frame);$('angle').value=avatar.frame}
+function figure(portrait=false){return window.REDAvatarRenderer.render(showImplants?avatar:{...avatar,cyberarm:'none',eyes:false},portrait)}
+function render(){$('showImplants').setAttribute('aria-pressed',String(showImplants));$('showImplants').textContent=showImplants?'Cyberware visible':'Cyberware hidden';$('body').innerHTML=figure();$('portrait').innerHTML=figure(true);$('frame').textContent='FRAME '+String(avatar.frame+1).padStart(2,'0')+' / 48';$('viewer').setAttribute('aria-valuenow',avatar.frame);$('angle').value=avatar.frame}
 function syncCyberware(){
  try{
   const raw=localStorage.getItem('cyberpunk-red-character-v1');
@@ -44,6 +44,7 @@ function syncCyberware(){
   $('status').textContent='Cyberware synced from saved character — save avatar to keep changes';
  }catch(e){$('status').textContent='Could not read character cyberware'}
 }
+document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{avatar.frame=Number(button.dataset.view);render()}));$('showImplants').addEventListener('click',()=>{showImplants=!showImplants;render()});
 function rotate(delta){avatar.frame=(avatar.frame+delta+48)%48;render()}
 $('left').onclick=()=>rotate(-1);$('right').onclick=()=>rotate(1);$('angle').oninput=e=>{avatar.frame=Number(e.target.value);render()};$('viewer').onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();rotate(e.key==='ArrowRight'?1:-1)}};
 let drag=null;$('viewer').addEventListener('pointerdown',e=>{drag={x:e.clientX,frame:avatar.frame};$('viewer').setPointerCapture(e.pointerId)});$('viewer').addEventListener('pointermove',e=>{if(!drag)return;avatar.frame=((drag.frame+Math.round((e.clientX-drag.x)/9))%48+48)%48;render()});for(const type of ['pointerup','pointercancel'])$('viewer').addEventListener(type,()=>drag=null);

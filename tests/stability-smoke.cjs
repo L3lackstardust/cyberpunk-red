@@ -212,19 +212,40 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.equal(result.overlayCount,1);
    }finally{await viewer.close()}
   });
+  await check('Avatar quick views and implant visibility do not alter saved implants',async()=>{
+   const page=await context.newPage();
+   page.on('pageerror',e=>errors.push('avatar quick views: '+e.message));
+   try{
+    await page.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'domcontentloaded'});
+    await page.locator('[data-key="cyberarm"][data-value="left"]').click();
+    await page.locator('[data-view="24"]').click();
+    assert.equal(await page.locator('#viewer').getAttribute('aria-valuenow'),'24');
+    await page.locator('#showImplants').click();
+    assert.equal(await page.locator('#showImplants').getAttribute('aria-pressed'),'false');
+    await page.locator('#save').click();
+    const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('cyberpunk-red-avatar-v1')));
+    assert.equal(saved.cyberarm,'left');
+    await page.locator('#showImplants').click();
+    assert.equal(await page.locator('#showImplants').getAttribute('aria-pressed'),'true');
+   }finally{await page.close()}
+  });
   await check('Cyberarm anatomical side reverses screen position at rear view',async()=>{
    const page=await context.newPage();
    page.on('pageerror',e=>errors.push('cyberarm side: '+e.message));
    try{
     await page.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'domcontentloaded'});
     await page.locator('[data-key="cyberarm"][data-value="left"]').click();
+    if(await page.locator('#showImplants').getAttribute('aria-pressed')==='false')await page.locator('#showImplants').click();
     const svg=async()=>page.locator('#body svg').evaluate(el=>el.outerHTML);
+    await page.locator('[data-view="0"]').click();
+    assert.equal(await page.locator('#viewer').getAttribute('aria-valuenow'),'0');
     const front=await svg();
     await page.locator('#angle').evaluate(el=>{el.value='24';el.dispatchEvent(new Event('input',{bubbles:true}))});
     const rear=await svg();
     assert.ok(front.includes('#ff526d')&&rear.includes('#ff526d'));
     assert.notEqual(front,rear);
     await page.locator('[data-key="cyberarm"][data-value="right"]').click();
+    assert.equal(await page.locator('[data-key="cyberarm"][data-value="right"]').getAttribute('aria-pressed'),'true');
     const rearRight=await svg();
     assert.notEqual(rear,rearRight,'left and right cyberarms should render differently at rear');
    }finally{await page.close()}
@@ -280,6 +301,7 @@ const {setTimeout:delay}=require('node:timers/promises');
     await page.locator('[data-key="pose"][data-value="confident"]').click();
     await page.locator('[data-key="cyberarm"][data-value="left"]').click();
     await page.locator('[data-key="eyes"]').click();
+    await page.locator('[data-view="0"]').click();
     await page.locator('#right').click();
     assert.equal(await page.locator('#viewer').getAttribute('aria-valuenow'),'1');
     assert.equal(await page.locator('#portrait svg').count(),1);
