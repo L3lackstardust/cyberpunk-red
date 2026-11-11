@@ -50,3 +50,9 @@ test('Cyberware anatomy markers compare stored left/right sides case-insensitive
  assert.ok(cyber.includes('String(state.installSideByIndex[i]).toLowerCase()===side.toLowerCase()'));
  assert.ok(cyber.includes('String(x.side).toLowerCase()===side.toLowerCase()'));
 });
+
+test('Anatomical left/right scan markers carry their side into installation selection',()=>{
+ const cyber=fs.readFileSync('character-cyberware.html','utf8');
+ assert.ok(cyber.includes('data-side="\'+side.toLowerCase()+\'"'));
+ assert.ok(cyber.includes("selectedAnatomicalSide=t.dataset.side||null"));
+});
