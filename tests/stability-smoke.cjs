@@ -188,6 +188,7 @@ const {setTimeout:delay}=require('node:timers/promises');
      state.installInstances=[{itemId:'arm',side:'Left'}];
      spinManifest={presets:{standard:{base:Array.from({length:48},(_,i)=>'missing-frame-'+i+'.png'),overlays:{'arms-left':Array.from({length:48},(_,i)=>'missing-arm-'+i+'.png')}}}};
      spinManifestPromise=Promise.resolve(spinManifest);
+     spinAssetPath=relative=>'./assets/cyberware-spin/'+relative;
      spinEnabled=true;spinFrame=0;render();
      const img=document.getElementById('spinBase');
      const firstError=img.onerror;
