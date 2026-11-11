@@ -32,3 +32,10 @@ test('Cyberware Manager defaults to efficient 48-frame rotation and keeps 3D opt
  assert.ok(cyber.includes('id="toggleSpin" type="button" aria-pressed="true"'));
  assert.ok(cyber.includes("if(cyber3dEnabled){spinEnabled=false;layerViewEnabled=false}else{spinEnabled=true}"));
 });
+
+test('Cyberware Manager recovers to image rotation if optional 3D initialization fails',()=>{
+ const cyber=fs.readFileSync('character-cyberware.html','utf8');
+ assert.ok(cyber.includes('function activateSpinFallback(host,message)'));
+ assert.ok(cyber.includes("activateSpinFallback(host,'3D unavailable — 48-frame image viewer active')"));
+ assert.ok(cyber.includes("activateSpinFallback(host,'3D renderer failed — 48-frame image viewer active')"));
+});
