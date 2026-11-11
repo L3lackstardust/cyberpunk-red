@@ -234,3 +234,16 @@ test('cyberleg renders only on the selected side across rotation',()=>{
  const both=ctx.window.REDAvatarRenderer.render({...base,frame:0,cyberleg:'both'});
  assert.match(both,/data-cyberleg-side="left"/);assert.match(both,/data-cyberleg-side="right"/);
 });
+
+test('cyberoptic lens geometry attenuates toward oblique angles',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ const base={build:'female-average',pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'none',cyberleg:'none',eyes:'both'};
+ const front=ctx.window.REDAvatarRenderer.render({...base,frame:0});
+ assert.match(front,/data-optic-visibility="1.000"/);
+ assert.match(front,/r="3.1"/);assert.match(front,/r="1.3"/);
+ const oblique=ctx.window.REDAvatarRenderer.render({...base,frame:4});
+ assert.match(oblique,/data-optic-side="left"/);assert.match(oblique,/data-optic-side="right"/);
+ assert.match(oblique,/data-optic-visibility="0\\.[0-9]{3}"/);
+ const rear=ctx.window.REDAvatarRenderer.render({...base,frame:24});
+ assert.doesNotMatch(rear,/data-optic-side=/);
+});
