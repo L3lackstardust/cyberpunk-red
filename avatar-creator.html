@@ -71,5 +71,7 @@ $('save').onclick=()=>{try{localStorage.setItem(KEY,JSON.stringify(avatar));$('s
 $('reset').onclick=()=>{avatar={...defaults};controls();render();$('status').textContent='Appearance reset; save to keep changes'};
 $('export').onclick=()=>{const blob=new Blob([JSON.stringify({schema:1,kind:'red-avatar',avatar},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='red-avatar.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 $('import').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const data=JSON.parse(await file.text());if(data.kind!=='red-avatar'||data.schema!==1||!data.avatar)throw Error('Invalid avatar backup');avatar=sanitize(data.avatar);controls();render();$('status').textContent='Avatar imported — save to keep changes'}catch(err){$('status').textContent='Import failed: '+err.message}e.target.value=''};
-controls();render();
+controls();syncCyberwareOnLoad();render();
+function syncCyberwareOnLoad(){try{const raw=localStorage.getItem('cyberpunk-red-character-v1');if(!raw)return;const data=JSON.parse(raw),inst=Array.isArray(data.installInstances)?data.installInstances:[];const arms=inst.filter(x=>x?.itemId==='arm').map(x=>String(x.side||'both').toLowerCase());const left=arms.includes('left')||arms.includes('both'),right=arms.includes('right')||arms.includes('both');avatar.cyberarm=left&&right?'both':left?'left':right?'right':'none';avatar.eyes=inst.some(x=>x?.itemId==='optic');controls()}catch(e){console.warn('Character cyberware sync skipped',e)}}
+window.addEventListener('storage',e=>{if(e.key==='cyberpunk-red-character-v1'){syncCyberwareOnLoad();render()}});
 </script></body></html>
