@@ -10,9 +10,15 @@ function renderAvatarSvg(avatar,portrait=false){
  let s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="'+(portrait?'60 0 140 210':'0 0 260 480')+'" role="img" aria-label="Custom cyberpunk character '+avatar.pose+' pose"><defs><linearGradient id="fabric" x2="1" y2="1"><stop stop-color="#566977"/><stop offset=".5" stop-color="#263843"/><stop offset="1" stop-color="#121d29"/></linearGradient><linearGradient id="chrome" x2="1" y2="1"><stop stop-color="#c4e4ec"/><stop offset=".5" stop-color="#6d8796"/><stop offset="1" stop-color="#263a48"/></linearGradient></defs>';
  const detail=(x,y,w,h,fill)=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="3" fill="'+fill+'"/>';
  s+='<ellipse cx="130" cy="455" rx="'+(40*depth*width)+'" ry="6" fill="#061017"/>';
- for(const sign of [-1,1]){const hip=sx(130+sign*20*hipScale),knee=sx(130+sign*(avatar.pose==='confident'?29:24)),foot=sx(130+sign*28);s+=line(hip,244,knee,347,'#2c3b46',24*depth*width*proportions.leg)+line(knee,347,foot,435,'#25343e',21*depth*width*proportions.leg)+line(hip,267,knee,327,'#6e8590',2)+line(knee,362,foot,422,'#6e8590',2);s+=path('M'+(foot-11)+' 431L'+(foot+13)+' 431L'+(foot+16)+' 449L'+(foot-14)+' 449Z','#111c26');s+=line(knee,346,foot,434,'#101c28',2);s+=detail(knee-7,336,14,7,'#4c6976');s+=line(foot-10,443,foot+13,443,'#607987',2)}
+ for(const sign of [-1,1]){const hip=sx(130+sign*20*hipScale),knee=sx(130+sign*(avatar.pose==='confident'?29:24)),foot=sx(130+sign*28);s+=line(hip,244,knee,347,'#2c3b46',24*depth*width*proportions.leg)+line(knee,347,foot,435,'#25343e',21*depth*width*proportions.leg)+line(hip,267,knee,327,'#6e8590',2)+line(knee,362,foot,422,'#6e8590',2);s+=path('M'+(foot-11)+' 431L'+(foot+13)+' 431L'+(foot+16)+' 449L'+(foot-14)+' 449Z','#111c26');s+=line(knee,346,foot,434,'#101c28',2);s+=detail(knee-7,336,14,7,'#4c6976');s+=path('M'+(knee-9)+' 346Q'+knee+' 355 '+(knee+9)+' 346','none','#8fa5af',1.5);s+=line(foot-10,443,foot+13,443,'#607987',2)}
  s+=path('M'+sx(130-31*shoulderScale)+' 104Q130 88 '+sx(130+31*shoulderScale)+' 104L'+sx(130+25*proportions.waist)+' 231Q130 249 '+sx(130-25*proportions.waist)+' 231Z',avatar.outfit==='corporate'?'#202d3c':'url(#fabric)');
  s+=path('M'+sx(109)+' 221Q130 234 '+sx(151)+' 221L'+sx(149)+' 249Q130 255 '+sx(111)+' 249Z','#1b2935','#708795',1);
+ // Collarbone, torso seams, and waist segmentation track the selected body proportions.
+ const collarY=114,collarL=sx(130-22*shoulderScale),collarR=sx(130+22*shoulderScale);
+ s+=path('M'+collarL+' '+collarY+'Q130 127 '+collarR+' '+collarY,'none','#8195a0',1.5);
+ s+=line(sx(130-20*proportions.waist),174,sx(130-17*proportions.waist),211,'#617987',1.5);
+ s+=line(sx(130+20*proportions.waist),174,sx(130+17*proportions.waist),211,'#617987',1.5);
+ s+=path('M'+sx(130-19*proportions.waist)+' 211Q130 218 '+sx(130+19*proportions.waist)+' 211','none','#93a4ad',1.5);
  s+=line(sx(112),228,sx(148),228,'#9e5562',2);
  if(avatar.outfit==='combat')s+=path('M'+sx(111)+' 117L'+sx(149)+' 117L'+sx(151)+' 205L'+sx(109)+' 205Z','#394d57','#93aab4',3);
  if(avatar.outfit==='street'){s+=line(sx(112),124,sx(149),215,'#e24d61',3);s+=path('M'+sx(105)+' 111L'+sx(122)+' 145L'+sx(115)+' 164L'+sx(103)+' 130Z','#1b2b36','#7795a0',1);s+=detail(sx(116),184,11,16,'#263d49')}
