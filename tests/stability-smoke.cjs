@@ -157,10 +157,12 @@ const {setTimeout:delay}=require('node:timers/promises');
     const control=viewer.locator('#spinView');
     await control.waitFor({state:'attached'});
     assert.equal(await control.getAttribute('aria-valuenow'),'0');
-    await control.evaluate(el=>el.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true})));
-
+    await control.focus();
+    await viewer.keyboard.press('ArrowLeft');
+    await viewer.waitForFunction(()=>document.getElementById('spinView')?.getAttribute('aria-valuenow')==='47');
     assert.equal(await control.getAttribute('aria-valuenow'),'47');
-    await control.evaluate(el=>el.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true})));
+    await viewer.keyboard.press('ArrowRight');
+    await viewer.waitForFunction(()=>document.getElementById('spinView')?.getAttribute('aria-valuenow')==='0');
     assert.equal(await control.getAttribute('aria-valuenow'),'0');
     assert.match(await viewer.locator('#spinIndex').innerText(),/FRAME 1\/48/);
    }finally{await viewer.close()}
