@@ -23,7 +23,15 @@
   if(!BUILDS.includes(build)||!POSES.includes(pose)||!Number.isInteger(angle)||angle<0||angle>=48)return null;
   return manifest?.frames?.[key(build,pose,angle)]||null;
  }
- const api=Object.freeze({BUILDS,POSES,ANGLES,requiredLayers,key,validate,frame,normalizeAngle,nextAngle});
+
+ // Artwork paths are repository-relative and cannot reference remote hosts or traversal.
+ const safePath=value=>typeof value==='string'&&/^assets\/avatar-art\/[a-z0-9_./-]+\.(?:webp|png|svg)$/i.test(value)&&!value.includes('..')?value:null;
+ const resolveBase=(manifest,build,pose,angle)=>safePath(frame(manifest,build,pose,normalizeAngle(angle))?.base);
+ const resolvePortrait=(manifest,build,pose,angle)=>{
+  const item=frame(manifest,build,pose,normalizeAngle(angle));
+  return safePath(item?.portrait)||safePath(item?.base);
+ };
+ const api=Object.freeze({BUILDS,POSES,ANGLES,requiredLayers,key,validate,frame,normalizeAngle,nextAngle,safePath,resolveBase,resolvePortrait});
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  if(root)root.REDAvatarTurnaround=api;
 })(typeof window!=='undefined'?window:null);
