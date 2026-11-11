@@ -80,3 +80,10 @@ test('Legacy installs without side metadata remain visible bilaterally',()=>{
  vm.runInNewContext(script.slice(start,end)+';syncCyberwareFromCharacter(input);',ctx);
  assert.equal(ctx.avatar.cyberarm,'both');assert.equal(ctx.avatar.cyberleg,'both');assert.equal(ctx.avatar.eyes,'both');
 });
+
+test('Cyberware Manager offers the six Avatar Studio body builds and uses the selected build',()=>{
+ const cyber=fs.readFileSync('character-cyberware.html','utf8');
+ for(const value of ['value="avatar"','value="female-slim"','value="female-average"','value="female-athletic"','value="male-slim"','value="male-average"','value="male-athletic"'])assert.ok(cyber.includes(value),value);
+ assert.ok(cyber.includes('build:selectedBuild'));
+ assert.ok(cyber.includes('function avatarBuildWidth(build)'));
+});
