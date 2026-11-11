@@ -44,3 +44,9 @@ test('Cyberware Manager refreshes the avatar preview after Avatar Studio saves i
  const cyber=fs.readFileSync('character-cyberware.html','utf8');
  assert.ok(cyber.includes("if(e.key==='cyberpunk-red-avatar-v1'){if(spinEnabled)render()}"));
 });
+
+test('Cyberware anatomy markers compare stored left/right sides case-insensitively',()=>{
+ const cyber=fs.readFileSync('character-cyberware.html','utf8');
+ assert.ok(cyber.includes('String(state.installSideByIndex[i]).toLowerCase()===side.toLowerCase()'));
+ assert.ok(cyber.includes('String(x.side).toLowerCase()===side.toLowerCase()'));
+});
