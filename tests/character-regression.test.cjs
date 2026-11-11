@@ -273,3 +273,14 @@ test('cyberlimb mechanical inset seams only appear on installed limbs',()=>{
  assert.match(augmented,/#122c3a/);assert.match(augmented,/#162d3b/);
  assert.match(augmented,/data-cyberarm-side="right"/);assert.match(augmented,/data-cyberleg-side="left"/);
 });
+
+test('cyberlimb outer plate contours scale with rotation depth',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ const base={build:'male-athletic',pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',eyes:false,cyberarm:'left',cyberleg:'right'};
+ const front=ctx.window.REDAvatarRenderer.render({...base,frame:0});
+ const profile=ctx.window.REDAvatarRenderer.render({...base,frame:12});
+ assert.match(front,/#d7eff5/);assert.match(front,/#d4edf3/);
+ assert.match(profile,/#d7eff5/);assert.match(profile,/#d4edf3/);
+ assert.notEqual(front,profile);
+ for(const svg of [front,profile])assert.ok(!/NaN|undefined|Infinity/.test(svg));
+});
