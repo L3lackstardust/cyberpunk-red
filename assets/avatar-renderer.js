@@ -78,8 +78,18 @@ function renderAvatarSvg(avatar,portrait=false){
  if(front>.12){s+=line(sx(112),45,sx(125),45,'#4a3430',2)+line(sx(135),45,sx(148),45,'#4a3430',2);s+=line(130,53,128,63,'#6e4b3e',1);s+='<ellipse cx="'+sx(119)+'" cy="51" rx="3.5" ry="2.5" fill="'+eye+'"/><ellipse cx="'+sx(141)+'" cy="51" rx="3.5" ry="2.5" fill="'+eye+'"/>'+line(sx(122),69,sx(138),69,'#4d3230',2)}
  // Cyberoptic glow is confined to the visible face and tracks viewing direction.
  if(avatar.eyes&&front>.12){
-  const opticX=sx(130+(Math.sin(a)>=0?11:-11));
-  s+='<g data-cyberoptic="visible"><circle cx="'+opticX+'" cy="51" r="5.5" fill="none" stroke="#ff526d" stroke-width="1.5"/></g>';
+  // A single optic remains on its anatomical side as the head turns.
+  // Legacy boolean true uses the right optic; explicit 'both' adds bilateral implants.
+  const installed=avatar.eyes===true?'right':avatar.eyes;
+  for(const opticSide of ['left','right']){
+   if(installed!=='both'&&installed!==opticSide)continue;
+   const lateral=opticSide==='left'?-1:1;
+   const visibility=Math.max(0,front+lateral*Math.sin(a)*.65);
+   if(visibility<=.12&&installed==='both')continue;
+   const opticX=sx(130+lateral*11*head*depth+Math.sin(a)*4);
+   const glow=opticSide==='left'?'#64d8ff':'#ff526d';
+   s+='<g data-cyberoptic="visible" data-optic-side="'+opticSide+'"><circle cx="'+opticX+'" cy="51" r="5.5" fill="none" stroke="'+glow+'" stroke-width="1.5"/></g>';
+  }
  }
  if(back>.4)s+=line(130,118,130,211,'#718e9a',3);
  s+='</svg>';return s;
