@@ -39,6 +39,9 @@ function syncCyberware(){
   const arms=instances.filter(x=>x&&x.itemId==='arm').map(x=>String(x.side||'both').toLowerCase());
   const left=arms.some(s=>s==='left'||s==='both'),right=arms.some(s=>s==='right'||s==='both');
   avatar.cyberarm=left&&right?'both':left?'left':right?'right':'none';
+  const legs=instances.filter(x=>x&&x.itemId==='leg').map(x=>String(x.side||'both').toLowerCase());
+  const leftLeg=legs.some(s=>s==='left'||s==='both'),rightLeg=legs.some(s=>s==='right'||s==='both');
+  avatar.cyberleg=leftLeg&&rightLeg?'both':leftLeg?'left':rightLeg?'right':'none';
   const optics=instances.filter(x=>x&&x.itemId==='optic').map(x=>String(x.side||'right').toLowerCase());
   const opticLeft=optics.includes('left')||optics.includes('both'),opticRight=optics.includes('right')||optics.includes('both');
   avatar.eyes=opticLeft&&opticRight?'both':opticLeft?'left':opticRight?'right':false;
