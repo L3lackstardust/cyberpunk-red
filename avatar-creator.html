@@ -24,16 +24,16 @@ function controls(){
  const entries=[['build','Base body · 3 female / 3 male'],['face','Face'],['hair','Hair'],['outfit','Clothing'],['pose','Personality pose'],['cyberarm','Cyberarms']];
  let html=entries.map(([key,title])=>'<div class="field"><label>'+title+'</label><div class="choices">'+schema[key].map(v=>'<button type="button" data-key="'+key+'" data-value="'+v+'" aria-pressed="'+(avatar[key]===v)+'">'+v.charAt(0).toUpperCase()+v.slice(1)+'</button>').join('')+'</div></div>').join('');
  for(const [key,title,colors] of [['skin','Skin tone',skinColors],['hairColor','Hair color',hairColors]])html+='<div class="field"><label>'+title+'</label><div class="choices">'+colors.map(color=>'<button class="swatch" data-key="'+key+'" data-value="'+color+'" aria-label="'+title+' '+color+'" aria-pressed="'+(avatar[key]===color)+'"><i style="background:'+color+'"></i></button>').join('')+'</div></div>';
- html+='<div class="field"><button data-key="eyes" data-value="toggle" aria-pressed="'+avatar.eyes+'">Cyberoptic glow '+(avatar.eyes?'ON':'OFF')+'</button></div>';
+ html+='<div class="field"><button id="syncCyberware" type="button">Sync installed cyberware</button><p class="note">Read cyberarms and cyberoptics from your saved Cyberware Manager character. Your other appearance choices stay unchanged.</p></div>';html+='<div class="field"><button data-key="eyes" data-value="toggle" aria-pressed="'+avatar.eyes+'">Cyberoptic glow '+(avatar.eyes?'ON':'OFF')+'</button></div>';
  $('controls').innerHTML=html;
- $('controls').querySelectorAll('button[data-key]').forEach(b=>b.addEventListener('click',()=>{const key=b.dataset.key;avatar[key]=key==='eyes'?!avatar.eyes:b.dataset.value;controls();render()}));
+ $('controls').querySelectorAll('button[data-key]').forEach(b=>b.addEventListener('click',()=>{const key=b.dataset.key;avatar[key]=key==='eyes'?!avatar.eyes:b.dataset.value;controls();render()}));$('syncCyberware').addEventListener('click',syncCyberware);
 }
 function figure(portrait=false){
  const a=portrait?0:avatar.frame*Math.PI/24,front=Math.cos(a),depth=Math.max(.15,Math.abs(front)),back=Math.max(0,-front),width={'female-slim':.79,'female-average':.89,'female-athletic':1.01,'male-slim':.88,'male-average':1.04,'male-athletic':1.17}[avatar.build],head={standard:1,angular:.91,round:1.12}[avatar.face];
  const female=avatar.build.startsWith('female-'),shoulderScale=female?.88:1.07,hipScale=female?1.14:.94;const sx=x=>130+(x-130)*depth*width,eye=avatar.eyes?'#ff526d':'#8fe2ec',skin=avatar.skin,arm=(side)=>avatar.cyberarm==='both'||avatar.cyberarm===side;
  const path=(d,fill,stroke='#63818e',sw=2)=>'<path d="'+d+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+sw+'" stroke-linejoin="round"/>';
  const line=(x,y,x2,y2,color,weight)=>'<path d="M'+x+' '+y+'L'+x2+' '+y2+'" stroke="'+color+'" stroke-width="'+weight+'" stroke-linecap="round"/>';
- const pose={neutral:[0,0],confident:[-8,8],guarded:[12,-10],relaxed:[-15,-12]}[avatar.pose];
+ const pose={neutral:[0,0],confident:[-17,-25],guarded:[-25,-40],relaxed:[13,17]}[avatar.pose];
  let s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="'+(portrait?'60 0 140 210':'0 0 260 480')+'" role="img" aria-label="Custom cyberpunk character '+avatar.pose+' pose"><defs><linearGradient id="fabric" x2="1" y2="1"><stop stop-color="#566977"/><stop offset=".5" stop-color="#263843"/><stop offset="1" stop-color="#121d29"/></linearGradient><linearGradient id="chrome" x2="1" y2="1"><stop stop-color="#c4e4ec"/><stop offset=".5" stop-color="#6d8796"/><stop offset="1" stop-color="#263a48"/></linearGradient></defs>';
  s+='<ellipse cx="130" cy="455" rx="'+(40*depth*width)+'" ry="6" fill="#061017"/>';
  for(const sign of [-1,1]){const hip=sx(130+sign*20*hipScale),knee=sx(130+sign*(avatar.pose==='confident'?29:24)),foot=sx(130+sign*28);s+=line(hip,244,knee,347,'#2c3b46',24*depth*width)+line(knee,347,foot,435,'#25343e',21*depth*width)+line(hip,267,knee,327,'#6e8590',2)+line(knee,362,foot,422,'#6e8590',2);s+=path('M'+(foot-11)+' 431L'+(foot+13)+' 431L'+(foot+16)+' 449L'+(foot-14)+' 449Z','#111c26')}
@@ -50,6 +50,20 @@ function figure(portrait=false){
  s+='</svg>';return s;
 }
 function render(){$('body').innerHTML=figure();$('portrait').innerHTML=figure(true);$('frame').textContent='FRAME '+String(avatar.frame+1).padStart(2,'0')+' / 48';$('viewer').setAttribute('aria-valuenow',avatar.frame);$('angle').value=avatar.frame}
+function syncCyberware(){
+ try{
+  const raw=localStorage.getItem('cyberpunk-red-character-v1');
+  if(!raw){$('status').textContent='No saved Cyberware Manager character found';return}
+  const character=JSON.parse(raw);
+  const instances=Array.isArray(character.installInstances)?character.installInstances:[];
+  const arms=instances.filter(x=>x&&x.itemId==='arm').map(x=>String(x.side||'both').toLowerCase());
+  const left=arms.some(s=>s==='left'||s==='both'),right=arms.some(s=>s==='right'||s==='both');
+  avatar.cyberarm=left&&right?'both':left?'left':right?'right':'none';
+  avatar.eyes=instances.some(x=>x&&x.itemId==='optic');
+  controls();render();
+  $('status').textContent='Cyberware synced from saved character — save avatar to keep changes';
+ }catch(e){$('status').textContent='Could not read character cyberware'}
+}
 function rotate(delta){avatar.frame=(avatar.frame+delta+48)%48;render()}
 $('left').onclick=()=>rotate(-1);$('right').onclick=()=>rotate(1);$('angle').oninput=e=>{avatar.frame=Number(e.target.value);render()};$('viewer').onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();rotate(e.key==='ArrowRight'?1:-1)}};
 let drag=null;$('viewer').addEventListener('pointerdown',e=>{drag={x:e.clientX,frame:avatar.frame};$('viewer').setPointerCapture(e.pointerId)});$('viewer').addEventListener('pointermove',e=>{if(!drag)return;avatar.frame=((drag.frame+Math.round((e.clientX-drag.x)/9))%48+48)%48;render()});for(const type of ['pointerup','pointercancel'])$('viewer').addEventListener(type,()=>drag=null);
