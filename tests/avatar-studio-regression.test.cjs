@@ -109,3 +109,11 @@ test('3D implant markers count and highlight left/right installations case-insen
  assert.ok(cyber.includes('String(inst.side).toLowerCase()===String(side).toLowerCase()'));
  assert.ok(cyber.includes('String(selectedAnatomicalSide).toLowerCase()===String(side).toLowerCase()'));
 });
+
+test('Shared model renderer includes layered facial and torso lighting',()=>{
+ const renderer=fs.readFileSync('assets/avatar-renderer.js','utf8');
+ assert.ok(renderer.includes('id="skinShade"'));
+ assert.ok(renderer.includes('id="faceLight"'));
+ assert.ok(renderer.includes("fill=\"url(#faceLight)\""));
+ assert.ok(renderer.includes("'url(#skinShade)'"));
+});
