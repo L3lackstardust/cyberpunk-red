@@ -333,3 +333,21 @@ test('combined arm and leg occlusion remains consistent across every build and f
   assert.ok(!/NaN|undefined|Infinity/.test(svg),build+' frame '+frame);
  }
 });
+
+test('six body silhouettes retain distinct shoulder and hip geometry across rotation',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ const builds=['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic'];
+ const base={pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',eyes:false,cyberarm:'none',cyberleg:'none'};
+ for(const frame of [0,6,12,18,24,30,36,42]){
+  const shoulderShapes=new Set(),hipRadii=new Set();
+  for(const build of builds){
+   const svg=ctx.window.REDAvatarRenderer.render({...base,build,frame});
+   const shoulder=svg.match(/<mask id="far-arm-torso-mask"[^>]*>[\\s\\S]*?<path d="([^"]+)"/);
+   const hip=svg.match(/<mask id="far-leg-hip-mask"[^>]*>[\\s\\S]*?<ellipse[^>]*rx="([^"]+)"/);
+   assert.ok(shoulder,build+' frame '+frame+' shoulder');assert.ok(hip,build+' frame '+frame+' hip');
+   shoulderShapes.add(shoulder[1]);hipRadii.add(hip[1]);
+  }
+  assert.equal(shoulderShapes.size,builds.length,'shoulder silhouettes frame '+frame);
+  assert.equal(hipRadii.size,builds.length,'hip silhouettes frame '+frame);
+ }
+});
