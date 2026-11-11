@@ -14,7 +14,9 @@
   for(const build of BUILDS)for(const pose of POSES)for(const angle of ANGLES){
    const entry=manifest.frames[key(build,pose,angle)];
    if(!entry){errors.push('Missing frame '+key(build,pose,angle));continue}
-   if(typeof entry.base!=='string'||!entry.base.trim())errors.push('Missing anatomy base '+key(build,pose,angle));
+   if(!safePath(entry.base))errors.push('Invalid anatomy base '+key(build,pose,angle));
+   if(entry.portrait&&!safePath(entry.portrait))errors.push('Invalid portrait '+key(build,pose,angle));
+   if(entry.layers&&typeof entry.layers==='object')for(const [name,path] of Object.entries(entry.layers))if(!requiredLayers.includes(name)||!safePath(path))errors.push('Invalid artwork layer '+name+' '+key(build,pose,angle));
    if(entry.layers&&typeof entry.layers!=='object')errors.push('Invalid layers '+key(build,pose,angle));
   }
   return {valid:errors.length===0,errors,expectedFrames:BUILDS.length*POSES.length*ANGLES.length};
