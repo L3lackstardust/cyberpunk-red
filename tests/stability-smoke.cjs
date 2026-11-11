@@ -237,6 +237,8 @@ const {setTimeout:delay}=require('node:timers/promises');
     await page.locator('[data-key="cyberarm"][data-value="left"]').click();
     if(await page.locator('#showImplants').getAttribute('aria-pressed')==='false')await page.locator('#showImplants').click();
     const svg=async()=>page.locator('#body svg').evaluate(el=>el.outerHTML);
+    await page.locator('[data-view="0"]').click();
+    assert.equal(await page.locator('#viewer').getAttribute('aria-valuenow'),'0');
     const front=await svg();
     await page.locator('#angle').evaluate(el=>{el.value='24';el.dispatchEvent(new Event('input',{bubbles:true}))});
     const rear=await svg();
