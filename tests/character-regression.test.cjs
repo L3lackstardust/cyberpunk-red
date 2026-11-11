@@ -176,3 +176,20 @@ test('profile occlusion state is consistent across all six body builds and 48 fr
   assert.ok(!/NaN|undefined|Infinity/.test(svg));
  }
 });
+
+test('six-body cardinal snapshots remain deterministic across poses and implant variants',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ const builds=['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic'];
+ const crypto=require('node:crypto');
+ const signatures=new Set();
+ for(const build of builds)for(const frame of [0,12,24,36])for(const cyberarm of ['none','left','right','both']){
+  const avatar={build,frame,pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm,eyes:true};
+  const svg=ctx.window.REDAvatarRenderer.render(avatar);
+  assert.equal(svg,ctx.window.REDAvatarRenderer.render(avatar));
+  assert.ok(!/NaN|undefined|Infinity/.test(svg));
+  const hash=crypto.createHash('sha256').update(svg).digest('hex');
+  signatures.add(hash);
+  assert.equal(svg,ctx.window.REDAvatarRenderer.render({...avatar,frame:frame+48}));
+ }
+ assert.ok(signatures.size>=72,'cardinal snapshots should preserve body, view and cyberware differences');
+});

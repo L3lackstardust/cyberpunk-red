@@ -1,18 +1,18 @@
 # Cyberpunk RED — Milestones 20–119
 
-Status: planned, not implemented. Each milestone requires code, appropriate automated tests, and verification before completion.
+Status: tracked incrementally. Checkboxes indicate verified implementation; incomplete or partial work remains unchecked. Each milestone requires code, appropriate automated tests, and verification before completion.
 
 Principles: original art only; six base bodies; shared Avatar Studio/Cyberware renderer; 48-frame viewer with fallback; non-destructive customization; private/local GM data stays off public Pages.
 
 ## Avatar anatomical fidelity
-- [ ] 20. shoulder contours
-- [ ] 21. elbow joints
-- [ ] 22. hand silhouettes
-- [ ] 23. neck proportions
-- [ ] 24. torso depth
-- [ ] 25. hip transitions
-- [ ] 26. knee joints
-- [ ] 27. boot anatomy
+- [x] 20. shoulder contours
+- [x] 21. elbow joints
+- [x] 22. hand silhouettes
+- [x] 23. neck proportions
+- [x] 24. torso depth
+- [x] 25. hip transitions
+- [x] 26. knee joints
+- [x] 27. boot anatomy
 - [ ] 28. face profile cleanup
 - [ ] 29. six-body visual snapshot audit
 
@@ -24,14 +24,14 @@ Principles: original art only; six base bodies; shared Avatar Studio/Cyberware r
 - [ ] 34. far-side arm layering
 - [ ] 35. profile head placement
 - [ ] 36. pose rotation continuity
-- [ ] 37. frame wrap continuity
+- [x] 37. frame wrap continuity
 - [ ] 38. drag sensitivity tuning
-- [ ] 39. 48-frame rotation regression
+- [x] 39. 48-frame rotation regression
 
 ## Cyberware rendering
-- [ ] 40. left arm component anchors
-- [ ] 41. right arm component anchors
-- [ ] 42. bilateral plating
+- [x] 40. left arm component anchors
+- [x] 41. right arm component anchors
+- [x] 42. bilateral plating
 - [ ] 43. optic location mapping
 - [ ] 44. optic side distinction
 - [ ] 45. cyberware color differentiation
