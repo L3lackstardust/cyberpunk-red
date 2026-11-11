@@ -243,7 +243,7 @@ test('cyberoptic lens geometry attenuates toward oblique angles',()=>{
  assert.match(front,/r="3.1"/);assert.match(front,/r="1.3"/);
  const oblique=ctx.window.REDAvatarRenderer.render({...base,frame:4});
  assert.match(oblique,/data-optic-side="left"/);assert.match(oblique,/data-optic-side="right"/);
- assert.match(oblique,/data-optic-visibility="0\\.[0-9]{3}"/);
+ assert.match(oblique,/data-optic-visibility="0\.[0-9]{3}"/);
  const rear=ctx.window.REDAvatarRenderer.render({...base,frame:24});
  assert.doesNotMatch(rear,/data-optic-side=/);
 });
