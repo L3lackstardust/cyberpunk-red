@@ -10,3 +10,7 @@ test('mismatched character blocks production',()=>assert.equal(gate.validate({..
 test('candidate status blocks production',()=>assert.equal(gate.validate({...manifest,status:'candidate_requires_visual_approval'}).ok,false));
 test('wrong background blocks production',()=>assert.equal(gate.validate({...manifest,background:'street'}).ok,false));
 test('frame lookup exact angle',()=>assert.equal(gate.frame(manifest,90).angle,90));
+
+test('UI-sized images are acceptable for a character pane',()=>assert.equal(gate.validate({...manifest,frames:frames.map(f=>({...f,dimensions:[256,640]}))}).ok,true));
+test('unsafe asset paths are rejected',()=>assert.equal(gate.validate({...manifest,frames:[{...frames[0],image:'../unsafe.webp'},...frames.slice(1)]}).ok,false));
+test('missing physical file fails closed',()=>assert.equal(gate.validate(manifest,p=>p!=='00_front.webp').ok,false));
