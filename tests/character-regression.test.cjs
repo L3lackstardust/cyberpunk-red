@@ -164,3 +164,15 @@ test('far-side arm is attenuated in profile while both arms remain fully visible
  assert.match(profile,/data-arm-depth="far" opacity="0.620"/);
  assert.match(profile,/data-arm-depth="near" opacity="1"/);
 });
+
+test('profile occlusion state is consistent across all six body builds and 48 frames',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ const builds=['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic'];
+ for(const build of builds)for(let frame=0;frame<48;frame++){
+  const svg=ctx.window.REDAvatarRenderer.render({build,frame,pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'both',eyes:true});
+  assert.equal((svg.match(/data-occlusion-mode=/g)||[]).length,2,build+' '+frame);
+  const expected=Math.abs(Math.sin(frame*Math.PI/24))>.5;
+  assert.equal(svg.includes('data-occlusion-mode="profile-far"'),expected,build+' '+frame);
+  assert.ok(!/NaN|undefined|Infinity/.test(svg));
+ }
+});
