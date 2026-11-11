@@ -51,7 +51,11 @@ function renderAvatarSvg(avatar,portrait=false){
  s+=line(130,89,130,104,skin,16*depth);
  const faceWidth=26*depth*head+4,cheek=avatar.face==='round'?1.12:avatar.face==='angular'?.82:1;
  s+=path('M'+(130-faceWidth*.78)+' 30Q130 13 '+(130+faceWidth*.78)+' 30Q'+(130+faceWidth*cheek)+' 58 '+(130+faceWidth*.57)+' 77Q130 '+(avatar.face==='angular'?98:91)+' '+(130-faceWidth*.57)+' 77Q'+(130-faceWidth*cheek)+' 58 '+(130-faceWidth*.78)+' 30Z',skin,'#b8a19a',1.5);
- s+='<ellipse cx="130" cy="55" rx="'+(faceWidth*1.02)+'" ry="36" fill="url(#faceLight)" pointer-events="none"/>';s+=line(sx(112),74,sx(121),80,'#815e50',1)+line(sx(139),80,sx(148),74,'#815e50',1);
+ // The rear head is a separate silhouette: face shading and facial landmarks
+ // must never appear on the back of a rotating character.
+ if(back>.18){s+=path('M'+(130-faceWidth*.74)+' 32Q130 19 '+(130+faceWidth*.74)+' 32Q'+(130+faceWidth*.86)+' 63 '+(130+faceWidth*.48)+' 79Q130 88 '+(130-faceWidth*.48)+' 79Q'+(130-faceWidth*.86)+' 63 '+(130-faceWidth*.74)+' 32Z','url(#skinShade)','none',0);s+=path('M'+(130-faceWidth*.4)+' 77Q130 83 '+(130+faceWidth*.4)+' 77','none','#8e6f61',1)}
+
+ if(front>0){s+='<ellipse cx="130" cy="55" rx="'+(faceWidth*1.02)+'" ry="36" fill="url(#faceLight)" pointer-events="none"/>';s+=line(sx(112),74,sx(121),80,'#815e50',1)+line(sx(139),80,sx(148),74,'#815e50',1);}
  // Profile features shift toward the viewing direction and fade at front/rear angles.
  const side=Math.sin(a),profile=Math.max(0,1-Math.abs(front)*2);
  if(profile>.01){
