@@ -247,3 +247,19 @@ test('cyberoptic lens geometry attenuates toward oblique angles',()=>{
  const rear=ctx.window.REDAvatarRenderer.render({...base,frame:24});
  assert.doesNotMatch(rear,/data-optic-side=/);
 });
+
+test('all body builds preserve cyberware placements through all 48 frames',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ const builds=['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic'];
+ for(const build of builds)for(let frame=0;frame<48;frame++){
+  const base={build,frame,pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a'};
+  const svg=ctx.window.REDAvatarRenderer.render({...base,cyberarm:'left',cyberleg:'right',eyes:'both'});
+  assert.match(svg,/data-cyberarm-side="left"/);
+  assert.doesNotMatch(svg,/data-cyberarm-side="right"/);
+  assert.match(svg,/data-cyberleg-side="right"/);
+  assert.doesNotMatch(svg,/data-cyberleg-side="left"/);
+  assert.ok(!/NaN|undefined|Infinity/.test(svg),build+' frame '+frame);
+  assert.equal(svg,ctx.window.REDAvatarRenderer.render({...base,cyberarm:'left',cyberleg:'right',eyes:'both'}));
+  assert.equal(svg,ctx.window.REDAvatarRenderer.render({...base,frame:frame+48,cyberarm:'left',cyberleg:'right',eyes:'both'}));
+ }
+});
