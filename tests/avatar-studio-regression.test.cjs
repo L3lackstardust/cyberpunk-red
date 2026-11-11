@@ -73,3 +73,10 @@ test('Avatar Studio exposes explicit none, left, right, and bilateral cyberoptic
  for(const side of ["'none'","'left'","'right'","'both'"])assert.ok(script.includes(side));
  assert.ok(script.includes("b.dataset.value==='none'?false:b.dataset.value"));
 });
+
+test('Legacy installs without side metadata remain visible bilaterally',()=>{
+ const start=script.indexOf('function installedInstances('),end=script.indexOf('function syncCyberware(){',start);
+ const ctx={avatar:{cyberarm:'none',cyberleg:'none',eyes:false},input:{installed:['arm','leg','optic']}};
+ vm.runInNewContext(script.slice(start,end)+';syncCyberwareFromCharacter(input);',ctx);
+ assert.equal(ctx.avatar.cyberarm,'both');assert.equal(ctx.avatar.cyberleg,'both');assert.equal(ctx.avatar.eyes,'both');
+});
