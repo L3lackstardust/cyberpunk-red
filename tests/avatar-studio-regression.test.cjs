@@ -39,3 +39,8 @@ test('Cyberware Manager recovers to image rotation if optional 3D initialization
  assert.ok(cyber.includes("activateSpinFallback(host,'3D unavailable — 48-frame image viewer active')"));
  assert.ok(cyber.includes("activateSpinFallback(host,'3D renderer failed — 48-frame image viewer active')"));
 });
+
+test('Cyberware Manager refreshes the avatar preview after Avatar Studio saves in another tab',()=>{
+ const cyber=fs.readFileSync('character-cyberware.html','utf8');
+ assert.ok(cyber.includes("if(e.key==='cyberpunk-red-avatar-v1'){if(spinEnabled)render()}"));
+});
