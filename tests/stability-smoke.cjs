@@ -316,7 +316,7 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.equal(await page.locator('#portrait svg').count(),1);
     await page.locator('#save').click();
     const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('cyberpunk-red-avatar-v1')));
-    assert.equal(saved.build,'female-athletic');assert.equal(saved.pose,'confident');assert.equal(saved.cyberarm,'right');assert.equal(saved.eyes,true);
+    assert.equal(saved.build,'female-athletic');assert.equal(saved.pose,'confident');assert.equal(saved.cyberarm,'right');assert.equal(saved.eyes,'both');
     await page.reload({waitUntil:'domcontentloaded'});
     assert.equal(await page.locator('[data-key="cyberarm"][data-value="right"]').getAttribute('aria-pressed'),'true');
     await page.evaluate(()=>localStorage.setItem('cyberpunk-red-character-v1',JSON.stringify({installInstances:[{itemId:'arm',side:'left'}]})));
