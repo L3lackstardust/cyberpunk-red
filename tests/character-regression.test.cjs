@@ -377,5 +377,7 @@ test('anatomical shoulder and hip contours remain valid across all builds and ro
   assert.equal((svg.match(/#a4b6be/g)||[]).length,2,build+' shoulder cap accents');
   assert.equal((svg.match(/#91a5af/g)||[]).length,2,build+' pelvis transitions');
   assert.ok(!/NaN|undefined|Infinity/.test(svg),build+' frame '+frame);
+  assert.match(svg,/data-cyberarm-side="left"/);assert.match(svg,/data-cyberarm-side="right"/);
+  assert.match(svg,/data-cyberleg-side="left"/);assert.match(svg,/data-cyberleg-side="right"/);
  }
 });
