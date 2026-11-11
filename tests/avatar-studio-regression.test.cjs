@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const studio=fs.readFileSync('avatar-creator.html','utf8');
-function inlineScript(){const marker='<script src="./assets/avatar-renderer.js"></script><script>';const start=studio.indexOf(marker);assert.ok(start>=0);const from=start+marker.length,end=studio.indexOf('</script>',from);assert.ok(end>from);return studio.slice(from,end)}
+function inlineScript(){const marker='<script src="./assets/avatar-turnaround.js"></script><script>';const start=studio.indexOf(marker);assert.ok(start>=0);const from=start+marker.length,end=studio.indexOf('</script>',from);assert.ok(end>from);return studio.slice(from,end)}
 const script=inlineScript();
 test('Avatar Studio inline JavaScript parses',()=>assert.doesNotThrow(()=>new vm.Script(script,{filename:'avatar-creator.js'})));
 test('Avatar Studio automatically persists appearance and rotation changes',()=>{
