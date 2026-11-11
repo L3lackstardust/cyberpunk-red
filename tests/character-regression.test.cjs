@@ -297,3 +297,17 @@ test('far arm uses torso occlusion mask at profile angles',()=>{
   assert.ok(groups.some(m=>m[2]==='near'&&!m[0].includes('mask="url(#far-arm-torso-mask)"')));
  }
 });
+
+test('hip mask follows far leg while near leg stays unmasked',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ const base={build:'female-athletic',pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',eyes:false,cyberarm:'none',cyberleg:'both'};
+ for(const frame of [6,12,18,30,36,42]){
+  const svg=ctx.window.REDAvatarRenderer.render({...base,frame});
+  assert.match(svg,/<mask id="far-leg-hip-mask"/);
+  const groups=[...svg.matchAll(/<g data-leg-depth="(near|far)" data-leg-side="(left|right)"[^>]*>/g)];
+  assert.equal(groups.length,2);
+  assert.ok(groups.some(m=>m[1]==='far'&&m[0].includes('mask="url(#far-leg-hip-mask)"')));
+  assert.ok(groups.some(m=>m[1]==='near'&&!m[0].includes('mask="url(#far-leg-hip-mask)"')));
+  assert.match(svg,/data-cyberleg-side="left"/);assert.match(svg,/data-cyberleg-side="right"/);
+ }
+});
