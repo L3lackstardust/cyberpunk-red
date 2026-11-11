@@ -321,6 +321,7 @@ const {setTimeout:delay}=require('node:timers/promises');
    const avatarContext=await browser.newContext();
    const page=await avatarContext.newPage();
    page.on('pageerror',e=>errors.push('avatar studio: '+e.message));
+   page.on('console',msg=>console.log('AVATAR PAGE:',msg.text()));
    try{
     await page.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'domcontentloaded'});
     await page.locator('[data-key="build"][data-value="female-athletic"]').click();
