@@ -117,3 +117,10 @@ test('Shared model renderer includes layered facial and torso lighting',()=>{
  assert.ok(renderer.includes("fill=\"url(#faceLight)\""));
  assert.ok(renderer.includes("'url(#skinShade)'"));
 });
+
+test('Avatar model geometry retains hand articulation, footwear and facial landmarks',()=>{
+ const renderer=fs.readFileSync('assets/avatar-renderer.js','utf8');
+ assert.ok(renderer.includes('finger<3'));
+ assert.ok(renderer.includes('foot-14*depth'));
+ assert.ok(renderer.includes("sx(124)+' 73Q130 77"));
+});
