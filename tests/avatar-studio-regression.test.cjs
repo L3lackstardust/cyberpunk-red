@@ -62,3 +62,8 @@ test('Selected implant side remains highlighted consistently between scan and la
  assert.ok(cyber.includes("String(selectedAnatomicalSide).toLowerCase()===side.toLowerCase()"));
  assert.ok(cyber.includes("String(selectedAnatomicalSide||'').toLowerCase()===String(side||'').toLowerCase()"));
 });
+
+test('3D anatomical picking preserves the selected implant side',()=>{
+ const cyber=fs.readFileSync('character-cyberware.html','utf8');
+ assert.ok(cyber.includes('state.selected=hit.object.userData.loc;selectedAnatomicalSide=hit.object.userData.side||null;render()'));
+});
