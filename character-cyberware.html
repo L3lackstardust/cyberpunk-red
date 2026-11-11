@@ -88,13 +88,15 @@ function savedAvatarForSpin(){
   const raw=localStorage.getItem('cyberpunk-red-avatar-v1');
   if(!raw||!window.REDAvatarRenderer)return null;
   const a=JSON.parse(raw);
-  if(!a||!['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic'].includes(a.build))return null;
+  if(!a||typeof a!=='object'||Array.isArray(a))return null;
+  const builds=['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic'];
+  const clean={...a,build:builds.includes(a.build)?a.build:'male-average',pose:['neutral','confident','guarded','relaxed'].includes(a.pose)?a.pose:'neutral',hair:['none','short','swept','mohawk'].includes(a.hair)?a.hair:'short',face:['standard','angular','round'].includes(a.face)?a.face:'standard',outfit:['street','combat','corporate'].includes(a.outfit)?a.outfit:'street',skin:['#e4b995','#c99170','#a9765d','#76513e','#513a31'].includes(a.skin)?a.skin:'#a9765d',hairColor:['#18222a','#684736','#e3c08b','#d14a56','#8d79b4'].includes(a.hairColor)?a.hairColor:'#18222a'};
   const installs=state.installInstances||[];
-  const selectedBuild=['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic'].includes(bodyPreset)?bodyPreset:a.build;
+  const selectedBuild=builds.includes(bodyPreset)?bodyPreset:clean.build;
   const arms=installs.filter(x=>x.itemId==='arm').map(x=>String(x.side||'both').toLowerCase());
   const left=arms.includes('left')||arms.includes('both'),right=arms.includes('right')||arms.includes('both');
   const legs=installs.filter(x=>x.itemId==='leg').map(x=>String(x.side||'both').toLowerCase());const leftLeg=legs.includes('left')||legs.includes('both'),rightLeg=legs.includes('right')||legs.includes('both');
-  return {...a,build:selectedBuild,cyberleg:leftLeg&&rightLeg?'both':leftLeg?'left':rightLeg?'right':'none',cyberarm:left&&right?'both':left?'left':right?'right':'none',eyes:(()=>{const optics=installs.filter(x=>x.itemId==='optic').map(x=>String(x.side||'right').toLowerCase());const left=optics.includes('left')||optics.includes('both'),right=optics.includes('right')||optics.includes('both');return left&&right?'both':left?'left':right?'right':false})(),frame:spinFrame};
+  return {...clean,build:selectedBuild,cyberleg:leftLeg&&rightLeg?'both':leftLeg?'left':rightLeg?'right':'none',cyberarm:left&&right?'both':left?'left':right?'right':'none',eyes:(()=>{const optics=installs.filter(x=>x.itemId==='optic').map(x=>String(x.side||'right').toLowerCase());const left=optics.includes('left')||optics.includes('both'),right=optics.includes('right')||optics.includes('both');return left&&right?'both':left?'left':right?'right':false})(),frame:spinFrame};
  }catch(e){return null}
 }
 function renderSpinViewer(){return '<div class="spin-view" id="spinView" role="slider" tabindex="0" aria-label="Character rotation" aria-valuemin="0" aria-valuemax="47" aria-valuenow="'+spinFrame+'"><img id="spinBase" alt="Rotating character frame"><div id="spinOverlays"></div><span class="spin-index" id="spinIndex">FRAME '+(spinFrame+1)+'/48</span><span class="spin-message" id="spinMessage">Preparing image sequence…</span></div>'}
