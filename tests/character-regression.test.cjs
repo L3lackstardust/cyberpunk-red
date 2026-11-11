@@ -93,3 +93,18 @@ test('cyberware storage failure displays a warning rather than silently losing e
  assert.match(cyber,/NOT SAVED — export a JSON backup now/);
  assert.match(cyber,/console\.error\('RED local save failed'/);
 });
+
+test('shared avatar renderer preserves anatomy geometry across six bodies and four cardinal views',()=>{
+ const src=fs.readFileSync('assets/avatar-renderer.js','utf8');
+ const ctx={window:{}};vm.runInNewContext(src,ctx);
+ for(const build of ['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic']){
+  for(const frame of [0,12,24,36]){
+   const svg=ctx.window.REDAvatarRenderer.render({build,frame,pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'left',eyes:false});
+   assert.match(svg,/viewBox="0 0 260 480"/);
+   assert.match(svg,/stroke="#977768"/);
+   assert.match(svg,/stroke="#536c79"/);
+   assert.match(svg,/stroke="#4c6876"/);
+   assert.ok(!/NaN|undefined/.test(svg),build+' frame '+frame+' contains invalid geometry');
+  }
+ }
+});
