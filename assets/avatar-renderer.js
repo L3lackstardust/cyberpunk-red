@@ -18,6 +18,7 @@ function renderAvatarSvg(avatar,portrait=false){
  const hipLeft=sx(130-23*hipScale),hipRight=sx(130+23*hipScale);
  s+=path('M'+hipLeft+' 246Q'+waistLeft+' 229 '+waistLeft+' 212','none','#536c79',2);
  s+=path('M'+hipRight+' 246Q'+waistRight+' 229 '+waistRight+' 212','none','#536c79',2);
+ s+=path('M'+hipLeft+' 246Q'+sx(130-28*hipScale)+' 254 '+sx(130-21*hipScale)+' 267','none','#91a5af',1.5);s+=path('M'+hipRight+' 246Q'+sx(130+28*hipScale)+' 254 '+sx(130+21*hipScale)+' 267','none','#91a5af',1.5);
  s+=path('M'+sx(130-31*shoulderScale)+' 104Q130 88 '+sx(130+31*shoulderScale)+' 104Q'+sx(130+27*proportions.waist)+' 165 '+sx(130+25*proportions.waist)+' 231Q130 249 '+sx(130-25*proportions.waist)+' 231Q'+sx(130-27*proportions.waist)+' 165 '+sx(130-31*shoulderScale)+' 104Z',avatar.outfit==='corporate'?'#202d3c':'url(#fabric)');
  s+=path('M'+sx(109)+' 221Q130 234 '+sx(151)+' 221L'+sx(149)+' 249Q130 255 '+sx(111)+' 249Z','#1b2935','#708795',1);
  // Collarbone, torso seams, and waist segmentation track the selected body proportions.
