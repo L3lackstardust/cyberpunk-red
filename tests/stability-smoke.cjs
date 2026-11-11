@@ -215,7 +215,7 @@ const {setTimeout:delay}=require('node:timers/promises');
    page.on('pageerror',e=>errors.push('avatar studio: '+e.message));
    try{
     await page.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'domcontentloaded'});
-    await page.locator('[data-key="build"][data-value="broad"]').click();
+    await page.locator('[data-key="build"][data-value="female-athletic"]').click();
     await page.locator('[data-key="pose"][data-value="confident"]').click();
     await page.locator('[data-key="cyberarm"][data-value="left"]').click();
     await page.locator('[data-key="eyes"]').click();
@@ -225,7 +225,7 @@ const {setTimeout:delay}=require('node:timers/promises');
     assert.equal(await page.locator('#body svg').count(),1);
     await page.locator('#save').click();
     const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('cyberpunk-red-avatar-v1')));
-    assert.equal(saved.build,'broad');assert.equal(saved.pose,'confident');assert.equal(saved.cyberarm,'left');assert.equal(saved.eyes,true);
+    assert.equal(saved.build,'female-athletic');assert.equal(saved.pose,'confident');assert.equal(saved.cyberarm,'left');assert.equal(saved.eyes,true);
     await page.reload({waitUntil:'domcontentloaded'});
     assert.equal(await page.locator('[data-key="pose"][data-value="confident"]').getAttribute('aria-pressed'),'true');
    }finally{await page.close()}
