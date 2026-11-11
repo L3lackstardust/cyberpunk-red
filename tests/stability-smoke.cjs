@@ -189,6 +189,7 @@ const {setTimeout:delay}=require('node:timers/promises');
     const rect=await control.boundingBox();
     await viewer.mouse.move(rect.x+40,rect.y+rect.height/2);await viewer.mouse.down();
     await viewer.mouse.move(rect.x+130,rect.y+rect.height/2,{steps:4});await viewer.mouse.up();
+    console.log('48-frame drag result:',await control.getAttribute('aria-valuenow'));
     await viewer.waitForFunction(()=>document.getElementById('spinView')?.getAttribute('aria-valuenow')==='10');
     assert.equal(await control.getAttribute('aria-valuenow'),'10');
     await viewer.locator('#toggleLayers').click();
