@@ -369,3 +369,15 @@ test('hip transition accents remain paired across body builds',()=>{
   assert.equal((svg.match(/#91a5af/g)||[]).length,2);
  }
 });
+
+test('anatomical shoulder and hip contours remain valid across all builds and rotation angles',()=>{
+ const ctx={window:{}};vm.runInNewContext(fs.readFileSync('assets/avatar-renderer.js','utf8'),ctx);
+ for(const build of ['female-slim','female-average','female-athletic','male-slim','male-average','male-athletic'])for(const frame of [0,6,12,18,24,30,36,42]){
+  const svg=ctx.window.REDAvatarRenderer.render({build,frame,pose:'neutral',face:'standard',hair:'short',outfit:'street',skin:'#a9765d',hairColor:'#18222a',eyes:false,cyberarm:'both',cyberleg:'both'});
+  assert.equal((svg.match(/#a4b6be/g)||[]).length,2,build+' shoulder cap accents');
+  assert.equal((svg.match(/#91a5af/g)||[]).length,2,build+' pelvis transitions');
+  assert.ok(!/NaN|undefined|Infinity/.test(svg),build+' frame '+frame);
+  assert.match(svg,/data-cyberarm-side="left"/);assert.match(svg,/data-cyberarm-side="right"/);
+  assert.match(svg,/data-cyberleg-side="left"/);assert.match(svg,/data-cyberleg-side="right"/);
+ }
+});
