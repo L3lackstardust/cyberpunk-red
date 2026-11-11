@@ -11,6 +11,11 @@ function renderAvatarSvg(avatar,portrait=false){
  const detail=(x,y,w,h,fill)=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="3" fill="'+fill+'"/>';
  s+='<ellipse cx="130" cy="455" rx="'+(40*depth*width)+'" ry="6" fill="#061017"/>';
  for(const sign of [-1,1]){const hip=sx(130+sign*20*hipScale),knee=sx(130+sign*(avatar.pose==='confident'?29:24)),foot=sx(130+sign*28);s+=line(hip,244,knee,347,'#2c3b46',24*depth*width*proportions.leg)+line(knee,347,foot,435,'#25343e',21*depth*width*proportions.leg)+line(hip,267,knee,327,'#6e8590',2)+line(knee,362,foot,422,'#6e8590',2);s+=path('M'+(foot-11)+' 431L'+(foot+13)+' 431L'+(foot+16)+' 449L'+(foot-14)+' 449Z','#111c26');s+=line(knee,346,foot,434,'#101c28',2);s+=detail(knee-7,336,14,7,'#4c6976');s+=path('M'+(knee-9)+' 346Q'+knee+' 355 '+(knee+9)+' 346','none','#8fa5af',1.5);s+=line(foot-10,443,foot+13,443,'#607987',2)}
+ // Garment contour follows the waist-to-hip transition rather than a fixed cylinder.
+ const waistLeft=sx(130-22*proportions.waist),waistRight=sx(130+22*proportions.waist);
+ const hipLeft=sx(130-23*hipScale),hipRight=sx(130+23*hipScale);
+ s+=path('M'+hipLeft+' 246Q'+waistLeft+' 229 '+waistLeft+' 212','none','#536c79',2);
+ s+=path('M'+hipRight+' 246Q'+waistRight+' 229 '+waistRight+' 212','none','#536c79',2);
  s+=path('M'+sx(130-31*shoulderScale)+' 104Q130 88 '+sx(130+31*shoulderScale)+' 104L'+sx(130+25*proportions.waist)+' 231Q130 249 '+sx(130-25*proportions.waist)+' 231Z',avatar.outfit==='corporate'?'#202d3c':'url(#fabric)');
  s+=path('M'+sx(109)+' 221Q130 234 '+sx(151)+' 221L'+sx(149)+' 249Q130 255 '+sx(111)+' 249Z','#1b2935','#708795',1);
  // Collarbone, torso seams, and waist segmentation track the selected body proportions.
@@ -19,6 +24,10 @@ function renderAvatarSvg(avatar,portrait=false){
  s+=line(sx(130-20*proportions.waist),174,sx(130-17*proportions.waist),211,'#617987',1.5);
  s+=line(sx(130+20*proportions.waist),174,sx(130+17*proportions.waist),211,'#617987',1.5);
  s+=path('M'+sx(130-19*proportions.waist)+' 211Q130 218 '+sx(130+19*proportions.waist)+' 211','none','#93a4ad',1.5);
+ // Central sternum and side panel lines distinguish broad and narrow torsos.
+ s+=line(130,132,130,184,'#536f7d',1.5);
+ s+=path('M'+sx(130-19*shoulderScale)+' 132Q'+sx(130-24*proportions.waist)+' 169 '+waistLeft+' 205','none','#4c6876',1.5);
+ s+=path('M'+sx(130+19*shoulderScale)+' 132Q'+sx(130+24*proportions.waist)+' 169 '+waistRight+' 205','none','#4c6876',1.5);
  s+=line(sx(112),228,sx(148),228,'#9e5562',2);
  if(avatar.outfit==='combat')s+=path('M'+sx(111)+' 117L'+sx(149)+' 117L'+sx(151)+' 205L'+sx(109)+' 205Z','#394d57','#93aab4',3);
  if(avatar.outfit==='street'){s+=line(sx(112),124,sx(149),215,'#e24d61',3);s+=path('M'+sx(105)+' 111L'+sx(122)+' 145L'+sx(115)+' 164L'+sx(103)+' 130Z','#1b2b36','#7795a0',1);s+=detail(sx(116),184,11,16,'#263d49')}
@@ -29,6 +38,10 @@ function renderAvatarSvg(avatar,portrait=false){
  s+=path('M'+(elbow-sign*7*depth)+' 188Q'+elbow+' 196 '+(elbow+sign*7*depth)+' 188','none',cyber?'#d4eaf0':'#9c776b',1.5);
  s+=path('M'+(wrist+sign*5*depth)+' 252L'+(wrist+sign*12*depth)+' 260L'+(wrist+sign*8*depth)+' 266','none',cyber?'#a6d1de':'#b68e7b',2);
  }
+ // Neck tapers into the shoulders and keeps its profile readable at oblique angles.
+ const neckRadius=(avatar.build.startsWith('male')?8.5:7)*depth*head;
+ s+=path('M'+(130-neckRadius)+' 86Q'+(130-neckRadius-2)+' 98 '+(130-neckRadius-6)+' 107','none','#977768',2);
+ s+=path('M'+(130+neckRadius)+' 86Q'+(130+neckRadius+2)+' 98 '+(130+neckRadius+6)+' 107','none','#977768',2);
  s+=line(130,89,130,104,skin,16*depth);
  const faceWidth=26*depth*head+4,cheek=avatar.face==='round'?1.12:avatar.face==='angular'?.82:1;
  s+=path('M'+(130-faceWidth*.78)+' 30Q130 13 '+(130+faceWidth*.78)+' 30Q'+(130+faceWidth*cheek)+' 58 '+(130+faceWidth*.57)+' 77Q130 '+(avatar.face==='angular'?98:91)+' '+(130-faceWidth*.57)+' 77Q'+(130-faceWidth*cheek)+' 58 '+(130-faceWidth*.78)+' 30Z',skin,'#b8a19a',1.5);
