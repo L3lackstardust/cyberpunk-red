@@ -31,7 +31,57 @@ const SPIN_FRAMES=48;
 async function loadSpinManifest(){if(spinManifestPromise)return spinManifestPromise;spinManifestPromise=fetch('./assets/cyberware-spin/manifest.json').then(r=>{if(!r.ok)throw Error('No image sequence');return r.json()}).then(m=>{if(m?.frameCount!==SPIN_FRAMES||!m.presets||typeof m.presets!=='object')throw Error('Invalid sequence manifest');spinManifest=m;return m}).catch(()=>null);return spinManifestPromise}
 function spinAssetPath(relative){if(typeof relative!=='string'||!/^[-\\w./]+\\.(webp|png|jpg|jpeg)$/i.test(relative)||relative.includes('..')||relative.startsWith('/'))return null;return './assets/cyberware-spin/'+relative}
 function spinLayers(){const keys=new Set();for(const inst of state.installInstances||[]){const item=items.find(i=>i.id===inst.itemId);if(!item)continue;if(!['Arms','Legs','Eyes','External'].includes(item.loc))continue;const key=item.loc==='Arms'||item.loc==='Legs'?(item.loc.toLowerCase()+'-'+(inst.side||'both').toLowerCase()):item.loc.toLowerCase();keys.add(key)}return [...keys]}
-function proceduralSpinSvg(frame,kind='base'){const a=frame*Math.PI*2/48,c=Math.cos(a),si=Math.sin(a),w=bodyPreset==='broad'?1.16:bodyPreset==='slim'?.86:1;const front=Math.max(0,c),back=Math.max(0,-c),side=Math.max(.12,Math.abs(c));const ellipse=(x,y,rx,ry,fill)=>'<ellipse cx="'+x+'" cy="'+y+'" rx="'+rx+'" ry="'+ry+'" fill="'+fill+'"/>';const limb=(x1,y1,x2,y2,stroke,width)=>'<path d="M'+x1+' '+y1+'L'+x2+' '+y2+'" stroke="'+stroke+'" stroke-width="'+width+'" stroke-linecap="round"/>';const metal='#8eaab9',skin='#365361',red='#ff4b66';let art='';const x=130;const sx=v=>130+(v-130)*side*w;const near=si>=0?'Left':'Right';if(kind==='base'){art+=ellipse(x,54,24*side*w+4,33,skin)+ellipse(x,51,17*side*w+3,23,'#527787');art+=limb(x,84,x,103,skin,18*side*w);art+='<path d="M'+sx(99)+' 104 Q130 92 '+sx(161)+' 104 L'+sx(158)+' 226 Q130 250 '+sx(102)+' 226Z" fill="'+skin+'" stroke="#9cb8c3" stroke-width="2"/>';for(const sign of [-1,1]){const shoulder=sx(130+sign*36),hand=sx(130+sign*64),hip=sx(130+sign*19),foot=sx(130+sign*25);art+=limb(shoulder,119,hand,246,skin,18*side*w);art+=limb(hip,235,foot,445,skin,23*side*w)}art+=ellipse(x,450,38*side*w,5,'#1d2a35');art+='<path d="M'+sx(114)+' 48H'+sx(146)+'" stroke="#a8dce6" stroke-width="3"/>';if(back>.5)art+=limb(x,115,x,220,'#7ba3b2',5)}else{const keys=kind.split('|'),loc=keys[0],which=keys[1]||'both';if(loc==='eyes'){art+=ellipse(x,51,19*side*w,6,red)}if(loc==='external'){art+='<path d="M'+sx(110)+' 123L'+sx(150)+' 123L'+sx(145)+' 208L'+sx(115)+' 208Z" fill="'+metal+'" stroke="'+red+'" stroke-width="3"/>'}if(loc==='arms'||loc==='legs'){for(const sign of [-1,1]){const thisSide=sign<0?'Right':'Left';if(which!=='both'&&which!==thisSide)continue;const start=loc==='arms'?{x:sx(130+sign*37),y:129}:{x:sx(130+sign*19),y:249};const end=loc==='arms'?{x:sx(130+sign*64),y:238}:{x:sx(130+sign*25),y:429};art+=limb(start.x,start.y,end.x,end.y,metal,loc==='arms'?19*side*w:23*side*w);art+=limb(start.x,start.y+33,end.x,end.y-24,red,2);art+=ellipse(end.x,end.y-18,5,5,red)}}}return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 480"><g>'+art+'</g></svg>'}
+function proceduralSpinSvg(frame,kind='base'){
+ const a=frame*Math.PI*2/48,c=Math.cos(a),si=Math.sin(a),w=bodyPreset==='broad'?1.16:bodyPreset==='slim'?.86:1;
+ const side=Math.max(.16,Math.abs(c)),front=Math.max(0,c),back=Math.max(0,-c),sx=v=>130+(v-130)*side*w;
+ const skin='#355465',lit='#7298a7',edge='#a8c4cf',shadow='#142633',metal='#8faebb',red='#ff526d';
+ const ellipse=(x,y,rx,ry,fill,stroke='none')=>'<ellipse cx="'+x+'" cy="'+y+'" rx="'+rx+'" ry="'+ry+'" fill="'+fill+'" stroke="'+stroke+'"/>';
+ const line=(x1,y1,x2,y2,color,width=2)=>'<path d="M'+x1+' '+y1+'L'+x2+' '+y2+'" stroke="'+color+'" stroke-width="'+width+'" stroke-linecap="round"/>';
+ const joint=(x,y,r)=>ellipse(x,y,r,r,shadow,edge)+ellipse(x,y,r*.45,r*.45,lit);
+ let art='<defs><linearGradient id="shell" x2="1" y2="1"><stop stop-color="#628797"/><stop offset=".5" stop-color="#355465"/><stop offset="1" stop-color="#172936"/></linearGradient><linearGradient id="steel" x2="1" y2="1"><stop stop-color="#b4d1da"/><stop offset=".55" stop-color="#698999"/><stop offset="1" stop-color="#263d4c"/></linearGradient></defs>';
+ if(kind==='base'){
+  art+=ellipse(130,450,42*side*w,7,'#101d28');
+  for(const sign of [-1,1]){
+   const hip=sx(130+sign*19),knee=sx(130+sign*23),ankle=sx(130+sign*25);
+   art+=line(hip,247,knee,346,skin,25*side*w)+line(knee,346,ankle,434,skin,21*side*w);
+   art+=line(hip,255,knee,337,lit,3)+line(knee,360,ankle,423,lit,2);
+   art+=joint(knee,346,6*side*w+2);
+   art+='<path d="M'+sx(130+sign*10)+' 437L'+sx(130+sign*39)+' 437L'+sx(130+sign*42)+' 448L'+sx(130+sign*8)+' 448Z" fill="'+shadow+'" stroke="'+edge+'" stroke-width="1"/>';
+  }
+  art+='<path d="M'+sx(100)+' 103Q130 88 '+sx(160)+' 103L'+sx(158)+' 216Q130 241 '+sx(102)+' 216Z" fill="url(#shell)" stroke="'+edge+'" stroke-width="2"/>';
+  art+='<path d="M'+sx(105)+' 218L'+sx(155)+' 218L'+sx(151)+' 254L'+sx(109)+' 254Z" fill="'+shadow+'" stroke="'+edge+'"/>';
+  for(const sign of [-1,1]){
+   const shoulder=sx(130+sign*36),elbow=sx(130+sign*49),wrist=sx(130+sign*63);
+   art+=line(shoulder,120,elbow,187,skin,20*side*w)+line(elbow,187,wrist,246,skin,17*side*w);
+   art+=line(shoulder,130,elbow,177,lit,3)+line(elbow,200,wrist,238,lit,2);
+   art+=joint(elbow,187,5*side*w+2);
+   art+=ellipse(wrist,251,8*side*w+2,13,skin,edge);
+  }
+  art+=line(130,88,130,105,skin,17*side*w);
+  art+=ellipse(130,55,25*side*w+4,34,'url(#shell)',edge);
+  art+=ellipse(sx(130-11),49,3*side+1,3,shadow)+ellipse(sx(130+11),49,3*side+1,3,shadow);
+  art+='<path d="M'+sx(113)+' 65Q130 72 '+sx(147)+' 65" fill="none" stroke="'+edge+'" stroke-width="2"/>';
+  art+='<path d="M'+sx(112)+' 43L'+sx(148)+' 43" stroke="'+lit+'" stroke-width="2"/>';
+  if(front>.15){art+='<path d="M'+sx(112)+' 123L130 143L'+sx(148)+' 123M130 143L130 205" fill="none" stroke="'+lit+'" stroke-width="2" opacity=".8"/>';for(const y of [157,174,191])art+=line(sx(117),y,sx(143),y,edge,1)}
+  if(back>.15){art+='<path d="M130 111L130 217M'+sx(108)+' 147L'+sx(152)+' 147" fill="none" stroke="'+lit+'" stroke-width="3"/>'}
+  for(const y of [272,302,374,402]){art+=line(sx(109),y,sx(119),y+3,edge,1)+line(sx(141),y+3,sx(151),y,edge,1)}
+ }else{
+  const [loc,which='both']=kind.split('|');
+  if(loc==='eyes')art+=ellipse(130,52,20*side*w,7,red)+line(sx(113),52,sx(147),52,'#ffd3dc',2);
+  if(loc==='external'){art+='<path d="M'+sx(109)+' 121L'+sx(151)+' 121L'+sx(147)+' 207L'+sx(113)+' 207Z" fill="url(#steel)" stroke="'+red+'" stroke-width="3"/>';for(const y of [141,161,181])art+=line(sx(115),y,sx(145),y,shadow,2)}
+  if(loc==='arms'||loc==='legs')for(const sign of [-1,1]){
+   const actual=sign<0?'Right':'Left';if(which!=='both'&&which!==actual)continue;
+   const start=loc==='arms'?{x:sx(130+sign*37),y:129}:{x:sx(130+sign*19),y:257};
+   const mid=loc==='arms'?{x:sx(130+sign*49),y:187}:{x:sx(130+sign*23),y:346};
+   const end=loc==='arms'?{x:sx(130+sign*63),y:243}:{x:sx(130+sign*25),y:429};
+   const thick=(loc==='arms'?21:25)*side*w;
+   art+=line(start.x,start.y,mid.x,mid.y,metal,thick)+line(mid.x,mid.y,end.x,end.y,metal,thick*.86);
+   art+=line(start.x,start.y+13,mid.x,mid.y-9,shadow,3)+line(mid.x,mid.y+11,end.x,end.y-13,red,2);
+   art+=joint(mid.x,mid.y,5*side*w+2)+ellipse(end.x,end.y-9,5,5,red);
+  }
+ }
+ return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 480" aria-hidden="true"><g>'+art+'</g></svg>'
+}
 function proceduralSpinUrl(frame,kind){return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(proceduralSpinSvg(frame,kind))}
 function renderSpinViewer(){return '<div class="spin-view" id="spinView" role="slider" tabindex="0" aria-label="Character rotation" aria-valuemin="0" aria-valuemax="47" aria-valuenow="'+spinFrame+'"><img id="spinBase" alt="Rotating character frame"><div id="spinOverlays"></div><span class="spin-index" id="spinIndex">FRAME '+(spinFrame+1)+'/48</span><span class="spin-message" id="spinMessage">Preparing image sequence…</span></div>'}
 function mountSpinViewer(){const node=$('spinView');if(!node)return;let origin=null;spinStep=delta=>{spinFrame=(spinFrame+delta+48)%48;showFrame()};function showFrame(){const preset=spinManifest?.presets?.[bodyPreset]||spinManifest?.presets?.standard;const base=preset?.base?.[spinFrame];const url=spinAssetPath(base);const img=$('spinBase');const frameAtRequest=spinFrame;img.onerror=()=>{if(spinFrame!==frameAtRequest||!img.isConnected)return;img.onerror=null;img.src=proceduralSpinUrl(frameAtRequest,'base');$('spinMessage').textContent='Using procedural preview — artwork missing';$('spinMessage').hidden=false};img.onload=()=>{if(spinFrame===frameAtRequest&&url)$('spinMessage').hidden=true};img.src=url||proceduralSpinUrl(frameAtRequest,'base');$('spinMessage').textContent=url?'Loading image frame…':'Procedural preview · high-detail artwork pending';$('spinMessage').hidden=!!url;const overlays=$('spinOverlays');overlays.replaceChildren();for(const key of spinLayers()){const overlay=spinAssetPath(preset?.overlays?.[key]?.[spinFrame]);const layer=document.createElement('img');layer.alt='';layer.onerror=()=>{if(spinFrame!==frameAtRequest||!layer.isConnected)return;if(overlay){layer.onerror=null;layer.src=proceduralSpinUrl(frameAtRequest,key.replace('-', '|'))}else layer.remove()};layer.src=overlay||proceduralSpinUrl(spinFrame,key.replace('-', '|'));overlays.append(layer)}$('spinIndex').textContent='FRAME '+(spinFrame+1)+'/48';node.setAttribute('aria-valuenow',String(spinFrame));for(const offset of [-2,-1,1,2]){const ahead=spinAssetPath(preset?.base?.[(spinFrame+offset+48)%48]);if(ahead){const pre=new Image();pre.src=ahead}}}node.addEventListener('pointerdown',e=>{origin={x:e.clientX,frame:spinFrame};node.setPointerCapture(e.pointerId)});node.addEventListener('pointermove',e=>{if(!origin)return;const next=(origin.frame+Math.round((e.clientX-origin.x)/9))%48;const normalized=(next+48)%48;if(normalized!==spinFrame){spinFrame=normalized;showFrame()}});node.addEventListener('pointerup',()=>origin=null);node.addEventListener('pointercancel',()=>origin=null);node.addEventListener('keydown',e=>{if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;e.preventDefault();spinFrame=(spinFrame+(e.key==='ArrowRight'?1:47))%48;showFrame()});loadSpinManifest().then(()=>{if($('spinView')===node)showFrame()});showFrame()}
