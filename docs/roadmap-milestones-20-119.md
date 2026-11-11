@@ -5,9 +5,9 @@ Status: planned, not implemented. Each milestone requires code, appropriate auto
 Principles: original art only; six base bodies; shared Avatar Studio/Cyberware renderer; 48-frame viewer with fallback; non-destructive customization; private/local GM data stays off public Pages.
 
 ## Avatar anatomical fidelity
-- [ ] 20. shoulder contours
-- [ ] 21. elbow joints
-- [ ] 22. hand silhouettes
+- [x] 20. shoulder contours
+- [x] 21. elbow joints
+- [x] 22. hand silhouettes
 - [ ] 23. neck proportions
 - [ ] 24. torso depth
 - [ ] 25. hip transitions
