@@ -1,0 +1,57 @@
+[
+  {
+    "id": "head",
+    "source": "exec-3f39f6e0-9478-4523-9ddf-3a14a8615ce5.png",
+    "prompt": "Create a production game sprite atlas of ONLY this character's bald head and neck, matching the reference Terry's identity, tattoos, beard, brown skin and realistic painted rendering. Reference is identity/style only. Exactly eight separate heads on a transparent background in a perfectly regular 4 columns x 2 rows grid. Each head fits entirely inside its equal-sized cell with generous transparent margin, identical scale and neck baseline; no shoulders, clothing, hair, props, text, labels, shadows outside head, or background. Reading row-major, views: front, front-right 45 degrees, right profile 90 degrees, back-right 135 degrees, back 180 degrees, back-left 225 degrees, left profile 270 degrees, front-left 315 degrees. Consistent orthographic camera, rotate the same head, stable neutral expression. Anatomically accurate back head has no face. Smooth shaved scalp, hair will be a separate modular layer. Neck extends to a flat attachment base. Entire atlas has true alpha transparency."
+  },
+  {
+    "id": "torso-combat",
+    "source": "exec-1855d929-ec3c-49eb-ba17-f348f049ee75.png",
+    "prompt": "Production 2D game modular character component sprite atlas. Exactly eight isolated sleeveless TORSO garments, no human heads, necks, arms, hands, legs, shadows or background. Regular 4 columns by 2 rows grid with equal cells. Each component contains shoulder sockets through hip belt line, attachment surfaces fully filled with fabric. Realistic gritty high-detail black cyberpunk tactical leather jacket with rolled short sleeve caps, dark shirt, red piping and red small LEDs, harness buckles. Consistent identical garment rotated around its vertical axis. Row-major views front, front-right 45, right profile, rear-right 135, back, rear-left 225, left profile, front-left 315. No perspective distortion, uniform scale, identical top and bottom baseline within every cell. Transparent margin all around each component, absolutely no overlap between cells. Black leather grain, seams, brushed metal buckles, restrained red accents. Neutral studio illumination. True transparent alpha background. No captions or grid lines. This is an assembly atlas not a scene."
+  },
+  {
+    "id": "torso-street",
+    "source": "exec-f290fb98-9a27-4289-8b9f-d2f7438dee7b.png",
+    "prompt": "Production 2D game modular sprite atlas. Exactly eight isolated components in regular 4 columns x 2 rows grid, equal cells, same scale, generous clear margins, consistent attachment baseline. Row-major camera views front, front-right45, right profile90, rear-right135, back180, rear-left225, left profile270, front-left315. Consistent orthographic rotation, realistic gritty high-detail painted game art, neutral studio light. True alpha transparency; no cast shadow, captions, grid lines, body parts other than requested component. ONLY sleeveless cyberpunk street torso jacket from collar through hip belt, dark burgundy worn leather over charcoal tank top, zipped pockets, stitched seams, no head or arms or legs. Filled fabric attachment sockets."
+  },
+  {
+    "id": "torso-corporate",
+    "source": "exec-c6c6a089-014e-4765-aefc-6fdd182724a7.png",
+    "prompt": "Production 2D game modular sprite atlas. Exactly eight isolated components in regular 4 columns x 2 rows grid, equal cells, same scale, generous clear margins, consistent attachment baseline. Row-major camera views front, front-right45, right profile90, rear-right135, back180, rear-left225, left profile270, front-left315. Consistent orthographic rotation, realistic gritty high-detail painted game art, neutral studio light. True alpha transparency; no cast shadow, captions, grid lines, body parts other than requested component. ONLY sleeveless corporate cyberpunk torso waistcoat from collar through hip belt, fine charcoal suit fabric, crisp gray shirt front and narrow dark red tie, tailored lapels, silver fasteners. No head arms or legs. Filled fabric attachment sockets."
+  },
+  {
+    "id": "arm-natural",
+    "source": "exec-fd8fab8b-53bd-473f-adc2-e405aa6a3a96.png",
+    "prompt": "Production 2D game modular sprite atlas. Exactly eight isolated components in regular 4 columns x 2 rows grid, equal cells, same scale, generous clear margins, consistent attachment baseline. Row-major camera views front, front-right45, right profile90, rear-right135, back180, rear-left225, left profile270, front-left315. Consistent orthographic rotation, realistic gritty high-detail painted game art, neutral studio light. True alpha transparency; no cast shadow, captions, grid lines, body parts other than requested component. ONLY one entire adult human RIGHT arm from round shoulder attachment through relaxed hand and fingers, hanging straight vertically. Brown skin and black geometric tattoos, muscular but not exaggerated, black fingerless leather glove and wrist cuff. NO torso or other limbs. Each cell is the same anatomical RIGHT arm seen from the stated camera angle. Arm vertical at center of cell; hand below shoulder. Skin detail realistic. Non-graphic detachable game sprite, no wounds."
+  },
+  {
+    "id": "arm-cyber",
+    "source": "exec-c24dddba-9834-4162-9a5f-fc523be14857.png",
+    "prompt": "Production 2D game modular sprite atlas. Exactly eight isolated components in regular 4 columns x 2 rows grid, equal cells, same scale, generous clear margins, consistent attachment baseline. Row-major camera views front, front-right45, right profile90, rear-right135, back180, rear-left225, left profile270, front-left315. Consistent orthographic rotation, realistic gritty high-detail painted game art, neutral studio light. True alpha transparency; no cast shadow, captions, grid lines, body parts other than requested component. ONLY one entire mechanical RIGHT cyberarm from round shoulder ball to relaxed articulated hand and fingers, hanging straight vertically. Brushed silver and graphite titanium plates over black cables, tiny red status LEDs, realistic joints and engraved panel seams. NO torso or other limbs. Each cell the same anatomical RIGHT cyberarm from stated camera angle. Arm vertical center of cell, hand below shoulder. Consistent proportions."
+  },
+  {
+    "id": "leg-natural",
+    "source": "exec-f4475d6c-8fd1-4883-aa7b-13c7a4df60a2.png",
+    "prompt": "Production 2D game modular sprite atlas. Exactly eight isolated components in regular 4 columns x 2 rows grid, equal cells, same scale, generous clear margins, consistent attachment baseline. Row-major camera views front, front-right45, right profile90, rear-right135, back180, rear-left225, left profile270, front-left315. Consistent orthographic rotation, realistic gritty high-detail painted game art, neutral studio light. True alpha transparency; no cast shadow, captions, grid lines, body parts other than requested component. ONLY one entire RIGHT leg from upper thigh attachment through boot sole, hanging straight vertically. Black rugged tactical cargo trousers, a knee pad, heavy black lace-up combat boot with restrained red buckles, realistic creased fabric. No hip pelvis torso other limb or human head. Every cell the same anatomical right leg viewed from the specified camera angle. Generous transparent margin above and below; all boot soles fit inside cells."
+  },
+  {
+    "id": "leg-cyber",
+    "source": "exec-dcb53ce1-5736-4b55-84d5-aae1314c3d9c.png",
+    "prompt": "Production 2D game modular sprite atlas. Exactly eight isolated components in regular 4 columns x 2 rows grid, equal cells, same scale, generous clear margins, consistent attachment baseline. Row-major camera views front, front-right45, right profile90, rear-right135, back180, rear-left225, left profile270, front-left315. Consistent orthographic rotation, realistic gritty high-detail painted game art, neutral studio light. True alpha transparency; no cast shadow, captions, grid lines, body parts other than requested component. ONLY one entire mechanical RIGHT cyberleg from hip ball attachment through articulated metal foot, straight vertical. Brushed titanium and graphite armor plates, exposed black actuators at knee and ankle, tiny red LEDs, mechanical toes and broad stable metal foot. No torso pelvis other limbs or head. Same anatomical right leg in each cell viewed from specified camera angle. Generous margin above and below; all foot soles fit inside cells."
+  },
+  {
+    "id": "hair-short",
+    "source": "exec-d76bcbc2-74f1-494d-8a79-ba7a7504f32e.png",
+    "prompt": "Production 2D game modular sprite atlas. Exactly eight isolated components in regular 4 columns x 2 rows grid, equal cells, same scale, generous clear margins, consistent attachment baseline. Row-major camera views front, front-right45, right profile90, rear-right135, back180, rear-left225, left profile270, front-left315. Consistent orthographic rotation, realistic gritty high-detail painted game art, neutral studio light. True alpha transparency; no cast shadow, captions, grid lines, body parts other than requested component. ONLY short closely cropped textured hair cap as a wearable hair layer; no head face scalp ears or neck. Neutral light gray hair to allow runtime tint. A slightly rounded skull-shaped cap with neat hairline at forehead and shorter back, detailed fine strands. All views same haircut."
+  },
+  {
+    "id": "hair-swept",
+    "source": "exec-aeb3fb72-354b-4fbc-b1e9-4bc05d5903ef.png",
+    "prompt": "Production 2D game modular sprite atlas. Exactly eight isolated components in regular 4 columns x 2 rows grid, equal cells, same scale, generous clear margins, consistent attachment baseline. Row-major camera views front, front-right45, right profile90, rear-right135, back180, rear-left225, left profile270, front-left315. Consistent orthographic rotation, realistic gritty high-detail painted game art, neutral studio light. True alpha transparency; no cast shadow, captions, grid lines, body parts other than requested component. ONLY a swept-back medium-length sculpted undercut hairstyle as a wearable hair layer; no head face skin ears or neck. Neutral light gray hair for runtime tint. Detailed combed strands, volume up front sweeping backward, tapered sides. Same hairstyle at each angle."
+  },
+  {
+    "id": "hair-mohawk",
+    "source": "exec-10a4c8e2-8173-4624-882a-435df7d62b99.png",
+    "prompt": "Production 2D game modular sprite atlas. Exactly eight isolated components in regular 4 columns x 2 rows grid, equal cells, same scale, generous clear margins, consistent attachment baseline. Row-major camera views front, front-right45, right profile90, rear-right135, back180, rear-left225, left profile270, front-left315. Consistent orthographic rotation, realistic gritty high-detail painted game art, neutral studio light. True alpha transparency; no cast shadow, captions, grid lines, body parts other than requested component. ONLY a narrow spiky mohawk crest as a wearable hair layer for an adult male head, NO head face scalp skin ears or neck. Neutral light gray hair for runtime tint. Short dense textured spikes in a narrow central strip running forehead to crown to nape. Front view narrow tuft, profile view long ridged crest, back view narrow descending strip. All views same mohawk hairstyle, detailed individual strands. No side hair. Equal cells with generous transparent margins."
+  }
+]

@@ -3,13 +3,14 @@ const assert=require('node:assert/strict');
 const {spawn}=require('node:child_process');
 const {setTimeout:delay}=require('node:timers/promises');
 (async()=>{
- const server=spawn('python3',['-m','http.server','8765','--bind','127.0.0.1'],{stdio:'ignore'});
+ const server=spawn(process.env.PYTHON||'python3',['-m','http.server','8765','--bind','127.0.0.1'],{stdio:'ignore'});
+ server.on('error',error=>{console.error('Test server failed:',error.message);process.exitCode=1});
  let browser;
  const failures=[];
  async function check(name,fn){try{await fn();console.log('PASS',name)}catch(e){failures.push(name+': '+e.message);console.error('FAIL',name,e.message)}}
  try{
   await delay(1200);
-  browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+  browser=await chromium.launch({headless:true,args:['--no-sandbox'],...(process.env.BROWSER_EXECUTABLE?{executablePath:process.env.BROWSER_EXECUTABLE}:{})});
   const context=await browser.newContext({acceptDownloads:true});
   context.setDefaultTimeout(7000);
   const page=await context.newPage();
@@ -137,7 +138,7 @@ const {setTimeout:delay}=require('node:timers/promises');
     await restore.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
     const snapshot=await restore.evaluate(()=>{
      const raw=JSON.parse(localStorage.getItem('cyberpunk-red-character-v1'));
-     return {...raw,name:'BACKUP-RESTORED',installed:['optic','image'],owned:['arm'],netLoaded:['sword'],conditions:{...raw.conditions,image:true}};
+     return {...raw,name:'BACKUP-RESTORED',installed:['optic','image'],installInstances:[],installSideByIndex:['left','left'],installSides:{optic:'left',image:'left'},owned:['arm'],netLoaded:['sword'],conditions:{...raw.conditions,image:true}};
     });
     restore.once('dialog',dialog=>dialog.accept());
     await restore.locator('#import').setInputFiles({name:'restore-test.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({schema:1,kind:'cyberpunk-character',data:snapshot}))});
@@ -186,6 +187,23 @@ const {setTimeout:delay}=require('node:timers/promises');
     await viewer.waitForFunction(()=>document.getElementById('spinView')?.getAttribute('aria-valuenow')==='0');
     assert.equal(await control.getAttribute('aria-valuenow'),'0');
     assert.match(await viewer.locator('#spinIndex').innerText(),/FRAME 1\/48/);
+    await control.scrollIntoViewIfNeeded();
+    const rect=await control.boundingBox();
+    const hit=await viewer.evaluate(({x,y})=>document.elementFromPoint(x,y)?.id||document.elementFromPoint(x,y)?.className,{x:rect.x+40,y:rect.y+rect.height/2});
+    await viewer.evaluate(()=>{window.__spinPointerEvents=[];const el=document.getElementById('spinView');el.addEventListener('pointerdown',()=>window.__spinPointerEvents.push('down'));el.addEventListener('pointermove',()=>window.__spinPointerEvents.push('move'));el.addEventListener('pointerup',()=>window.__spinPointerEvents.push('up'))});
+    console.log('drag geometry:',JSON.stringify({rect,hit}));
+    await viewer.mouse.move(rect.x+40,rect.y+rect.height/2);await viewer.mouse.down();
+    await viewer.mouse.move(rect.x+130,rect.y+rect.height/2,{steps:4});await viewer.mouse.up();
+    console.log('48-frame drag result:',await control.getAttribute('aria-valuenow'),'events:',JSON.stringify(await viewer.evaluate(()=>window.__spinPointerEvents)));
+    await viewer.waitForFunction(()=>document.getElementById('spinView')?.getAttribute('aria-valuenow')==='10');
+    assert.equal(await control.getAttribute('aria-valuenow'),'10');
+    await viewer.locator('#toggleLayers').click();
+    assert.equal(await viewer.locator('#toggleLayers').getAttribute('aria-pressed'),'true');
+    assert.equal(await viewer.locator('#toggleSpin').getAttribute('aria-pressed'),'false');
+    assert.equal(await viewer.locator('#toggle3d').getAttribute('aria-pressed'),'false');
+    await viewer.locator('#toggleSpin').click();
+    assert.equal(await viewer.locator('#toggleSpin').getAttribute('aria-pressed'),'true');
+    assert.equal(await viewer.locator('#toggleLayers').getAttribute('aria-pressed'),'false');
    }finally{await viewer.close()}
   });
   await check('Image rotation provides a fallback when sequence art is unavailable',async()=>{
@@ -316,14 +334,15 @@ const {setTimeout:delay}=require('node:timers/promises');
    }finally{await page.close()}
   });
   await check('Avatar studio builds, rotates, poses and saves one shared identity',async()=>{
-   const page=await context.newPage();
+   const avatarContext=await browser.newContext();
+   const page=await avatarContext.newPage();
    page.on('pageerror',e=>errors.push('avatar studio: '+e.message));
    try{
     await page.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'domcontentloaded'});
     await page.locator('[data-key="build"][data-value="female-athletic"]').click();
     await page.locator('[data-key="pose"][data-value="confident"]').click();
     await page.locator('[data-key="cyberarm"][data-value="left"]').click();
-    await page.locator('[data-key="eyes"]').click();
+    await page.locator('[data-key="eyes"][data-value="right"]').click();
     await page.locator('[data-view="0"]').click();
     await page.locator('#right').click();
     assert.equal(await page.locator('#viewer').getAttribute('aria-valuenow'),'1');
@@ -332,7 +351,7 @@ const {setTimeout:delay}=require('node:timers/promises');
     await page.evaluate(()=>localStorage.setItem('cyberpunk-red-character-v1',JSON.stringify({installInstances:[{itemId:'arm',side:'right'},{itemId:'optic',side:'both'}]})));
     await page.locator('#syncCyberware').click();
     assert.equal(await page.locator('[data-key="cyberarm"][data-value="right"]').getAttribute('aria-pressed'),'true');
-    assert.equal(await page.locator('[data-key="eyes"]').getAttribute('aria-pressed'),'true');
+    assert.equal(await page.locator('[data-key="eyes"][data-value="both"]').getAttribute('aria-pressed'),'true');
     assert.equal(await page.locator('#body svg').count(),1);
     assert.equal(await page.locator('#portrait svg').count(),1);
     await page.locator('#save').click();
@@ -343,10 +362,82 @@ const {setTimeout:delay}=require('node:timers/promises');
     await page.evaluate(()=>localStorage.setItem('cyberpunk-red-character-v1',JSON.stringify({installInstances:[{itemId:'arm',side:'left'}]})));
     await page.reload({waitUntil:'domcontentloaded'});
     assert.equal(await page.locator('[data-key="cyberarm"][data-value="left"]').getAttribute('aria-pressed'),'true');
-    assert.equal(await page.locator('[data-key="eyes"]').getAttribute('aria-pressed'),'false');
+    assert.equal(await page.locator('[data-key="eyes"][data-value="none"]').getAttribute('aria-pressed'),'true');
     await page.reload({waitUntil:'domcontentloaded'});
     assert.equal(await page.locator('[data-key="pose"][data-value="confident"]').getAttribute('aria-pressed'),'true');
+   }finally{await avatarContext.close()}
+  });
+  await check('Cyberware Manager shares all six Avatar Studio body builds',async()=>{
+   const buildContext=await browser.newContext();
+   const page=await buildContext.newPage();
+   page.on('pageerror',e=>errors.push('shared body build: '+e.message));
+   try{
+    await page.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
+    await page.evaluate(()=>localStorage.setItem('cyberpunk-red-avatar-v1',JSON.stringify({pose:'invalid-pose',hair:'invalid-hair',face:'invalid-face',outfit:'invalid-outfit',skin:'#000000',hairColor:'#000000'})));
+    await page.reload({waitUntil:'domcontentloaded'});
+    const legacy=await page.evaluate(()=>savedAvatarForSpin());
+    assert.equal(legacy.build,'male-average');assert.equal(legacy.pose,'neutral');assert.equal(legacy.hair,'short');assert.equal(legacy.face,'standard');assert.equal(legacy.outfit,'street');assert.equal(legacy.skin,'#a9765d');
+    await page.evaluate(()=>localStorage.setItem('cyberpunk-red-avatar-v1',JSON.stringify({build:'female-athletic',pose:'neutral',hair:'short',face:'standard',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'none',cyberleg:'none',eyes:false,frame:0})));
+    await page.reload({waitUntil:'domcontentloaded'});
+    assert.equal(await page.evaluate(()=>savedAvatarForSpin()?.build),'female-athletic');
+    await page.selectOption('#bodyPreset','male-slim');
+    assert.equal(await page.evaluate(()=>savedAvatarForSpin()?.build),'male-slim');
+    await page.selectOption('#bodyPreset','avatar');
+    assert.equal(await page.evaluate(()=>savedAvatarForSpin()?.build),'female-athletic');
+   }finally{await buildContext.close()}
+  });
+  await check('Avatar Studio updates the Cyberware Manager rotation across tabs',async()=>{
+   const sharedContext=await browser.newContext();
+   const cyberTab=await sharedContext.newPage(),studioTab=await sharedContext.newPage();
+   try{
+    await cyberTab.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
+    await cyberTab.evaluate(()=>localStorage.setItem('cyberpunk-red-avatar-v1',JSON.stringify({build:'female-athletic',pose:'neutral',hair:'short',face:'standard',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'none',cyberleg:'none',eyes:false,frame:0})));
+    await cyberTab.reload({waitUntil:'domcontentloaded'});
+    const before=await cyberTab.locator('#spinBase').getAttribute('src');
+    await studioTab.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'domcontentloaded'});
+    await studioTab.evaluate(()=>localStorage.setItem('cyberpunk-red-avatar-v1',JSON.stringify({build:'female-slim',pose:'confident',hair:'swept',face:'angular',outfit:'combat',skin:'#c99170',hairColor:'#684736',cyberarm:'none',cyberleg:'none',eyes:false,frame:0})));
+    await cyberTab.waitForFunction(previous=>document.querySelector('#spinBase')?.getAttribute('src')!==previous,before,{timeout:5000});
+    assert.equal(await cyberTab.evaluate(()=>savedAvatarForSpin()?.build),'female-slim');
+   }finally{await sharedContext.close()}
+  });
+  await check('Avatar cyberoptic overlays match the installed eye side',async()=>{
+   const page=await context.newPage();
+   try{
+    await page.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'domcontentloaded'});
+    const result=await page.evaluate(()=>{
+     const base={build:'male-average',pose:'neutral',hair:'short',face:'standard',outfit:'street',skin:'#a9765d',hairColor:'#18222a',cyberarm:'none',cyberleg:'none',frame:0};
+     const sides=eyes=>{const svg=REDAvatarRenderer.render({...base,eyes},false),doc=new DOMParser().parseFromString(svg,'image/svg+xml');return [...doc.querySelectorAll('[data-optic-side]')].map(n=>n.getAttribute('data-optic-side')).sort()};
+     return {left:sides('left'),right:sides('right'),both:sides('both'),none:sides(false)};
+    });
+    assert.deepEqual(result,{left:['left'],right:['right'],both:['left','right'],none:[]});
    }finally{await page.close()}
+  });
+  await check('Catalog artwork preserves implant hiding, dragging, and invalid-selection fallback',async()=>{
+   const tab=await context.newPage();
+   tab.on('pageerror',e=>errors.push('catalog tab: '+e.message));
+   try{
+    await tab.route('**/assets/avatar-art/test-frame.svg',route=>route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="200" height="400"><rect width="200" height="400" fill="teal"/></svg>'}));
+    await tab.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'networkidle'});
+    await tab.evaluate(()=>{
+     avatar={...defaults,cyberarm:'left'};showImplants=true;
+     catalogSelection=Object.fromEntries(REDAvatarImageIndex.KEYS.map(k=>[k,0]));
+     imageCatalog={version:1,images:{[REDAvatarImageIndex.imageId(catalogSelection,0)]:{path:'assets/avatar-art/test-frame.svg',characterFingerprint:JSON.stringify({build:avatar.build,pose:avatar.pose,skin:avatar.skin,face:avatar.face,hair:avatar.hair,hairColor:avatar.hairColor,outfit:avatar.outfit,cyberarm:avatar.cyberarm,cyberleg:avatar.cyberleg,eyes:avatar.eyes})}}};
+     render();persistAvatar();
+    });
+    assert.equal(await tab.locator('#body img').evaluate(img=>img.draggable),false);
+    await tab.locator('#showImplants').click();
+    assert.equal(await tab.locator('#body svg').count(),1);
+    assert.equal(await tab.locator('#portrait svg').count(),1);
+    assert.equal(await tab.evaluate(()=>JSON.parse(localStorage.getItem(KEY)).cyberarm),'left');
+    await tab.locator('#showImplants').click();
+    assert.equal(await tab.locator('#body img').count(),1);
+    await tab.evaluate(()=>{catalogSelection={};render()});
+    assert.equal(await tab.locator('#body svg').count(),1);
+    await tab.setViewportSize({width:390,height:844});
+    await tab.locator('#right').click();
+    assert.equal(await tab.locator('#viewer').getAttribute('aria-valuenow'),'1');
+    assert.equal(await tab.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+   }finally{await tab.close()}
   });
   await check('No uncaught errors in tested flows',async()=>assert.deepEqual(errors,[]));
   await context.close();

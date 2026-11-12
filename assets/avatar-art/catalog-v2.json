@@ -1,0 +1,1172 @@
+{
+  "version": 2,
+  "kind": "concept-art-registry",
+  "status": "reference-only",
+  "angles": 8,
+  "templates": [
+    {
+      "id": 1,
+      "slug": "terry",
+      "name": "Terry",
+      "role": "solo",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 2,
+      "slug": "maya",
+      "name": "Maya",
+      "role": "netrunner",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 3,
+      "slug": "reyes",
+      "name": "Reyes",
+      "role": "tech",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 4,
+      "slug": "vex",
+      "name": "Vex",
+      "role": "fixer",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 5,
+      "slug": "kane",
+      "name": "Kane",
+      "role": "brawler",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 6,
+      "slug": "rin",
+      "name": "Rin",
+      "role": "media",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 7,
+      "slug": "drake",
+      "name": "Drake",
+      "role": "exec",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 8,
+      "slug": "sable",
+      "name": "Sable",
+      "role": "nomad",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 9,
+      "slug": "toro",
+      "name": "Toro",
+      "role": "solo",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 10,
+      "slug": "lace",
+      "name": "Lace",
+      "role": "netrunner",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 11,
+      "slug": "bishop",
+      "name": "Bishop",
+      "role": "tech",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 12,
+      "slug": "nova",
+      "name": "Nova",
+      "role": "fixer",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 13,
+      "slug": "clay",
+      "name": "Clay",
+      "role": "brawler",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 14,
+      "slug": "jinx",
+      "name": "Jinx",
+      "role": "media",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 15,
+      "slug": "raze",
+      "name": "Raze",
+      "role": "exec",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 16,
+      "slug": "echo",
+      "name": "Echo",
+      "role": "nomad",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 17,
+      "slug": "hammer",
+      "name": "Hammer",
+      "role": "solo",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 18,
+      "slug": "pixel",
+      "name": "Pixel",
+      "role": "netrunner",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 19,
+      "slug": "ghost",
+      "name": "Ghost",
+      "role": "tech",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 20,
+      "slug": "zara",
+      "name": "Zara",
+      "role": "fixer",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 21,
+      "slug": "brick",
+      "name": "Brick",
+      "role": "brawler",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 22,
+      "slug": "miko",
+      "name": "Miko",
+      "role": "media",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 23,
+      "slug": "falcon",
+      "name": "Falcon",
+      "role": "exec",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 24,
+      "slug": "ivy",
+      "name": "Ivy",
+      "role": "nomad",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 25,
+      "slug": "kestrel",
+      "name": "Kestrel",
+      "role": "solo",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 26,
+      "slug": "rift",
+      "name": "Rift",
+      "role": "netrunner",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 27,
+      "slug": "mack",
+      "name": "Mack",
+      "role": "tech",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 28,
+      "slug": "sola",
+      "name": "Sola",
+      "role": "fixer",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 29,
+      "slug": "crane",
+      "name": "Crane",
+      "role": "brawler",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 30,
+      "slug": "haze",
+      "name": "Haze",
+      "role": "media",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 31,
+      "slug": "rex",
+      "name": "Rex",
+      "role": "exec",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 32,
+      "slug": "lux",
+      "name": "Lux",
+      "role": "nomad",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 33,
+      "slug": "varg",
+      "name": "Varg",
+      "role": "solo",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 34,
+      "slug": "dot",
+      "name": "Dot",
+      "role": "netrunner",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 35,
+      "slug": "orion",
+      "name": "Orion",
+      "role": "tech",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 36,
+      "slug": "byte",
+      "name": "Byte",
+      "role": "fixer",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 37,
+      "slug": "atlas",
+      "name": "Atlas",
+      "role": "brawler",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 38,
+      "slug": "seraph",
+      "name": "Seraph",
+      "role": "media",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 39,
+      "slug": "rodin",
+      "name": "Rodin",
+      "role": "exec",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 40,
+      "slug": "kira",
+      "name": "Kira",
+      "role": "nomad",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 41,
+      "slug": "grimm",
+      "name": "Grimm",
+      "role": "solo",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 42,
+      "slug": "rune",
+      "name": "Rune",
+      "role": "netrunner",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 43,
+      "slug": "bolt",
+      "name": "Bolt",
+      "role": "tech",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 44,
+      "slug": "vega",
+      "name": "Vega",
+      "role": "fixer",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 45,
+      "slug": "slate",
+      "name": "Slate",
+      "role": "brawler",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 46,
+      "slug": "onyx",
+      "name": "Onyx",
+      "role": "media",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 47,
+      "slug": "cypher",
+      "name": "Cypher",
+      "role": "exec",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    },
+    {
+      "id": 48,
+      "slug": "aspen",
+      "name": "Aspen",
+      "role": "nomad",
+      "source": "character-library-poster-v1",
+      "status": "concept-reference",
+      "frames": [],
+      "identityLocked": true
+    }
+  ],
+  "cyberware": [
+    {
+      "id": "arms-industrial",
+      "zone": "arms",
+      "style": "industrial",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "arms-combat",
+      "zone": "arms",
+      "style": "combat",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "arms-sleek-chrome",
+      "zone": "arms",
+      "style": "sleek-chrome",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "arms-medical",
+      "zone": "arms",
+      "style": "medical",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "arms-stealth",
+      "zone": "arms",
+      "style": "stealth",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "arms-tool-integrated",
+      "zone": "arms",
+      "style": "tool-integrated",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "arms-armored",
+      "zone": "arms",
+      "style": "armored",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "arms-neon-conduit",
+      "zone": "arms",
+      "style": "neon-conduit",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "arms-carbon-fiber",
+      "zone": "arms",
+      "style": "carbon-fiber",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "arms-heavy-lift",
+      "zone": "arms",
+      "style": "heavy-lift",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "arms-articulated",
+      "zone": "arms",
+      "style": "articulated",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "arms-gold-filigree",
+      "zone": "arms",
+      "style": "gold-filigree",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "legs-runner",
+      "zone": "legs",
+      "style": "runner",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "legs-combat",
+      "zone": "legs",
+      "style": "combat",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "legs-stealth",
+      "zone": "legs",
+      "style": "stealth",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "legs-industrial",
+      "zone": "legs",
+      "style": "industrial",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "legs-spring-heel",
+      "zone": "legs",
+      "style": "spring-heel",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "legs-carbon",
+      "zone": "legs",
+      "style": "carbon",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "legs-reinforced",
+      "zone": "legs",
+      "style": "reinforced",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "legs-hydraulic",
+      "zone": "legs",
+      "style": "hydraulic",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "legs-chrome",
+      "zone": "legs",
+      "style": "chrome",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "legs-prosthetic",
+      "zone": "legs",
+      "style": "prosthetic",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "optics-red-hud",
+      "zone": "optics",
+      "style": "red-hud",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "optics-violet-hud",
+      "zone": "optics",
+      "style": "violet-hud",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "optics-infrared",
+      "zone": "optics",
+      "style": "infrared",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "optics-low-light",
+      "zone": "optics",
+      "style": "low-light",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "optics-camera",
+      "zone": "optics",
+      "style": "camera",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "optics-telescopic",
+      "zone": "optics",
+      "style": "telescopic",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "optics-dual-spectrum",
+      "zone": "optics",
+      "style": "dual-spectrum",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "optics-monocle",
+      "zone": "optics",
+      "style": "monocle",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "optics-tactical",
+      "zone": "optics",
+      "style": "tactical",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "optics-minimal",
+      "zone": "optics",
+      "style": "minimal",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "ears-comms",
+      "zone": "ears",
+      "style": "comms",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "ears-audio-filter",
+      "zone": "ears",
+      "style": "audio-filter",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "ears-radar",
+      "zone": "ears",
+      "style": "radar",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "ears-concealed",
+      "zone": "ears",
+      "style": "concealed",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "ears-industrial",
+      "zone": "ears",
+      "style": "industrial",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "spine-reflex",
+      "zone": "spine",
+      "style": "reflex",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "spine-support",
+      "zone": "spine",
+      "style": "support",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "spine-armored",
+      "zone": "spine",
+      "style": "armored",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "spine-interface",
+      "zone": "spine",
+      "style": "interface",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "spine-vertebral",
+      "zone": "spine",
+      "style": "vertebral",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "torso-subdermal",
+      "zone": "torso",
+      "style": "subdermal",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "torso-exoskeletal",
+      "zone": "torso",
+      "style": "exoskeletal",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "torso-biomonitor",
+      "zone": "torso",
+      "style": "biomonitor",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "torso-reinforced",
+      "zone": "torso",
+      "style": "reinforced",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "torso-respiratory",
+      "zone": "torso",
+      "style": "respiratory",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "skin-hex-armor",
+      "zone": "skin",
+      "style": "hex-armor",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "skin-chrome",
+      "zone": "skin",
+      "style": "chrome",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "skin-camouflage",
+      "zone": "skin",
+      "style": "camouflage",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "skin-tattoo-circuit",
+      "zone": "skin",
+      "style": "tattoo-circuit",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    },
+    {
+      "id": "skin-synthskin",
+      "zone": "skin",
+      "style": "synthskin",
+      "sides": [
+        "left",
+        "right",
+        "both"
+      ],
+      "status": "concept-reference",
+      "frames": [],
+      "visible": true
+    }
+  ],
+  "qualityGates": {
+    "minimumIdentitySimilarity": 0.9,
+    "requiredAngles": 8,
+    "requireExactCyberwareSide": true,
+    "allowConceptCropsAsProduction": false
+  }
+}

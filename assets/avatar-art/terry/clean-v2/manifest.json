@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "characterId": "terry",
+  "appearanceId": "terry-clean-v2",
+  "status": "approved",
+  "approvalScope": "Local base-appearance workflow; visual browser QA on contrasting backgrounds",
+  "background": "transparent",
+  "frames": [
+    {
+      "angle": 0,
+      "image": "00_front.png",
+      "sha256": "4dc8e8b843494b3a754d7ca5ef6d1a5a135420155b5684f41dcc15b2944e1ef2",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "characterFingerprint": "terry-clean-v2",
+      "alphaRange": [
+        0,
+        254
+      ],
+      "silhouetteBounds": [
+        207,
+        52,
+        818,
+        1472
+      ]
+    },
+    {
+      "angle": 45,
+      "image": "01_front_right.png",
+      "sha256": "9aa008a2a1524a0646aa7fa9a7e8fb3be493507ab2131224af8b9740db52f50a",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "characterFingerprint": "terry-clean-v2",
+      "alphaRange": [
+        0,
+        254
+      ],
+      "silhouetteBounds": [
+        256,
+        80,
+        767,
+        1481
+      ]
+    },
+    {
+      "angle": 90,
+      "image": "02_right.png",
+      "sha256": "84bfa5d7eb88476e38954072c85ba6b3ca26332ba9ce40c79415e8a4089cae60",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "characterFingerprint": "terry-clean-v2",
+      "alphaRange": [
+        0,
+        254
+      ],
+      "silhouetteBounds": [
+        307,
+        87,
+        593,
+        1443
+      ]
+    },
+    {
+      "angle": 135,
+      "image": "03_rear_right.png",
+      "sha256": "1959d4f55f76cebe05d745ab184ef7f19f36f07f136da536becbfdabdd35f068",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "characterFingerprint": "terry-clean-v2",
+      "alphaRange": [
+        0,
+        254
+      ],
+      "silhouetteBounds": [
+        279,
+        91,
+        744,
+        1452
+      ]
+    },
+    {
+      "angle": 180,
+      "image": "04_back.png",
+      "sha256": "cc4970fbea234fe573e6b38717c496808e4d253dae643ca17711a67b8bcf9532",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "characterFingerprint": "terry-clean-v2",
+      "alphaRange": [
+        0,
+        254
+      ],
+      "silhouetteBounds": [
+        222,
+        83,
+        802,
+        1469
+      ]
+    },
+    {
+      "angle": 225,
+      "image": "05_rear_left.png",
+      "sha256": "865c5167a2d8f9f504659b063f09832aad7599f59c6c658560581d58c11fc242",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "characterFingerprint": "terry-clean-v2",
+      "alphaRange": [
+        0,
+        254
+      ],
+      "silhouetteBounds": [
+        234,
+        89,
+        727,
+        1474
+      ]
+    },
+    {
+      "angle": 270,
+      "image": "06_left.png",
+      "sha256": "36583ba7af590c5b1243ab67cfe48896cd04767e280a7f2701d3d51cfb7601b2",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "characterFingerprint": "terry-clean-v2",
+      "alphaRange": [
+        0,
+        254
+      ],
+      "silhouetteBounds": [
+        367,
+        88,
+        658,
+        1419
+      ]
+    },
+    {
+      "angle": 315,
+      "image": "07_front_left.png",
+      "sha256": "8310deee84a8203608a9e2aa795e60ebb19ac88e2f950dd41644113ef531015d",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "characterFingerprint": "terry-clean-v2",
+      "alphaRange": [
+        0,
+        254
+      ],
+      "silhouetteBounds": [
+        261,
+        89,
+        763,
+        1468
+      ]
+    }
+  ],
+  "portrait": {
+    "image": "00_front.png",
+    "presentation": "CSS crop of the same front frame"
+  },
+  "limitations": [
+    "Eight authored views, not a continuous 3D reconstruction",
+    "Small clothing and lighting differences remain between views",
+    "Customized appearance and implant variants use explicit procedural fallback"
+  ]
+}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Terry · Artwork review</title>
+<style>
+:root{color-scheme:dark;font:16px system-ui;background:#0b111a;color:#edf3f6}*{box-sizing:border-box}body{margin:0}header,main{max-width:1200px;margin:auto;padding:20px}header{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}h1{font-size:1.5rem;margin:0}a{color:#86e6ef}.tag{color:#ffbd7d;font-size:.85rem}.layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(240px,1fr);gap:20px}.panel{background:#15212d;border:1px solid #3d5264;border-radius:12px;padding:18px}h2{font-size:1rem;margin:0 0 12px}.stage{display:grid;place-items:center;height:65vh;min-height:320px;max-height:700px;overflow:hidden;border-radius:8px;touch-action:pan-y;cursor:grab;user-select:none}.stage:active{cursor:grabbing}.checker{background-color:#cbd0d6;background-image:conic-gradient(#87909b 25%,transparent 0 50%,#87909b 0 75%,transparent 0);background-size:32px 32px}.dark{background:#101722}.light{background:#f4f3ed}.cyan{background:#23ced2}.stage img{height:100%;max-width:100%;object-fit:contain;min-height:0;pointer-events:none}button,select{font:inherit;color:inherit;background:#233645;border:1px solid #648096;padding:10px;border-radius:6px;cursor:pointer}button[aria-pressed=true]{background:#713044;border-color:#ff6384}button:focus-visible,select:focus-visible,.stage:focus-visible{outline:3px solid #84f4ef;outline-offset:3px}.toolbar,.angles{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px}.angles button{font-size:.85rem}label{display:block;margin:16px 0 6px}.portrait{width:160px;height:160px;object-fit:contain;border-radius:8px}.note{color:#b7cad8;font-size:.9rem;line-height:1.5}#issue{min-height:4.5em;color:#ffd2a7;line-height:1.5}#frameLabel{font-weight:600;flex:1;text-align:center}li{margin-bottom:9px}.error{color:#ff9d9d}@media(max-width:700px){header,main{padding:12px}.layout{grid-template-columns:1fr}.stage{height:58vh;min-height:320px}.panel{padding:12px}}
+</style></head>
+<body><header><div><h1>Terry · Eight-angle artwork</h1><p class="tag">Cleaned v2 · Local workflow ready</p></div><a href="./avatar-creator.html">Back to Avatar Studio</a></header>
+<main class="layout"><section class="panel"><h2>TURNAROUND REVIEW</h2><label for="version">Artwork version</label><select id="version"><option value="clean">Cleaned v2</option><option value="original">Original candidate v1</option></select>
+<div id="stage" class="stage checker" role="slider" tabindex="0" aria-label="Terry viewing angle" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0"><img id="frame" draggable="false" alt="Terry, front view" src="./assets/avatar-art/terry/candidate-v1/00_front.webp"></div>
+<div class="toolbar"><button id="previous" aria-label="Previous angle">←</button><span id="frameLabel" aria-live="polite"></span><button id="next" aria-label="Next angle">→</button><button id="play" aria-pressed="false">Play rotation</button></div>
+<div id="angles" class="angles" aria-label="Choose angle"></div>
+<label for="background">Inspection background</label><select id="background"><option value="checker">Checkerboard</option><option value="dark">Dark</option><option value="light">Light</option><option value="cyan">Cyan</option></select>
+<p class="note">Drag horizontally or use arrow keys to rotate. Eight supplied views, spaced 45° apart. This review does not change character saves or installed cyberware.</p><p id="loadStatus" class="error" role="status"></p>
+</section><aside class="panel"><h2>ORIGINAL PORTRAIT</h2><img class="portrait checker" src="./assets/avatar-art/terry/candidate-v1/portrait.webp" id="reviewPortrait" alt="Terry portrait"><h2 style="margin-top:24px">CURRENT VIEW</h2><p id="issue"></p>
+<h2>ARTWORK COVERAGE</h2><ul class="note"><li>Cleaned silhouettes with eight authored views.</li><li>Minor clothing and lighting differences remain between angles.</li><li>Matching portrait uses the cleaned front frame.</li><li>Appearance changes and installed implants use an explicit procedural fallback in the live workflow.</li></ul>
+<a href="./assets/avatar-art/terry/candidate-v1/contact_sheet.jpg">Open original contact sheet</a>
+</aside></main>
+<script>
+'use strict';
+const frames=[
+ ['00_front.webp','Front','Blue floor remains between the legs and beneath the boots; background also remains in arm gaps.'],
+ ['01_front_right.webp','Front right','Blue floor reflection remains beneath and between the boots. Check the silhouette edges.'],
+ ['02_right.webp','Right','A large dark background patch remains around the torso and legs.'],
+ ['03_rear_right.webp','Rear right','Inspect dark edge remnants near the shoulders and boots; match equipment with adjacent views.'],
+ ['04_back.webp','Back','Compare jacket insignia, holsters, proportions, and boot alignment with both rear-quarter views.'],
+ ['05_rear_left.webp','Rear left','Large dark background islands remain around the arms and lower body.'],
+ ['06_left.webp','Left','A reflection remains beneath the boots. Compare scale and posture with the opposite profile.'],
+ ['07_front_left.webp','Front left','Inspect the silhouette on light and cyan backgrounds; compare equipment with the front view.']
+];
+const $=id=>document.getElementById(id),stage=$('stage');let angle=0,timer=null,drag=null;
+frames.forEach((frame,i)=>{const button=document.createElement('button');button.textContent=i*45+'°';button.setAttribute('aria-label',frame[1]);button.onclick=()=>{stop();show(i)};$('angles').append(button)});
+function show(value){angle=((value%8)+8)%8;const current=frames[angle];$('loadStatus').textContent='';const clean=$('version').value==='clean';$('frame').src='./assets/avatar-art/terry/'+(clean?'clean-v2/'+current[0].replace('.webp','.png'):'candidate-v1/'+current[0]);$('reviewPortrait').src='./assets/avatar-art/terry/'+(clean?'clean-v2/00_front.png':'candidate-v1/portrait.webp');$('reviewPortrait').style.objectFit=clean?'cover':'contain';$('reviewPortrait').style.objectPosition='center top';$('frame').alt='Terry, '+current[1].toLowerCase()+' view';$('frameLabel').textContent=current[1]+' · '+angle*45+'°';$('issue').textContent=clean?'Cleaned silhouette. Compare adjacent views for remaining clothing and lighting variation.':current[2];stage.setAttribute('aria-valuenow',angle);stage.setAttribute('aria-valuetext',current[1]+', '+angle*45+' degrees');[...$('angles').children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===angle)))}
+function stop(){clearInterval(timer);timer=null;$('play').textContent='Play rotation';$('play').setAttribute('aria-pressed','false')}
+function step(delta){stop();show(angle+delta)}
+$('previous').onclick=()=>step(-1);$('next').onclick=()=>step(1);
+$('play').onclick=()=>{if(timer){stop();return}timer=setInterval(()=>show(angle+1),700);$('play').textContent='Pause rotation';$('play').setAttribute('aria-pressed','true')};
+$('version').onchange=()=>{stop();show(angle)};
+$('background').onchange=e=>{stage.className='stage '+e.target.value};
+stage.onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();step(e.key==='ArrowRight'?1:-1)}};
+stage.onpointerdown=e=>{if(!e.isPrimary||e.button!==0)return;stop();drag={id:e.pointerId,x:e.clientX,angle};stage.setPointerCapture(e.pointerId)};
+stage.onpointermove=e=>{if(drag&&drag.id===e.pointerId)show(drag.angle+Math.round((e.clientX-drag.x)/45))};
+for(const name of ['pointerup','pointercancel','lostpointercapture'])stage.addEventListener(name,e=>{if(drag?.id===e.pointerId)drag=null});
+$('frame').onerror=()=>{$('loadStatus').textContent='This frame could not be loaded. The original candidate files may be missing.';stop()};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});show(0);
+</script></body></html>

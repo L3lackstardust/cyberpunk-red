@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "characterId": "terry",
+  "characterTemplateId": 1,
+  "appearanceId": "terry_base_v1",
+  "status": "candidate_requires_visual_approval",
+  "background": "transparent",
+  "rotationDegrees": [
+    0,
+    45,
+    90,
+    135,
+    180,
+    225,
+    270,
+    315
+  ],
+  "frames": [
+    {
+      "angle": 0,
+      "image": "00_front.webp",
+      "sha256": "9814a507f5d390ff7e1af019f2b1add8772dc813d788dd851426cdb892f88a77",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "source": "00_front.webp",
+      "maskStatus": "automated_unverified",
+      "characterFingerprint": "terry_base_v1"
+    },
+    {
+      "angle": 45,
+      "image": "01_front_right.webp",
+      "sha256": "59c1ab25219acc54a275e3877faf2213c4fa5b6c37a215742754be7cc3271e11",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "source": "01_front_right.webp",
+      "maskStatus": "automated_unverified",
+      "characterFingerprint": "terry_base_v1"
+    },
+    {
+      "angle": 90,
+      "image": "02_right.webp",
+      "sha256": "b0305c6d627f1c975a8e3664d7a287db3af119cfdfe57b10b8c0920cc485ccd2",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "source": "02_right.webp",
+      "maskStatus": "automated_unverified",
+      "characterFingerprint": "terry_base_v1"
+    },
+    {
+      "angle": 135,
+      "image": "03_rear_right.webp",
+      "sha256": "e926709791fe55c32d83b822ed2d219570575fbbb244f00d6630f2e00e35cd83",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "source": "03_rear_right.webp",
+      "maskStatus": "automated_unverified",
+      "characterFingerprint": "terry_base_v1"
+    },
+    {
+      "angle": 180,
+      "image": "04_back.webp",
+      "sha256": "5d68fa5c01c31e733ea65a02174e00b0c9cb28728037a59a55cb2f3a8f68271b",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "source": "04_back.webp",
+      "maskStatus": "automated_unverified",
+      "characterFingerprint": "terry_base_v1"
+    },
+    {
+      "angle": 225,
+      "image": "05_rear_left.webp",
+      "sha256": "f2aa8c28d38d41d38282e94add7f692a12c90422ff6f5770d7292893904f22f3",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "source": "05_rear_left.webp",
+      "maskStatus": "automated_unverified",
+      "characterFingerprint": "terry_base_v1"
+    },
+    {
+      "angle": 270,
+      "image": "06_left.webp",
+      "sha256": "d09ecae5768674be18d362bb75e1eb16919859c8e838814b114f211838fabdad",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "source": "06_left.webp",
+      "maskStatus": "automated_unverified",
+      "characterFingerprint": "terry_base_v1"
+    },
+    {
+      "angle": 315,
+      "image": "07_front_left.webp",
+      "sha256": "d4c0470292cfb25d4bba9fe4e007409b283e389261a8c4635d68de3ec8d7daef",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "source": "07_front_left.webp",
+      "maskStatus": "automated_unverified",
+      "characterFingerprint": "terry_base_v1"
+    }
+  ],
+  "knownIssues": [
+    "Original first two frames have city backgrounds and require additional masking inspection",
+    "Some armor details vary between generated views",
+    "Left and right 45-degree viewpoints are not guaranteed to be geometrically exact",
+    "No cyberware-specific complete-image variant sets approved"
+  ],
+  "portrait": "portrait.webp"
+}

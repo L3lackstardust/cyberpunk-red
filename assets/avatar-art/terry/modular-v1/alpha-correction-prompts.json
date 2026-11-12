@@ -1,0 +1,17 @@
+[
+  {
+    "id": "torso-street",
+    "source": "exec-6092504a-6d9d-49e1-b999-74daa62bb3d7.png",
+    "prompt": "Edit target: the supplied eight-component game sprite atlas. Remove ONLY the entire white/gray background and ALL cast shadows, making it genuinely transparent alpha=0. Preserve all eight objects, their exact positions, sizes, texture, details and 4x2 grid. Do not redraw or move the objects. Clean anti-aliased object edges; no white halos. No colored backdrop. Output a true transparent PNG cutout atlas."
+  },
+  {
+    "id": "leg-natural",
+    "source": "exec-2c982f9d-6c29-4675-9c66-747e069eaccf.png",
+    "prompt": "Edit the supplied eight-leg sprite atlas. Remove ONLY all gray cloud/fog/checker texture and all background behind the eight trouser-and-boot leg components. Make every background pixel truly transparent with alpha zero. Preserve all eight actual black trouser and boot sprites and their exact position, scale and detail in the 4x2 grid. Clean edge transparency, no smoke, no floor, no halo, no shadows, no backdrop. Do not alter garment or boot pixels."
+  },
+  {
+    "id": "leg-cyber",
+    "source": "exec-73ed50f8-571e-4fe7-a93c-7f6d4c9551d0.png",
+    "prompt": "Edit target: the supplied eight-component game sprite atlas. Remove ONLY the entire white/gray background and ALL cast shadows, making it genuinely transparent alpha=0. Preserve all eight objects, their exact positions, sizes, texture, details and 4x2 grid. Do not redraw or move the objects. Clean anti-aliased object edges; no white halos. No colored backdrop. Output a true transparent PNG cutout atlas."
+  }
+]
