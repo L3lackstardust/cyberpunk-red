@@ -34,9 +34,13 @@ jobs:
           cp -R /tmp/package/dist/assets vendor/dice-box/assets
           test -f vendor/dice-box/dice-box.es.min.js
           test -d vendor/dice-box/assets
+      - name: Run release regression checks
+        run: node --test tests/*.test.cjs
+      - name: Stage application
+        run: node scripts/build-site.cjs
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: dist
       - id: deployment
         uses: actions/deploy-pages@v4
 
@@ -49,7 +53,10 @@ jobs:
           import os, time, urllib.request
           base=os.environ['PAGES_URL'].rstrip('/')+'/'
           checks={
-              'index.html':['redSaveStatus','cyberpunk-red-console-v1'],
+              'index.html':['REDRules.sources','cyberpunk-red-console-v1'],
+              'avatar-creator.html':['useModular','REDModularArtwork.mount'],
+              'character-backup.html':['Complete character backup'],
+              'assets/modular-artwork.js':['terry-modular-v1'],
               'character-cyberware.html':['NOT SAVED','Body preset storage unavailable','spinView']
           }
           for path,needles in checks.items():

@@ -1,23 +1,9 @@
-# Terry foreground production gate (2026-11-11)
+# Terry artwork gate — current local release
 
-Status: **candidate, NOT production approved**. Eight 1024×1536 transparent WebP frames and a front-derived portrait have been generated in the conversation artifact `terry_production_candidate_v1.zip`, but are not committed to the repository. The GitHub text-file connector cannot upload binary artwork; do not reference these paths in live manifests until binary assets are actually uploaded.
+**Cleaned v2 passes the local base-appearance workflow gate.** Eight 1024×1536 RGBA PNG views are in `assets/avatar-art/terry/clean-v2/`, with per-frame hashes and metadata in `manifest.json`. The original candidate remains preserved in `candidate-v1/`.
 
-## Frame order
-0 front; 1 front-right; 2 right; 3 rear-right; 4 back; 5 rear-left; 6 left; 7 front-left. The matching images are `00_front.webp` through `07_front_left.webp`.
+Transparent silhouettes were checked with actual browser compositing on contrasting backgrounds. The portrait uses the same front frame. Display transforms align height, horizontal center, and boot baseline without modifying the generated source images.
 
-## QA blockers
-- Frames 0 and 1: visible neon street / floor remnants in alpha foreground.
-- Frames 2, 3 and 5: dark studio background islands around silhouette.
-- Equipment, lighting and body scale vary between angles.
-- Exact camera-angle parity and cyberware side-specific variant groups are not yet approved.
-- Full browser integration, character-save synchronization and mobile tests for these actual assets have **not** been run.
+The local gate covers the original base outfit and eight authored views. Matching high-detail customization and cyberware variants are not available; the integrated workflow explicitly falls back to the procedural renderer with side-correct limbs and eyes. Minor per-view equipment and lighting differences remain.
 
-## Approval requirements
-1. Clean transparent silhouettes with no retained scenery.
-2. Exact eight-frame angle order, consistent scale and body landmarks.
-3. Visual review of clothing, facial identity and cyberware laterality.
-4. Matching portrait and valid per-frame image hashes.
-5. Upload binary files to `assets/avatar-art/terry/base/` and register only after verifying every referenced path exists.
-6. Browser regression checks including missing-art fallback, eight-angle navigation, and save/reload.
-
-Backgrounds are independent player-selected future assets. Do not bake backgrounds into character frames.
+See `terry-completed-workflow.md` for acceptance checks, startup instructions, scope limits, and image prompts. No GitHub upload, merge, or deployment has been performed.

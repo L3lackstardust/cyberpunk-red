@@ -3,13 +3,14 @@ const assert=require('node:assert/strict');
 const {spawn}=require('node:child_process');
 const {setTimeout:delay}=require('node:timers/promises');
 (async()=>{
- const server=spawn('python3',['-m','http.server','8765','--bind','127.0.0.1'],{stdio:'ignore'});
+ const server=spawn(process.env.PYTHON||'python3',['-m','http.server','8765','--bind','127.0.0.1'],{stdio:'ignore'});
+ server.on('error',error=>{console.error('Test server failed:',error.message);process.exitCode=1});
  let browser;
  const failures=[];
  async function check(name,fn){try{await fn();console.log('PASS',name)}catch(e){failures.push(name+': '+e.message);console.error('FAIL',name,e.message)}}
  try{
   await delay(1200);
-  browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+  browser=await chromium.launch({headless:true,args:['--no-sandbox'],...(process.env.BROWSER_EXECUTABLE?{executablePath:process.env.BROWSER_EXECUTABLE}:{})});
   const context=await browser.newContext({acceptDownloads:true});
   context.setDefaultTimeout(7000);
   const page=await context.newPage();
@@ -137,7 +138,7 @@ const {setTimeout:delay}=require('node:timers/promises');
     await restore.goto('http://127.0.0.1:8765/character-cyberware.html',{waitUntil:'domcontentloaded'});
     const snapshot=await restore.evaluate(()=>{
      const raw=JSON.parse(localStorage.getItem('cyberpunk-red-character-v1'));
-     return {...raw,name:'BACKUP-RESTORED',installed:['optic','image'],owned:['arm'],netLoaded:['sword'],conditions:{...raw.conditions,image:true}};
+     return {...raw,name:'BACKUP-RESTORED',installed:['optic','image'],installInstances:[],installSideByIndex:['left','left'],installSides:{optic:'left',image:'left'},owned:['arm'],netLoaded:['sword'],conditions:{...raw.conditions,image:true}};
     });
     restore.once('dialog',dialog=>dialog.accept());
     await restore.locator('#import').setInputFiles({name:'restore-test.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({schema:1,kind:'cyberpunk-character',data:snapshot}))});
@@ -410,6 +411,33 @@ const {setTimeout:delay}=require('node:timers/promises');
     });
     assert.deepEqual(result,{left:['left'],right:['right'],both:['left','right'],none:[]});
    }finally{await page.close()}
+  });
+  await check('Catalog artwork preserves implant hiding, dragging, and invalid-selection fallback',async()=>{
+   const tab=await context.newPage();
+   tab.on('pageerror',e=>errors.push('catalog tab: '+e.message));
+   try{
+    await tab.route('**/assets/avatar-art/test-frame.svg',route=>route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="200" height="400"><rect width="200" height="400" fill="teal"/></svg>'}));
+    await tab.goto('http://127.0.0.1:8765/avatar-creator.html',{waitUntil:'networkidle'});
+    await tab.evaluate(()=>{
+     avatar={...defaults,cyberarm:'left'};showImplants=true;
+     catalogSelection=Object.fromEntries(REDAvatarImageIndex.KEYS.map(k=>[k,0]));
+     imageCatalog={version:1,images:{[REDAvatarImageIndex.imageId(catalogSelection,0)]:{path:'assets/avatar-art/test-frame.svg',characterFingerprint:JSON.stringify({build:avatar.build,pose:avatar.pose,skin:avatar.skin,face:avatar.face,hair:avatar.hair,hairColor:avatar.hairColor,outfit:avatar.outfit,cyberarm:avatar.cyberarm,cyberleg:avatar.cyberleg,eyes:avatar.eyes})}}};
+     render();persistAvatar();
+    });
+    assert.equal(await tab.locator('#body img').evaluate(img=>img.draggable),false);
+    await tab.locator('#showImplants').click();
+    assert.equal(await tab.locator('#body svg').count(),1);
+    assert.equal(await tab.locator('#portrait svg').count(),1);
+    assert.equal(await tab.evaluate(()=>JSON.parse(localStorage.getItem(KEY)).cyberarm),'left');
+    await tab.locator('#showImplants').click();
+    assert.equal(await tab.locator('#body img').count(),1);
+    await tab.evaluate(()=>{catalogSelection={};render()});
+    assert.equal(await tab.locator('#body svg').count(),1);
+    await tab.setViewportSize({width:390,height:844});
+    await tab.locator('#right').click();
+    assert.equal(await tab.locator('#viewer').getAttribute('aria-valuenow'),'1');
+    assert.equal(await tab.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+   }finally{await tab.close()}
   });
   await check('No uncaught errors in tested flows',async()=>assert.deepEqual(errors,[]));
   await context.close();

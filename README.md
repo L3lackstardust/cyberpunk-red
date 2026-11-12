@@ -1,19 +1,27 @@
-# RED Character Console — Fantastic Dice GitHub Pages
+# Cyberpunk RED character workspace
 
-This repository kit includes the existing Character Console and a GitHub Actions workflow that **downloads and packages the actual Fantastic Dice v1.1.4 module, workers, and assets** during deployment. It does not require a CDN at runtime.
+Run **Start Cyberpunk RED.cmd** with Node.js installed, then open **http://127.0.0.1:8765/**. Keep the launcher open while using the application.
 
-## Deploy
+- **Character Console:** stats, skills, inventory, conditions, sourced rolls and linked portraits.
+- **Avatar Studio:** choose **Modular Terry artwork** for all existing appearance combinations and side-specific cyberware across eight views. Original painted Terry and procedural previews remain available.
+- **Cyberware Manager:** purchase/install/remove by anatomical side, Humanity previews and guarded inventory undo.
+- **Complete backup & recovery:** one export for console, cyberware and appearance; validated restore and previous local saves.
 
-1. Create a **new public repository** named `cyberpunk-red` under `L3lackstardust` (do not use Aetherforge).
-2. Upload **all contents of this kit**, including the hidden `.github/workflows/pages.yml` file, to the root of the new repository.
-3. In GitHub repository **Settings → Pages**, set **Build and deployment → Source: GitHub Actions**.
-4. Open **Actions → Deploy RED Character Console** and check that the job succeeds.
-5. Visit `https://l3lackstardust.github.io/cyberpunk-red/`. Check the 3D status and roll D10 and D6.
+Data stays in browser-local storage. Export a complete backup before changing devices or clearing browser data. The demo shop is a sample catalog; sourcebook prices, Humanity caps, slot limits and non-numeric injury effects still require player/GM entry.
 
-This is a deployment kit, not proof that the engine has rendered in a browser. It uses GitHub Actions network access to download the package. If the workflow fails, check its log before sharing the URL.
+See [priorities 1–5 implementation and validation](docs/priorities-1-5-release.md). The historical roadmap covers larger future work and does not represent this release's completion percentage.
 
-## Security
+## Checks
 
-The character sheet saves in localStorage and exports JSON. Google Sheets cloud synchronization and secure player permissions are **not** implemented. Do not store GM secrets in this public repo. Portraits are still third-party hotlinks; image hosting remains deferred.
+Run from the project folder:
 
-Fantastic Dice is MIT licensed; upstream: https://github.com/3d-dice/dice-box .
+```text
+node --test tests/*.test.cjs
+node tests/stability-smoke.cjs
+node tests/terry-workflow-browser.cjs
+node tests/priorities-browser.cjs
+```
+
+Browser checks require Playwright/Chromium. Set BROWSER_EXECUTABLE to an installed Chromium browser if needed; the older smoke runner also accepts PYTHON. GitHub Actions installs these dependencies. Pages packages Fantastic Dice 1.1.4 during deployment and stages only application files in dist.
+
+Roll20 direct synchronization, cloud persistence and GM collaboration remain separate roadmap work. This is an unofficial campaign utility.

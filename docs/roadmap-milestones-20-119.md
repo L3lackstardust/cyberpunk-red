@@ -1,5 +1,7 @@
 # Cyberpunk RED — Milestones 20–119
 
+Current release: see [priorities 1–5](priorities-1-5-release.md) for the implemented modular eight-view artwork, reliability and roll changes. The checklist below is the historical broader 48-frame roadmap.
+
 Status: tracked incrementally. Checkboxes indicate verified implementation; incomplete or partial work remains unchecked. Each milestone requires code, appropriate automated tests, and verification before completion.
 
 Principles: original art only; six base bodies; shared Avatar Studio/Cyberware renderer; 48-frame viewer with fallback; non-destructive customization; private/local GM data stays off public Pages.
@@ -128,6 +130,6 @@ Principles: original art only; six base bodies; shared Avatar Studio/Cyberware r
 
 - No milestone is marked complete solely because a plan or mockup exists.
 - Require character regression and browser stability checks for changes that touch shared renderer, avatar, cyberware, or character storage.
-- Record known limitations: current avatar is procedural SVG; high-resolution frame assets have not been produced.
+- Record known limitations: modular and original eight-view Terry artwork are available; continuous 48-angle painted artwork remains future work.
 - Validate all new UI against compact horizontal layout and keyboard use.
 - Never publish private GM campaign content, secrets, or local GM state.

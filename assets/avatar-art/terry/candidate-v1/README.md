@@ -1,0 +1,1 @@
+Terry complete-image candidate v1. Eight standardized WebP frames with alpha and a matching derived portrait. Original artwork preserved separately. Automated masking is NOT artist-approved. Character/cyberware identity QA and application integration are pending. No backgrounds included.
